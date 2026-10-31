@@ -1,0 +1,235 @@
+/* Generiert aus dem Design-Stylesheet; gilt nur für body.theme-modern. */
+/* Kurstafel im Stil einer echten Börsenanzeige: warmes Schwarz, eine Akzentfarbe,
+   Haarlinien statt Kästen, IBM Plex für Text und Zahlen. Feste 16:9-Bühne für TV/Beamer. */
+body.theme-modern {
+  --bg: #0f0f0d;
+  --panel: #171613;
+  --panel-2: #1d1b17;
+  --line: #2b2924;
+  --line-strong: #46433b;
+  --text: #ece7dc;
+  --muted: #8f897c;
+  --faint: #5c584f;
+  --accent: #ff7a1a;
+  --down: #e5533d;
+  --up: #63c27f;
+  --hold: #e8b04a;
+  --sans: "IBM Plex Sans", system-ui, sans-serif;
+  --cond: "IBM Plex Sans Condensed", "Arial Narrow", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+body.theme-modern, body.theme-modern * { box-sizing: border-box; }
+body.theme-modern { background: var(--bg); }
+body.theme-modern {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+body.theme-modern .screen {
+  width: min(100vw, 177.777778vh);
+  aspect-ratio: 16 / 9;
+  container-type: inline-size;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) 16% 5%;
+  gap: 1.2cqw;
+  padding: 1.5cqw 1.8cqw 1cqw;
+  overflow: hidden;
+  background: var(--bg);
+}
+/* Kopfzeile */
+body.theme-modern header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2cqw;
+  padding-bottom: .9cqw;
+  border-bottom: 1px solid var(--line-strong);
+}
+body.theme-modern .brand { display: flex; align-items: baseline; gap: 1.2cqw; white-space: nowrap; }
+body.theme-modern .brand-name { font-family: var(--cond); font-weight: 700; font-size: 2.8cqw; line-height: 1; letter-spacing: -.01em; }
+body.theme-modern .brand-sub { font-family: var(--cond); font-weight: 500; font-size: 1.7cqw; color: var(--accent); }
+body.theme-modern .brand-tag { font-size: 1cqw; color: var(--muted); }
+body.theme-modern .header-right { display: flex; align-items: baseline; gap: 1.6cqw; white-space: nowrap; }
+body.theme-modern .date { font-size: 1.05cqw; color: var(--muted); }
+body.theme-modern #clock { font-family: var(--mono); font-size: 2cqw; line-height: 1; }
+body.theme-modern .live { display: inline-flex; align-items: center; gap: .5cqw; font-size: 1.05cqw; color: var(--muted); }
+body.theme-modern .live::before {
+  content: "";
+  width: .55cqw;
+  height: .55cqw;
+  border-radius: 50%;
+  background: var(--down);
+  animation: live-dot 2.4s ease-in-out infinite;
+}
+@keyframes live-dot { 50% { opacity: .3; } }
+/* Hauptbereich */
+body.theme-modern .main {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 1.8cqw;
+  min-height: 0;
+}
+body.theme-modern .market, body.theme-modern .market-top { min-height: 0; height: 100%; }
+body.theme-modern .market-top { display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 1.1cqw; }
+body.theme-modern .hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  column-gap: 1.5cqw;
+  row-gap: .5cqw;
+}
+body.theme-modern .beer-title {
+  font-family: var(--cond);
+  font-weight: 700;
+  font-size: 4.8cqw;
+  line-height: .9;
+  letter-spacing: -.015em;
+  text-transform: uppercase;
+}
+body.theme-modern .beer-title.long-name { font-size: 3.1cqw; }
+body.theme-modern .beer-price {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 6.4cqw;
+  line-height: .85;
+  letter-spacing: -.05em;
+  white-space: nowrap;
+  text-align: right;
+}
+body.theme-modern .beer-price small { font-size: .36em; color: var(--muted); letter-spacing: 0; margin-left: .2em; }
+body.theme-modern .beer-sub { grid-column: 1 / -1; font-family: var(--mono); font-size: 1.5cqw; color: var(--down); }
+body.theme-modern .beer-sub.up { color: var(--up); }
+body.theme-modern .beer-sub span { font-family: var(--sans); font-size: .7em; color: var(--muted); margin-left: .8cqw; }
+body.theme-modern .rotation-info { grid-column: 1 / -1; font-size: .95cqw; color: var(--muted); }
+body.theme-modern .rotation-info.happy-hour-active { color: var(--accent); }
+/* Chart */
+body.theme-modern .market-halted {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  border-top: 1px solid var(--line-strong);
+  border-bottom: 1px solid var(--line);
+}
+body.theme-modern .chart-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: .6cqw 0 .2cqw;
+  font-size: 1.05cqw;
+  color: var(--muted);
+}
+body.theme-modern .chart-pair { font-family: var(--mono); }
+body.theme-modern .halt-badge { color: var(--hold); font-weight: 600; }
+body.theme-modern .halt-badge.trading-open { color: var(--up); }
+body.theme-modern .crash-chart { display: block; flex: 1 1 0; width: 100%; min-height: 0; }
+body.theme-modern .crash-chart text { font-family: var(--mono); }
+body.theme-modern .crash-chart .price-history { stroke: #b9b3a6; stroke-width: 1.6; stroke-linejoin: round; }
+body.theme-modern .crash-chart .price-crash { stroke: var(--down); stroke-width: 2.2; fill: none; stroke-linejoin: round; }
+body.theme-modern .price-event { fill: none; stroke: var(--down); stroke-width: 2.6; }
+body.theme-modern .price-event.recovery { stroke: var(--up); }
+body.theme-modern .price-event.trading { stroke-dasharray: 1; stroke-dashoffset: 1; animation: trade-reveal 5s linear forwards; }
+@keyframes trade-reveal { to { stroke-dashoffset: 0; } }
+body.theme-modern .halt-summary {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1cqw;
+  padding: .55cqw 0 .3cqw;
+  border-top: 1px solid var(--line);
+  font-size: 1.05cqw;
+  color: var(--muted);
+}
+body.theme-modern .halt-summary strong { font-family: var(--mono); font-weight: 500; font-size: 2cqw; color: var(--hold); }
+/* Reporter */
+body.theme-modern .reporter {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  background: #000;
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+body.theme-modern .reporter img, body.theme-modern .reporter-portrait {
+  display: block;
+  flex: 1 1 0;
+  width: 100%;
+  height: 0;
+  min-height: 0;
+  object-fit: contain;
+}
+body.theme-modern .reporter-portrait { pointer-events: none; }
+body.theme-modern .reporter img.reporter-source { display: none; }
+body.theme-modern .reporter-bottom { flex: 0 0 auto; background: var(--panel); border-top: 2px solid var(--accent); padding: .7cqw 1cqw .8cqw; }
+body.theme-modern .reporter-caption { font-size: .8cqw; font-weight: 600; color: var(--accent); letter-spacing: .05em; }
+body.theme-modern .reporter-headline { font-family: var(--cond); font-weight: 700; font-size: 1.65cqw; line-height: 1.15; margin-top: .25cqw; }
+body.theme-modern .reporter-text { font-size: 1.05cqw; line-height: 1.4; color: #c8c2b5; margin-top: .3cqw; min-height: 2.95cqw; }
+/* Getränke */
+body.theme-modern .drinks {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  min-height: 0;
+  border-top: 1px solid var(--line-strong);
+  border-bottom: 1px solid var(--line-strong);
+}
+body.theme-modern .drink {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+  padding: .7cqw .8cqw .6cqw;
+  border-left: 1px solid var(--line);
+}
+body.theme-modern .drink:first-child { border-left: 0; }
+body.theme-modern .drink.beer { background: var(--panel-2); }
+body.theme-modern .drink.beer .drink-name { color: var(--accent); }
+body.theme-modern .drink-name { font-family: var(--cond); font-weight: 600; font-size: 1.2cqw; line-height: 1.1; overflow-wrap: anywhere; }
+body.theme-modern .drink-price { font-family: var(--mono); font-size: 2.05cqw; letter-spacing: -.05em; white-space: nowrap; }
+body.theme-modern .drink-price small { font-size: .55em; color: var(--muted); letter-spacing: 0; margin-left: .15em; }
+body.theme-modern .drink-foot { display: flex; align-items: center; gap: .5cqw; }
+body.theme-modern .drink-change { font-family: var(--mono); font-size: .85cqw; color: var(--muted); white-space: nowrap; }
+body.theme-modern .drink-change.down { color: var(--down); }
+body.theme-modern .drink-change.up { color: var(--up); }
+body.theme-modern .spark { flex: 1 1 auto; min-width: 0; height: .9cqw; display: block; }
+body.theme-modern .spark path { fill: none; stroke: var(--faint); stroke-width: 1.2; vector-effect: non-scaling-stroke; }
+body.theme-modern .spark.down path { stroke: var(--down); }
+/* Laufband */
+body.theme-modern .ticker-outer { display: flex; align-items: center; gap: 1.2cqw; min-height: 0; overflow: hidden; }
+body.theme-modern .ticker-live {
+  font-family: var(--cond);
+  font-weight: 600;
+  font-size: 1.05cqw;
+  color: var(--bg);
+  background: var(--accent);
+  padding: .3cqw .7cqw;
+  white-space: nowrap;
+}
+body.theme-modern .ticker-viewport { overflow: hidden; flex: 1; }
+body.theme-modern .ticker-track {
+  display: flex;
+  width: max-content;
+  white-space: nowrap;
+  font-family: var(--mono);
+  font-size: 1.15cqw;
+  color: var(--muted);
+  animation: marquee var(--ticker-duration, 65s) linear infinite;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+body.theme-modern .ticker-group { display: flex; flex: 0 0 auto; align-items: center; gap: 2.4cqw; padding-right: 2.4cqw; }
+body.theme-modern .ticker-group > span { flex: 0 0 auto; }
+body.theme-modern .ticker-track b { font-family: var(--cond); font-weight: 600; color: var(--text); margin-right: .7cqw; }
+body.theme-modern .ticker-track .bier b { color: var(--accent); }
+@keyframes marquee { to { transform: translate3d(-50%, 0, 0); } }
+@media (prefers-reduced-motion: reduce) {
+body.theme-modern .live::before { animation: none; }
+body.theme-modern .price-event.trading { animation: none; stroke-dashoffset: 0; }
+}
+body.theme-modern .crash-chart text.chart-word { font-family: var(--sans); }

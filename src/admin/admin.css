@@ -105,3 +105,26 @@
 .admin input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
 .admin input[type="number"]::-webkit-inner-spin-button,
 .admin input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+.admin-running { list-style: none; margin: 0 0 18px; padding: 0; border-top: 1px solid var(--line); }
+.admin-running li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+}
+.admin-running b { font-family: var(--cond); font-size: 18px; color: var(--accent); }
+.admin-running strong { font-family: var(--mono); font-weight: 500; color: var(--text); }
+.admin-running button { padding: 7px 12px; font-size: 14px; }
+
+.admin-choice { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; border: 0; }
+.admin-choice legend { width: 100%; padding: 0; margin-bottom: 6px; color: var(--muted); font-size: 14px; }
+.admin .admin-choice button { font-family: var(--cond); font-size: 16px; }
+.admin .admin-choice button.selected { border-color: var(--accent); color: var(--accent); background: #ff7a1a14; }
+
+.admin .danger { border-color: var(--down); color: var(--down); }
+.admin .danger:not(:disabled):hover { background: #e5533d1a; border-color: var(--down); }

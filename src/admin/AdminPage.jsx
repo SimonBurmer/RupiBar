@@ -1,17 +1,22 @@
 import { useEffect, useState } from 'react'
-import { DRINKS, fmt, parsePrice } from '../lib/market.js'
-import { ALARM_MS, MAX_MINUTES, formatEnd, isAlarmActive, isOpen, isPromotion } from '../lib/happyHour.js'
+import { DRINKS, HAPPY_DRINKS, fmt, parsePrice } from '../lib/market.js'
+import { ALARM_MS, MAX_MINUTES, activePromotions, formatEnd, isAlarmActive, isOpen } from '../lib/happyHour.js'
 import { sendChange, useExchange } from '../lib/useExchange.js'
 import './admin.css'
 
 const toInput = price => price.toFixed(2)
+const draftsFrom = prices => Object.fromEntries(DRINKS.map(({ name }) => [name, toInput(prices[name])]))
+const THEME_OPTIONS = [['modern', 'Neu'], ['classic', 'Klassisch']]
 
 export default function AdminPage() {
-  const { prices, happy, alarmAt, offset, synced, connected } = useExchange()
+  const { prices, happy, alarmAt, theme, offset, synced, connected } = useExchange()
   const [drafts, setDrafts] = useState(null)
   const [priceFeedback, setPriceFeedback] = useState({ text: '', error: false })
   const [happyFeedback, setHappyFeedback] = useState({ text: '', error: false })
   const [alarmFeedback, setAlarmFeedback] = useState({ text: '', error: false })
+  const [themeFeedback, setThemeFeedback] = useState({ text: '', error: false })
+  const [resetFeedback, setResetFeedback] = useState({ text: '', error: false })
+  const [happyDrink, setHappyDrink] = useState('Bier')
   const [happyPrice, setHappyPrice] = useState('1.50')
   const [happyMinutes, setHappyMinutes] = useState('60')
   const [busy, setBusy] = useState(false)
@@ -24,13 +29,14 @@ export default function AdminPage() {
   }, [])
   // Eingabefelder einmalig mit den Serverpreisen füllen.
   useEffect(() => {
-    if (synced && drafts === null) setDrafts(Object.fromEntries(DRINKS.map(({ name }) => [name, toInput(prices[name])])))
+    if (synced && drafts === null) setDrafts(draftsFrom(prices))
   }, [synced, drafts, prices])
 
   const changed = drafts
     ? DRINKS.filter(({ name }) => parsePrice(drafts[name]) !== prices[name]).map(({ name }) => name)
     : []
-  const promotion = isPromotion(happy, prices.Bier)
+  const serverNow = now + offset
+  const promotions = activePromotions(happy, prices)
 
   async function run(action, setFeedback, success) {
     setBusy(true)
@@ -56,22 +62,34 @@ export default function AdminPage() {
     const update = Object.fromEntries(changed.map(name => [name, parsePrice(drafts[name])]))
     const state = await run(() => sendChange('PUT', '/api/prices', { prices: update }), setPriceFeedback,
       () => (changed.length ? `Gespeichert: ${changed.join(', ')}.` : 'Keine Änderungen.'))
-    if (state) setDrafts(Object.fromEntries(DRINKS.map(({ name }) => [name, toInput(state.prices[name])])))
+    if (state) setDrafts(draftsFrom(state.prices))
   }
 
   function startHappyHour(event) {
     event.preventDefault()
-    run(() => sendChange('POST', '/api/happy-hour', { price: happyPrice, minutes: happyMinutes }), setHappyFeedback,
-      state => `Übernommen: ${fmt(state.happy.price)} € · ${formatEnd(state.happy)}.`)
+    const drink = happyDrink
+    run(() => sendChange('POST', '/api/happy-hour', { drink, price: happyPrice, minutes: happyMinutes }), setHappyFeedback,
+      state => `${drink}: ${fmt(state.happy[drink].price)} € · ${formatEnd(state.happy[drink])}.`)
   }
 
   function triggerAlarm() {
     run(() => sendChange('POST', '/api/alarm'), setAlarmFeedback, () => 'Alarm ausgelöst.')
   }
 
-  function resetHappyHour() {
-    run(() => sendChange('POST', '/api/happy-hour/reset'), setHappyFeedback,
-      state => `Zurückgesetzt auf ${fmt(state.happy.price)} €.`)
+  function resetHappyHour(drink) {
+    run(() => sendChange('POST', '/api/happy-hour/reset', { drink }), setHappyFeedback,
+      state => `${drink}: zurück auf ${fmt(state.happy[drink].price)} €.`)
+  }
+
+  function chooseTheme(value) {
+    run(() => sendChange('PUT', '/api/theme', { theme: value }), setThemeFeedback,
+      () => `Design „${THEME_OPTIONS.find(([key]) => key === value)[1]}“ wird angezeigt.`)
+  }
+
+  async function resetAll() {
+    if (!window.confirm('Wirklich alles zurücksetzen? Alle Preise gehen auf Standard, alle Happy Hours enden.')) return
+    const state = await run(() => sendChange('POST', '/api/reset'), setResetFeedback, () => 'Alles zurückgesetzt.')
+    if (state) setDrafts(draftsFrom(state.prices))
   }
 
   return (
@@ -96,15 +114,37 @@ export default function AdminPage() {
       </section>
 
       <section className="admin-card">
-        <h2>Bier · Happy Hour</h2>
-        <p className="admin-current">
-          Aktuell: <strong>{fmt(happy.price)} €</strong>
-          {promotion ? ` · Happy Hour ${happy.expiresAt ? `bis ${formatEnd(happy)} Uhr` : 'bis zur Rücksetzung'}` : ' · Normalpreis'}
-          {isOpen(happy, now + offset) && <span className="admin-pill">Handel kurz geöffnet</span>}
-        </p>
+        <h2>Happy Hour</h2>
+        {promotions.length === 0 ? (
+          <p className="admin-current">Keine Happy Hour aktiv – alle Getränke zum Normalpreis.</p>
+        ) : (
+          <ul className="admin-running">
+            {promotions.map(({ name, state }) => (
+              <li key={name}>
+                <span>
+                  <b>{name}</b> <strong>{fmt(state.price)} €</strong>
+                  {` · ${state.expiresAt ? `bis ${formatEnd(state)} Uhr` : 'bis zur Rücksetzung'}`}
+                  {isOpen(state, serverNow) && <span className="admin-pill">Handel kurz geöffnet</span>}
+                </span>
+                <button type="button" onClick={() => resetHappyHour(name)} disabled={busy || !connected}>
+                  Beenden ({fmt(prices[name])} €)
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
         <form className="admin-happy" onSubmit={startHappyHour}>
+          <fieldset className="admin-choice">
+            <legend>Getränk</legend>
+            {HAPPY_DRINKS.map(name => (
+              <button key={name} type="button" aria-pressed={happyDrink === name}
+                className={happyDrink === name ? 'selected' : ''} onClick={() => setHappyDrink(name)}>
+                {name}
+              </button>
+            ))}
+          </fieldset>
           <label>
-            Neuer Bierpreis (€)
+            Happy-Hour-Preis (€)
             <input type="number" inputMode="decimal" min="0" max="99" step="0.01" required
               value={happyPrice} onChange={event => setHappyPrice(event.target.value)} />
           </label>
@@ -113,15 +153,28 @@ export default function AdminPage() {
             <input type="number" inputMode="numeric" min="0" max={MAX_MINUTES} step="1" required
               value={happyMinutes} onChange={event => setHappyMinutes(event.target.value)} />
           </label>
-          <small>0 = bis zur manuellen Rücksetzung. Danach gilt wieder der Normalpreis von {fmt(prices.Bier)} €.</small>
+          <small>
+            Normalpreis {happyDrink}: {fmt(prices[happyDrink])} €. 0 Minuten = bis zur manuellen Rücksetzung.
+            Während einer Happy Hour blendet die Anzeige alle 3 Minuten „HAPPY HOUR“ ein.
+          </small>
           <div className="admin-actions">
-            <button type="submit" className="primary" disabled={busy || !connected}>Happy Hour starten</button>
-            <button type="button" onClick={resetHappyHour} disabled={busy || !connected}>
-              Zurück auf {fmt(prices.Bier)} €
-            </button>
+            <button type="submit" className="primary" disabled={busy || !connected}>Happy Hour für {happyDrink} starten</button>
           </div>
         </form>
         <p className={`admin-feedback${happyFeedback.error ? ' error' : ''}`} role="status" aria-live="polite">{happyFeedback.text}</p>
+      </section>
+
+      <section className="admin-card">
+        <h2>Design der Anzeige</h2>
+        <div className="admin-choice" role="group" aria-label="Design">
+          {THEME_OPTIONS.map(([value, label]) => (
+            <button key={value} type="button" aria-pressed={theme === value}
+              className={theme === value ? 'selected' : ''} onClick={() => chooseTheme(value)} disabled={busy || !connected}>
+              {label}
+            </button>
+          ))}
+        </div>
+        <p className={`admin-feedback${themeFeedback.error ? ' error' : ''}`} role="status" aria-live="polite">{themeFeedback.text}</p>
       </section>
 
       <section className="admin-card">
@@ -135,7 +188,7 @@ export default function AdminPage() {
                 <li key={name} className={changed.includes(name) ? 'changed' : ''}>
                   <label htmlFor={`price-${name}`}>
                     {name}
-                    {name === 'Bier' && <small> (Normalpreis)</small>}
+                    {HAPPY_DRINKS.includes(name) && <small> (Normalpreis)</small>}
                   </label>
                   <div className="admin-price-input">
                     <input id={`price-${name}`} type="number" inputMode="decimal" min="0" max="99" step="0.01" required
@@ -157,6 +210,13 @@ export default function AdminPage() {
           </form>
         )}
         <p className={`admin-feedback${priceFeedback.error ? ' error' : ''}`} role="status" aria-live="polite">{priceFeedback.text}</p>
+      </section>
+
+      <section className="admin-card admin-danger">
+        <h2>Alles zurücksetzen</h2>
+        <p className="admin-current">Setzt alle Preise auf Standard, beendet alle Happy Hours und stoppt den Alarm. Das Design bleibt.</p>
+        <button type="button" className="danger" onClick={resetAll} disabled={busy || !connected}>Alles zurücksetzen</button>
+        <p className={`admin-feedback${resetFeedback.error ? ' error' : ''}`} role="status" aria-live="polite">{resetFeedback.text}</p>
       </section>
 
       <p className="admin-note">Preise werden auf dem Server gespeichert und gelten für alle Anzeigen. Nach einem neuen Deploy gelten wieder die Standardpreise.</p>

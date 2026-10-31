@@ -1,250 +1,6 @@
-/* Kurstafel im Stil einer echten Börsenanzeige: warmes Schwarz, eine Akzentfarbe,
-   Haarlinien statt Kästen, IBM Plex für Text und Zahlen. Feste 16:9-Bühne für TV/Beamer. */
-:root {
-  --bg: #0f0f0d;
-  --panel: #171613;
-  --panel-2: #1d1b17;
-  --line: #2b2924;
-  --line-strong: #46433b;
-  --text: #ece7dc;
-  --muted: #8f897c;
-  --faint: #5c584f;
-  --accent: #ff7a1a;
-  --down: #e5533d;
-  --up: #63c27f;
-  --hold: #e8b04a;
-  --sans: "IBM Plex Sans", system-ui, sans-serif;
-  --cond: "IBM Plex Sans Condensed", "Arial Narrow", sans-serif;
-  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
-}
-
-* { box-sizing: border-box; }
-
-html { background: var(--bg); }
-
-body {
-  margin: 0;
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--sans);
-  font-variant-numeric: tabular-nums;
-  -webkit-font-smoothing: antialiased;
-}
-
+/* Gemeinsame Basis für beide Designs. Die Designs selbst liegen in src/themes/ und gelten nur
+   unter body.theme-modern bzw. body.theme-classic. */
 #root { display: contents; }
-
-.screen {
-  width: min(100vw, 177.777778vh);
-  aspect-ratio: 16 / 9;
-  container-type: inline-size;
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr) 16% 5%;
-  gap: 1.2cqw;
-  padding: 1.5cqw 1.8cqw 1cqw;
-  overflow: hidden;
-  background: var(--bg);
-}
-
-/* Kopfzeile */
-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 2cqw;
-  padding-bottom: .9cqw;
-  border-bottom: 1px solid var(--line-strong);
-}
-.brand { display: flex; align-items: baseline; gap: 1.2cqw; white-space: nowrap; }
-.brand-name { font-family: var(--cond); font-weight: 700; font-size: 2.8cqw; line-height: 1; letter-spacing: -.01em; }
-.brand-sub { font-family: var(--cond); font-weight: 500; font-size: 1.7cqw; color: var(--accent); }
-.brand-tag { font-size: 1cqw; color: var(--muted); }
-.header-right { display: flex; align-items: baseline; gap: 1.6cqw; white-space: nowrap; }
-.date { font-size: 1.05cqw; color: var(--muted); }
-#clock { font-family: var(--mono); font-size: 2cqw; line-height: 1; }
-.live { display: inline-flex; align-items: center; gap: .5cqw; font-size: 1.05cqw; color: var(--muted); }
-.live::before {
-  content: "";
-  width: .55cqw;
-  height: .55cqw;
-  border-radius: 50%;
-  background: var(--down);
-  animation: live-dot 2.4s ease-in-out infinite;
-}
-@keyframes live-dot { 50% { opacity: .3; } }
-
-/* Hauptbereich */
-.main {
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-  gap: 1.8cqw;
-  min-height: 0;
-}
-.market, .market-top { min-height: 0; height: 100%; }
-.market-top { display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 1.1cqw; }
-
-.hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: end;
-  column-gap: 1.5cqw;
-  row-gap: .5cqw;
-}
-.beer-title {
-  font-family: var(--cond);
-  font-weight: 700;
-  font-size: 4.8cqw;
-  line-height: .9;
-  letter-spacing: -.015em;
-  text-transform: uppercase;
-}
-.beer-title.long-name { font-size: 3.1cqw; }
-.beer-price {
-  font-family: var(--mono);
-  font-weight: 500;
-  font-size: 6.4cqw;
-  line-height: .85;
-  letter-spacing: -.05em;
-  white-space: nowrap;
-  text-align: right;
-}
-.beer-price small { font-size: .36em; color: var(--muted); letter-spacing: 0; margin-left: .2em; }
-.beer-sub { grid-column: 1 / -1; font-family: var(--mono); font-size: 1.5cqw; color: var(--down); }
-.beer-sub.up { color: var(--up); }
-.beer-sub span { font-family: var(--sans); font-size: .7em; color: var(--muted); margin-left: .8cqw; }
-.rotation-info { grid-column: 1 / -1; font-size: .95cqw; color: var(--muted); }
-.rotation-info.happy-hour-active { color: var(--accent); }
-
-/* Chart */
-.market-halted {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  height: 100%;
-  border-top: 1px solid var(--line-strong);
-  border-bottom: 1px solid var(--line);
-}
-.chart-status {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  padding: .6cqw 0 .2cqw;
-  font-size: 1.05cqw;
-  color: var(--muted);
-}
-.chart-pair { font-family: var(--mono); }
-.halt-badge { color: var(--hold); font-weight: 600; }
-.halt-badge.trading-open { color: var(--up); }
-.crash-chart { display: block; flex: 1 1 0; width: 100%; min-height: 0; }
-.crash-chart text { font-family: var(--mono); }
-.crash-chart .price-history { stroke: #b9b3a6; stroke-width: 1.6; stroke-linejoin: round; }
-.crash-chart .price-crash { stroke: var(--down); stroke-width: 2.2; fill: none; stroke-linejoin: round; }
-.price-event { fill: none; stroke: var(--down); stroke-width: 2.6; }
-.price-event.recovery { stroke: var(--up); }
-.price-event.trading { stroke-dasharray: 1; stroke-dashoffset: 1; animation: trade-reveal 5s linear forwards; }
-@keyframes trade-reveal { to { stroke-dashoffset: 0; } }
-.halt-summary {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 1cqw;
-  padding: .55cqw 0 .3cqw;
-  border-top: 1px solid var(--line);
-  font-size: 1.05cqw;
-  color: var(--muted);
-}
-.halt-summary strong { font-family: var(--mono); font-weight: 500; font-size: 2cqw; color: var(--hold); }
-
-/* Reporter */
-.reporter {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  height: 100%;
-  background: #000;
-  border: 1px solid var(--line);
-  overflow: hidden;
-}
-.reporter img, .reporter-portrait {
-  display: block;
-  flex: 1 1 0;
-  width: 100%;
-  height: 0;
-  min-height: 0;
-  object-fit: contain;
-}
-.reporter-portrait { pointer-events: none; }
-.reporter img.reporter-source { display: none; }
-.reporter-bottom { flex: 0 0 auto; background: var(--panel); border-top: 2px solid var(--accent); padding: .7cqw 1cqw .8cqw; }
-.reporter-caption { font-size: .8cqw; font-weight: 600; color: var(--accent); letter-spacing: .05em; }
-.reporter-headline { font-family: var(--cond); font-weight: 700; font-size: 1.65cqw; line-height: 1.15; margin-top: .25cqw; }
-.reporter-text { font-size: 1.05cqw; line-height: 1.4; color: #c8c2b5; margin-top: .3cqw; min-height: 2.95cqw; }
-
-/* Getränke */
-.drinks {
-  display: grid;
-  grid-template-columns: repeat(10, minmax(0, 1fr));
-  min-height: 0;
-  border-top: 1px solid var(--line-strong);
-  border-bottom: 1px solid var(--line-strong);
-}
-.drink {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-width: 0;
-  padding: .7cqw .8cqw .6cqw;
-  border-left: 1px solid var(--line);
-}
-.drink:first-child { border-left: 0; }
-.drink.beer { background: var(--panel-2); }
-.drink.beer .drink-name { color: var(--accent); }
-.drink-name { font-family: var(--cond); font-weight: 600; font-size: 1.2cqw; line-height: 1.1; overflow-wrap: anywhere; }
-.drink-price { font-family: var(--mono); font-size: 2.05cqw; letter-spacing: -.05em; white-space: nowrap; }
-.drink-price small { font-size: .55em; color: var(--muted); letter-spacing: 0; margin-left: .15em; }
-.drink-foot { display: flex; align-items: center; gap: .5cqw; }
-.drink-change { font-family: var(--mono); font-size: .85cqw; color: var(--muted); white-space: nowrap; }
-.drink-change.down { color: var(--down); }
-.drink-change.up { color: var(--up); }
-.spark { flex: 1 1 auto; min-width: 0; height: .9cqw; display: block; }
-.spark path { fill: none; stroke: var(--faint); stroke-width: 1.2; vector-effect: non-scaling-stroke; }
-.spark.down path { stroke: var(--down); }
-
-/* Laufband */
-.ticker-outer { display: flex; align-items: center; gap: 1.2cqw; min-height: 0; overflow: hidden; }
-.ticker-live {
-  font-family: var(--cond);
-  font-weight: 600;
-  font-size: 1.05cqw;
-  color: var(--bg);
-  background: var(--accent);
-  padding: .3cqw .7cqw;
-  white-space: nowrap;
-}
-.ticker-viewport { overflow: hidden; flex: 1; }
-.ticker-track {
-  display: flex;
-  width: max-content;
-  white-space: nowrap;
-  font-family: var(--mono);
-  font-size: 1.15cqw;
-  color: var(--muted);
-  animation: marquee var(--ticker-duration, 65s) linear infinite;
-  transform: translate3d(0, 0, 0);
-  will-change: transform;
-}
-.ticker-group { display: flex; flex: 0 0 auto; align-items: center; gap: 2.4cqw; padding-right: 2.4cqw; }
-.ticker-group > span { flex: 0 0 auto; }
-.ticker-track b { font-family: var(--cond); font-weight: 600; color: var(--text); margin-right: .7cqw; }
-.ticker-track .bier b { color: var(--accent); }
-@keyframes marquee { to { transform: translate3d(-50%, 0, 0); } }
-
-@media (prefers-reduced-motion: reduce) {
-  .live::before { animation: none; }
-  .price-event.trading { animation: none; stroke-dashoffset: 0; }
-}
 
 /* Alarm aus /admin: ganze Anzeige rot, großer blinkender Schriftzug. */
 .alarm-overlay {
@@ -259,7 +15,7 @@ header {
   pointer-events: none;
 }
 .alarm-text {
-  font-family: var(--cond);
+  font-family: "IBM Plex Sans Condensed", Impact, "Arial Black", sans-serif;
   font-weight: 700;
   font-size: min(13vw, 28vh);
   line-height: 1;
@@ -276,4 +32,47 @@ header {
   .alarm-overlay, .alarm-text { animation: none; }
 }
 
-.crash-chart text.chart-word { font-family: var(--sans); }
+
+/* Happy-Hour-Einblendung: wie der Alarm, aber in Kürbis-Orange mit den laufenden Angeboten. */
+.happy-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: min(3vw, 5vh);
+  padding: 4vmin;
+  background: #e86a10c9;
+  box-shadow: inset 0 0 18vmin 4vmin #ff9a1f;
+  animation: happy-flash .6s linear infinite;
+  pointer-events: none;
+  font-family: "IBM Plex Sans Condensed", Impact, "Arial Black", sans-serif;
+  color: #fff;
+  text-align: center;
+}
+.happy-overlay-title {
+  font-weight: 700;
+  font-size: min(12vw, 24vh);
+  line-height: 1;
+  letter-spacing: .01em;
+  white-space: nowrap;
+  text-shadow: 0 0 .08em #000, 0 0 .3em #ffb347, .03em .03em 0 #7a3300;
+  -webkit-text-stroke: .012em #7a3300;
+  animation: alarm-blink .6s linear infinite;
+}
+.happy-overlay-offers {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: .4em 1.4em;
+  font-weight: 600;
+  font-size: min(4.2vw, 8vh);
+  line-height: 1.1;
+  text-shadow: 0 0 .15em #5a2600;
+}
+.happy-overlay-offers b { font-family: "IBM Plex Mono", ui-monospace, monospace; font-weight: 500; margin-left: .35em; }
+@keyframes happy-flash { 0%, 49.9% { background: #e86a10c9; } 50%, 100% { background: #b8480acf; } }
+@media (prefers-reduced-motion: reduce) {
+  .happy-overlay, .happy-overlay-title { animation: none; }
+}

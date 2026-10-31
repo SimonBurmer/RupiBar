@@ -27,9 +27,12 @@ const MARKETS = [
 export const MARKET_COUNT = MARKETS.length;
 export const MARKET_ROTATION_MS = 60000;
 
-// Kurse und Getränkekarte aus den Preisen; `beerPrice` ist der aktuelle Bierpreis (inkl. Happy Hour).
-export function buildBoard(prices, beerPrice) {
-  const priceOf = name => (name === 'Bier' ? beerPrice : prices[name]);
+// Getränke mit eigener Kursübersicht; für sie ist eine Happy Hour möglich.
+export const HAPPY_DRINKS = MARKETS.map(market => market.name);
+
+// Kurse und Getränkekarte aus den Normalpreisen und den aktuellen Kursen (`current`, inkl. Happy Hour).
+export function buildBoard(prices, current = {}) {
+  const priceOf = name => current[name] ?? prices[name];
   return {
     markets: MARKETS.map(market => ({ ...market, price: priceOf(market.name) })),
     drinks: DRINKS.map(({ name, emoji }) => ({
@@ -60,9 +63,9 @@ const NORMALIZED = [[58, 0], [84, .02], [109, 0], [130, .04], [151, .03], [175, 
 const toPath = points => points.map(([x, py], index) => `${index ? 'L' : 'M'}${x} ${py.toFixed(2)}`).join(' ');
 
 // Geometrie des Crash-Charts (viewBox 680 × 300).
-// `trade` ist nur beim Bier gesetzt: { price, previousPrice, open }; `beerBase` ist der Bier-Normalpreis.
-export function chartGeometry(market, trade, beerBase) {
-  const reference = market.name === 'Bier' ? beerBase : market.price;
+// `trade` = Kurszustand des Getränks { price, previousPrice, open } oder null; `base` = sein Normalpreis.
+export function chartGeometry(market, trade, base = market.price) {
+  const reference = base;
   const previous = trade?.previousPrice ?? reference;
   const lower = Math.min(market.price, reference, previous);
   const upper = Math.max(market.opening, market.price, previous);

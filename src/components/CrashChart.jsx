@@ -2,8 +2,8 @@ import { chartGeometry, fmt, marketChange } from '../lib/market.js'
 
 const LABEL_Y = [52, 87, 122, 157, 192, 227]
 
-export default function CrashChart({ market, trade, beerBase, open, haltUntil }) {
-  const g = chartGeometry(market, trade, beerBase)
+export default function CrashChart({ market, trade, base, open, haltUntil }) {
+  const g = chartGeometry(market, trade, base)
   const { percentage } = marketChange(market)
   return (
     <div className="chart-wrap market-halted">

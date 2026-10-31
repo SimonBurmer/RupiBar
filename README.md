@@ -30,14 +30,20 @@ Wechsel im Minutentakt: Bier, Gin Tonic, Vodka Bull, Aperol Spritz. Dazu Crash-C
 mit ausgesetztem Handel, das animierte Reporterduo mit Eilmeldungen, Preisband und
 zehn Getränkekacheln.
 
-Auf `/admin` lassen sich alle zehn Getränkepreise setzen. Der Bierpreis dort ist der
-Normalpreis. Die **Happy Hour** setzt einen vorübergehenden Bierpreis mit frei
-wählbarer Laufzeit (`0` Minuten = bis zur manuellen Rücksetzung); danach gilt wieder
-der Normalpreis. Die Anzeige erzählt dazu eine kurze Handelsöffnung mit Preissturz
-beziehungsweise Kurserholung und zeigt eine Minute lang das Bier.
+Auf `/admin`:
 
-Der Button **Alarm** auf `/admin` färbt alle Anzeigen für 6 Sekunden rot und lässt
-in der Mitte einen großen ALARM-Schriftzug blinken.
+- **Getränkepreise** für alle zehn Getränke setzen (Normalpreise).
+- **Happy Hour** für Bier, Gin Tonic, Vodka Bull oder Aperol Spritz: vorübergehender
+  Preis mit Laufzeit (`0` Minuten = bis zur manuellen Rücksetzung), mehrere gleichzeitig
+  möglich. Die Anzeige zeigt das Getränk eine Minute lang mit Handelsöffnung und
+  Eilmeldung und blendet während einer Happy Hour alle 3 Minuten groß „HAPPY HOUR“ ein.
+- **Design der Anzeige**: „Neu“ oder „Klassisch“ (das ursprüngliche Design).
+- **Alarm**: färbt alle Anzeigen für 6 Sekunden rot mit blinkendem ALARM.
+- **Alles zurücksetzen**: Standardpreise, alle Happy Hours beendet, Alarm gestoppt
+  (das Design bleibt).
+
+Der Reporterbereich wechselt alle 30 Sekunden zwischen den Szenen in
+`src/lib/scenes.js` (Studio, Brauerei).
 
 Die Preise liegen nur im Speicher des Servers. `/admin` ist nicht passwortgeschützt,
 und nach jedem Deploy oder Neustart gelten wieder die Standardpreise.
@@ -46,7 +52,8 @@ und nach jedem Deploy oder Neustart gelten wieder die Standardpreise.
 
 - `server.js` – liefert die App aus und stellt die Preis-API bereit
   (`GET /api/state`, Live-Updates über `GET /api/events`, `PUT /api/prices`,
-  `POST /api/happy-hour`, `POST /api/happy-hour/reset`, `POST /api/alarm`).
+  `POST /api/happy-hour`, `POST /api/happy-hour/reset`, `POST /api/reset`,
+  `POST /api/alarm`, `PUT /api/theme`).
 - `src/App.jsx` – Börsenanzeige; `src/admin/AdminPage.jsx` – Admin-Seite.
 - `src/components/` – Kopfzeile, Kursanzeige, Crash-Chart, Reporter,
   Getränkekacheln und Laufband.
@@ -54,7 +61,9 @@ und nach jedem Deploy oder Neustart gelten wieder die Standardpreise.
 - `src/lib/happyHour.js` – Happy-Hour-Logik; `src/lib/store.js` – Preiszustand des Servers.
 - `src/lib/useExchange.js` – Live-Verbindung des Browsers zum Server.
 - `src/lib/reporterAnimation.js` – Dialog und Canvas-Animation der Reporter.
-- `src/index.css` – Gestaltung der Anzeige; `src/admin/admin.css` – Gestaltung von `/admin`.
+- `src/themes/modern.css` und `src/themes/classic.css` – die beiden Designs der Anzeige
+  (Komponenten des klassischen Designs in `src/components/classic/`);
+  `src/index.css` – Alarm- und Happy-Hour-Einblendung; `src/admin/admin.css` – `/admin`.
 
 `tests/happy-hour.test.js` prüft Preisänderungen, Handelsphasen, Ablauf,
 unbegrenzte Laufzeit, Zurücksetzen und die Eingabeprüfung.

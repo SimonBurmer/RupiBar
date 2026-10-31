@@ -51,9 +51,11 @@ function readJson(req) {
 
 const ACTIONS = {
   'PUT /api/prices': (body, now) => store.setPrices(body.prices, now),
-  'POST /api/happy-hour': (body, now) => store.setHappyHour(body.price, body.minutes, now),
-  'POST /api/happy-hour/reset': (_body, now) => store.resetHappyHour(now),
-  'POST /api/alarm': (_body, now) => store.triggerAlarm(now)
+  'POST /api/happy-hour': (body, now) => store.setHappyHour(body.drink ?? 'Bier', body.price, body.minutes, now),
+  'POST /api/happy-hour/reset': (body, now) => store.resetHappyHour(body.drink ?? 'Bier', now),
+  'POST /api/reset': (_body, now) => store.resetAll(now),
+  'POST /api/alarm': (_body, now) => store.triggerAlarm(now),
+  'PUT /api/theme': body => store.setTheme(body.theme)
 };
 
 async function handleApi(req, res, pathname) {

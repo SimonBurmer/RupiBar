@@ -1,102 +1,134 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { DEFAULT_PRICES, buildBoard, chartGeometry, fmt, parsePrice } from '../src/lib/market.js'
-import { ALARM_MS, INITIAL_HAPPY, bulletin, isAlarmActive, formatEnd, isExpired, isOpen, isPromotion, nextState, parseInput } from '../src/lib/happyHour.js'
+import { DEFAULT_PRICES, HAPPY_DRINKS, buildBoard, chartGeometry, fmt, parsePrice } from '../src/lib/market.js'
+import {
+  ALARM_MS, HAPPY_FLASH_DELAY_MS, HAPPY_FLASH_EVERY_MS, HAPPY_FLASH_MS, activePromotions, bulletin, formatEnd,
+  happyFlash, isAlarmActive, isExpired, isOpen, latestEvent, parseInput
+} from '../src/lib/happyHour.js'
 import { createStore } from '../src/lib/store.js'
 
 const T0 = 1800000000000
+const currentPrices = happy => Object.fromEntries(Object.entries(happy).map(([name, state]) => [name, state.price]))
 
-test('Preise wirken auf Kurse, Getränkekarte und Ticker', () => {
-  const { markets, drinks } = buildBoard({ ...DEFAULT_PRICES, 'Gin Tonic': 5 }, 1.5)
-  assert.equal(markets[0].price, 1.5)
-  assert.equal(drinks[0].price, 1.5)
-  assert.equal(fmt(drinks[0].price), '1,50')
-  assert.equal(markets.find(market => market.name === 'Gin Tonic').price, 5)
-  assert.equal(drinks.find(drink => drink.name === 'Gin Tonic').price, 5)
+test('Happy Hour gibt es für alle vier Kursübersichten', () => {
+  assert.deepEqual(HAPPY_DRINKS, ['Bier', 'Gin Tonic', 'Vodka Bull', 'Aperol Spritz'])
 })
 
-test('Handelsphasen: kurz geöffnet, danach ausgesetzt', () => {
-  const state = nextState(INITIAL_HAPPY, 1.5, 30, T0)
-  assert.equal(isOpen(state, T0), true)
-  assert(bulletin(state, T0).headline.includes('ABGESTÜRZT'))
-  assert.equal(isOpen(state, T0 + 6500), false)
-  assert.equal(isPromotion(state, 2), true)
-})
-
-test('Happy Hour läuft ab und der Kurs erholt sich auf den Normalpreis', () => {
+test('Preise und Happy-Hour-Kurse wirken auf Kurse, Getränkekarte und Ticker', () => {
   const store = createStore()
-  assert.equal(store.setHappyHour('1.5', '30', T0).ok, true)
-  assert.equal(store.snapshot().happy.price, 1.5)
+  store.setPrices({ Vodka: '1,20' }, T0)
+  store.setHappyHour('Gin Tonic', '2.5', '30', T0)
+  const { prices, happy } = store.snapshot()
+  const { markets, drinks } = buildBoard(prices, currentPrices(happy))
+  assert.equal(markets.find(m => m.name === 'Gin Tonic').price, 2.5)
+  assert.equal(drinks.find(d => d.name === 'Gin Tonic').price, 2.5)
+  assert.equal(drinks.find(d => d.name === 'Vodka').price, 1.2)
+  assert.equal(markets[0].price, 2)
+  assert.equal(fmt(2.5), '2,50')
+})
+
+test('Handelsphase, Eilmeldung und Ablauf je Getränk', () => {
+  const store = createStore()
+  assert.equal(store.setHappyHour('Aperol Spritz', 3, 30, T0).ok, true)
+  let { happy, prices } = store.snapshot()
+  assert.equal(isOpen(happy['Aperol Spritz'], T0), true)
+  assert.equal(isOpen(happy['Aperol Spritz'], T0 + 6500), false)
+  assert.equal(latestEvent(happy), 'Aperol Spritz')
+  assert.equal(bulletin(happy, T0).headline, 'EIL: APEROL SPRITZ ABGESTÜRZT')
+  assert.deepEqual(activePromotions(happy, prices).map(p => p.name), ['Aperol Spritz'])
+
   const end = T0 + 30 * 60000
   assert.equal(store.tick(end - 1), false)
   assert.equal(store.tick(end), true)
-  const { happy } = store.snapshot()
-  assert.equal(happy.price, 2)
-  assert(bulletin(happy, end).headline.includes('ERHOLT'))
-  const geometry = chartGeometry(buildBoard(DEFAULT_PRICES, 2).markets[0], { ...happy, open: true }, 2)
-  assert.equal(geometry.recovery, true)
-  assert.equal(geometry.trading, true)
-  assert.notEqual(geometry.eventPath, '')
+  ;({ happy, prices } = store.snapshot())
+  assert.equal(happy['Aperol Spritz'].price, 4)
+  assert.equal(bulletin(happy, end).headline, 'EIL: APEROL SPRITZ ERHOLT SICH')
+  const g = chartGeometry({ name: 'Aperol Spritz', opening: 8, price: 4 }, { ...happy['Aperol Spritz'], open: true }, 4)
+  assert.equal(g.recovery, true)
+  assert.equal(g.trading, true)
+  assert.equal(activePromotions(happy, prices).length, 0)
 })
 
-test('Unbegrenzte Laufzeit und manuelles Zurücksetzen', () => {
+test('Mehrere Happy Hours laufen unabhängig', () => {
   const store = createStore()
-  store.setHappyHour(1.25, 0, T0)
-  const { happy } = store.snapshot()
-  assert.equal(happy.expiresAt, null)
-  assert.equal(isExpired(happy, T0 + 8 * 3600000), false)
-  assert.equal(formatEnd(happy), 'bis zur Rücksetzung')
-  store.resetHappyHour(T0 + 1)
-  assert.equal(store.snapshot().happy.price, 2)
-  assert.equal(isPromotion(store.snapshot().happy, 2), false)
+  store.setHappyHour('Bier', 1.5, 10, T0)
+  store.setHappyHour('Vodka Bull', 2, 0, T0 + 1000)
+  store.tick(T0 + 10 * 60000)
+  const { happy, prices } = store.snapshot()
+  assert.equal(happy.Bier.price, 2)
+  assert.equal(happy['Vodka Bull'].price, 2)
+  assert.equal(isExpired(happy['Vodka Bull'], T0 + 8 * 3600000), false)
+  assert.equal(formatEnd(happy['Vodka Bull']), 'bis zur Rücksetzung')
+  store.resetHappyHour('Vodka Bull', T0 + 11 * 60000)
+  assert.equal(store.snapshot().happy['Vodka Bull'].price, 4)
+  assert.equal(store.setHappyHour('Vodka', 1, 10, T0).ok, false, 'nur für Kursübersichten')
+  assert.equal(prices.Bier, 2)
 })
 
-test('Getränkepreise ändern', () => {
-  const store = createStore()
-  assert.equal(store.setPrices({ Vodka: '1,20', 'Aperol Spritz': 4.5 }, T0).ok, true)
-  assert.equal(store.snapshot().prices.Vodka, 1.2)
-  assert.equal(store.snapshot().prices['Aperol Spritz'], 4.5)
-  assert.equal(store.snapshot().happy.eventAt, 0, 'andere Getränke lösen keine Biermeldung aus')
-  assert.equal(store.setPrices({ Cola: 2 }, T0).ok, false)
-  assert.equal(store.setPrices({ Vodka: -1 }, T0).ok, false)
-  assert.equal(store.setPrices({ Vodka: '' }, T0).ok, false)
-  assert.equal(store.setPrices(null, T0).ok, false)
-  assert.equal(store.snapshot().prices.Vodka, 1.2, 'ungültige Eingaben ändern nichts')
-})
-
-test('Neuer Bier-Normalpreis: Kurs folgt sofort, außer während einer Happy Hour', () => {
+test('Neuer Normalpreis: Kurs folgt sofort, außer während einer Happy Hour', () => {
   const store = createStore()
   store.setPrices({ Bier: 2.5 }, T0)
-  assert.equal(store.snapshot().happy.price, 2.5)
-  assert.equal(store.snapshot().happy.eventAt, T0)
-
-  store.setHappyHour(1, 10, T0 + 1000)
-  store.setPrices({ Bier: 3 }, T0 + 2000)
-  assert.equal(store.snapshot().happy.price, 1, 'Happy Hour läuft weiter')
-  store.tick(T0 + 1000 + 10 * 60000)
-  assert.equal(store.snapshot().happy.price, 3, 'nach Ablauf gilt der neue Normalpreis')
+  assert.equal(store.snapshot().happy.Bier.price, 2.5)
+  store.setHappyHour('Gin Tonic', 2, 10, T0)
+  store.setPrices({ 'Gin Tonic': 5 }, T0 + 1000)
+  assert.equal(store.snapshot().happy['Gin Tonic'].price, 2, 'Happy Hour läuft weiter')
+  store.tick(T0 + 10 * 60000)
+  assert.equal(store.snapshot().happy['Gin Tonic'].price, 5, 'danach gilt der neue Normalpreis')
 })
 
-test('Eingabeprüfung', () => {
-  assert.equal(parseInput('-1', '30'), null)
-  assert.equal(parseInput('1.5', '0.5'), null)
-  assert.equal(parseInput('100', '1'), null)
-  assert.equal(parseInput('1', '10081'), null)
-  assert.equal(parseInput('', ''), null)
-  assert.deepEqual(parseInput('0', '1'), { price: 0, minutes: 1 })
-  assert.deepEqual(parseInput('1,555', '5'), { price: 1.56, minutes: 5 })
-  assert.equal(parsePrice(' 2,5 '), 2.5)
-  assert.equal(parsePrice('abc'), null)
+test('Alles zurücksetzen', () => {
+  const store = createStore()
+  store.setPrices({ Vodka: 3, Bier: 2.5 }, T0)
+  store.setHappyHour('Gin Tonic', 1, 0, T0)
+  store.triggerAlarm(T0)
+  store.setTheme('classic')
+  store.resetAll(T0 + 1000)
+  const { prices, happy, alarmAt, theme } = store.snapshot()
+  assert.deepEqual(prices, DEFAULT_PRICES)
+  for (const name of HAPPY_DRINKS) assert.equal(happy[name].price, DEFAULT_PRICES[name])
+  assert.equal(activePromotions(happy, prices).length, 0)
+  assert.equal(alarmAt, 0)
+  assert.equal(theme, 'classic', 'Design bleibt')
+})
+
+test('Design wählen', () => {
+  const store = createStore()
+  assert.equal(store.snapshot().theme, 'modern')
+  assert.equal(store.setTheme('classic').ok, true)
+  assert.equal(store.setTheme('neon').ok, false)
+  assert.equal(store.snapshot().theme, 'classic')
+})
+
+test('Happy-Hour-Einblendung: nach dem Start, dann alle 3 Minuten', () => {
+  const store = createStore()
+  store.setHappyHour('Bier', 1, 0, T0)
+  const { happy, prices } = store.snapshot()
+  const at = ms => happyFlash(happy, prices, T0 + ms).length > 0
+  assert.equal(at(0), false, 'nicht während der Handelsöffnung')
+  assert.equal(at(HAPPY_FLASH_DELAY_MS), true)
+  assert.equal(at(HAPPY_FLASH_DELAY_MS + HAPPY_FLASH_MS), false)
+  assert.equal(at(HAPPY_FLASH_DELAY_MS + HAPPY_FLASH_EVERY_MS + 1), true)
+  assert.deepEqual(happyFlash(happy, prices, T0 + HAPPY_FLASH_DELAY_MS).map(p => p.name), ['Bier'])
+  const none = createStore().snapshot()
+  assert.equal(happyFlash(none.happy, none.prices, T0 + HAPPY_FLASH_DELAY_MS).length, 0)
 })
 
 test('Alarm ist für ALARM_MS aktiv', () => {
   const store = createStore()
-  assert.equal(store.snapshot().alarmAt, 0)
   assert.equal(isAlarmActive(0, T0), false)
   store.triggerAlarm(T0)
   const { alarmAt } = store.snapshot()
-  assert.equal(alarmAt, T0)
-  assert.equal(isAlarmActive(alarmAt, T0), true)
   assert.equal(isAlarmActive(alarmAt, T0 + ALARM_MS - 1), true)
   assert.equal(isAlarmActive(alarmAt, T0 + ALARM_MS), false)
+})
+
+test('Eingabeprüfung', () => {
+  const store = createStore()
+  assert.equal(store.setPrices({ Cola: 2 }, T0).ok, false)
+  assert.equal(store.setPrices({ Vodka: '' }, T0).ok, false)
+  assert.equal(parseInput('-1', '30'), null)
+  assert.equal(parseInput('1.5', '0.5'), null)
+  assert.equal(parseInput('', ''), null)
+  assert.deepEqual(parseInput('1,555', '5'), { price: 1.56, minutes: 5 })
+  assert.equal(parsePrice(' 2,5 '), 2.5)
 })

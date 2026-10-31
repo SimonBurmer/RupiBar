@@ -1,0 +1,666 @@
+/* Generiert aus dem Design-Stylesheet; gilt nur für body.theme-classic. */
+body.theme-classic {
+  --red: #ff273d;
+  --green: #21df92;
+  --white: #f5f5f7;
+  --line: #303039
+}
+body.theme-classic, body.theme-classic * {
+  box-sizing: border-box
+}
+body.theme-classic {
+  margin: 0;
+  background: #050507;
+  color: var(--white);
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 600
+}
+body.theme-classic .screen {
+  min-height: 100vh;
+  padding: 16px 20px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: radial-gradient(ellipse at 60% 20%, #1c070b 0%, #08080b 42%, #030304 90%)
+}
+body.theme-classic header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #444;
+  padding-bottom: 12px;
+  gap: 12px
+}
+body.theme-classic .brand {
+  font-size: clamp(23px, 3.5vw, 54px);
+  font-weight: 950;
+  letter-spacing: -1.5px
+}
+body.theme-classic .brand span {
+  color: var(--red)
+}
+body.theme-classic .subtitle {
+  font-size: clamp(10px, 1.15vw, 17px);
+  letter-spacing: .45em;
+  font-weight: 400;
+  margin-top: 2px
+}
+body.theme-classic .header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 16px;
+  white-space: nowrap
+}
+body.theme-classic .live {
+  background: #b60016;
+  border: 1px solid #ff334a;
+  box-shadow: 0 0 18px #e0003440;
+  padding: 10px 23px;
+  font-size: 24px;
+  font-weight: 900;
+  animation: classic-livepulse 2s infinite
+}
+body.theme-classic .main {
+  display: grid;
+  grid-template-columns: minmax(0, 2.05fr) minmax(260px, .95fr);
+  gap: 15px;
+  min-height: 0;
+  flex: 1
+}
+body.theme-classic .market {
+  min-width: 0;
+  display: flex;
+  flex-direction: column
+}
+body.theme-classic .market-top {
+  display: grid;
+  grid-template-columns: minmax(250px, .85fr) minmax(300px, 1.2fr);
+  gap: 14px;
+  align-items: center;
+  flex: 1;
+  min-height: 270px
+}
+body.theme-classic .beer-title {
+  font-size: clamp(52px, 7vw, 112px);
+  font-weight: 950;
+  letter-spacing: -4px;
+  line-height: 1
+}
+body.theme-classic .beer-price {
+  font-size: clamp(66px, 8vw, 138px);
+  font-weight: 950;
+  white-space: nowrap;
+  letter-spacing: -4px;
+  margin: 8px 0
+}
+body.theme-classic .beer-price small {
+  font-size: .45em
+}
+body.theme-classic .beer-sub {
+  font-size: clamp(20px, 2.7vw, 42px);
+  color: var(--red);
+  font-weight: 900
+}
+body.theme-classic .beer-sub span {
+  font-size: .55em;
+  color: #aaa
+}
+body.theme-classic .chart-wrap {
+  position: relative;
+  min-width: 0;
+  height: 80%;
+  min-height: 240px;
+  border-left: 1px solid #45454b;
+  border-bottom: 1px solid #45454b;
+  background: linear-gradient(180deg, #26080caa, #0b0507)
+}
+body.theme-classic #chart {
+  width: 100%;
+  height: 100%;
+  display: block
+}
+body.theme-classic .chart-label {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  color: #bbb;
+  font-size: 12px
+}
+body.theme-classic .reporter {
+  position: relative;
+  min-height: 520px;
+  border: 1px solid #444;
+  border-radius: 5px;
+  overflow: hidden;
+  background: #100d18
+}
+body.theme-classic .reporter img, body.theme-classic .reporter-portrait {
+  width: 100%;
+  height: calc(100% - 150px);
+  position: absolute;
+  inset: 40px 0 auto;
+  object-fit: contain;
+  object-position: center;
+  filter: contrast(1.07) saturate(.75) brightness(.75);
+  animation: classic-talk 3s ease-in-out infinite
+}
+body.theme-classic .reporter-portrait {
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+body.theme-classic .reporter img, body.theme-classic .reporter-portrait {
+    animation: none;
+  }
+}
+body.theme-classic .reporter:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, #000 0%, transparent 45%), linear-gradient(110deg, #060b32aa, transparent 35%, #62020d55);
+  pointer-events: none
+}
+body.theme-classic .reporter-live {
+  position: absolute;
+  z-index: 2;
+  top: 12px;
+  left: 12px;
+  background: #ed001f;
+  padding: 9px 16px;
+  font-weight: 900;
+  font-size: 20px
+}
+body.theme-classic .reporter-bottom {
+  position: absolute;
+  z-index: 3;
+  bottom: 0;
+  left: 0;
+  right: 0
+}
+body.theme-classic .reporter-caption {
+  background: var(--red);
+  display: inline-block;
+  padding: 6px 15px;
+  font-size: 14px
+}
+body.theme-classic .reporter-headline {
+  font-size: clamp(19px, 2vw, 31px);
+  font-weight: 950;
+  background: #050505b8;
+  padding: 8px 13px;
+  border-top: 2px solid var(--red)
+}
+body.theme-classic .reporter-text {
+  padding: 9px 13px 13px;
+  background: #09090ce8;
+  font-size: clamp(13px, 1.15vw, 18px);
+  font-weight: 400;
+  min-height: 66px
+}
+body.theme-classic .voice {
+  position: absolute;
+  z-index: 4;
+  right: 12px;
+  top: 13px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  background: #0009;
+  padding: 8px
+}
+body.theme-classic .voice i {
+  width: 3px;
+  height: 10px;
+  background: #ff344c;
+  animation: classic-wave .65s ease-in-out infinite alternate
+}
+body.theme-classic .voice i:nth-child(2) {
+  animation-delay: .15s
+}
+body.theme-classic .voice i:nth-child(3) {
+  animation-delay: .3s
+}
+body.theme-classic .voice i:nth-child(4) {
+  animation-delay: .1s
+}
+body.theme-classic .drinks {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 7px;
+  margin-top: 10px
+}
+body.theme-classic .drink {
+  border: 1px solid #3b3b44;
+  background: linear-gradient(180deg, #121216, #050507);
+  border-radius: 5px;
+  padding: 12px 5px 10px;
+  text-align: center;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 156px
+}
+body.theme-classic .drink.beer {
+  border-color: var(--red);
+  box-shadow: inset 0 0 22px #8c001b35, 0 0 9px #ff163633
+}
+body.theme-classic .drink-name {
+  font-size: clamp(11px, 1.05vw, 18px);
+  font-weight: 900;
+  overflow-wrap: anywhere;
+  text-transform: uppercase
+}
+body.theme-classic .drink-emoji {
+  font-size: clamp(27px, 3vw, 47px);
+  filter: drop-shadow(0 4px 4px #000)
+}
+body.theme-classic .drink-price {
+  font-size: clamp(17px, 1.8vw, 31px);
+  font-weight: 950;
+  white-space: nowrap
+}
+body.theme-classic .spark {
+  height: 15px;
+  width: 100%
+}
+body.theme-classic .spark path {
+  fill: none;
+  stroke: #eee;
+  stroke-width: 2
+}
+body.theme-classic .beer .spark path {
+  stroke: var(--red)
+}
+body.theme-classic .ticker-outer {
+  border-top: 1px solid #555;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  min-height: 50px;
+  gap: 12px
+}
+body.theme-classic .ticker-live {
+  background: #8e0014;
+  padding: 9px;
+  font-size: 16px;
+  color: white;
+  white-space: nowrap
+}
+body.theme-classic .ticker-viewport {
+  overflow: hidden;
+  flex: 1
+}
+body.theme-classic .ticker-track {
+  display: flex;
+  gap: 45px;
+  white-space: nowrap;
+  width: max-content;
+  animation: classic-marquee 38s linear infinite;
+  font-size: clamp(14px, 1.2vw, 19px)
+}
+body.theme-classic .ticker-track b {
+  color: white
+}
+body.theme-classic .ticker-track .bier {
+  color: var(--red)
+}
+body.theme-classic .controls {
+  position: fixed;
+  z-index: 20;
+  right: 12px;
+  bottom: 12px;
+  background: #16161df5;
+  border: 1px solid #666;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px #000;
+  display: none;
+  gap: 8px;
+  align-items: center
+}
+body.theme-classic .controls.open {
+  display: flex
+}
+body.theme-classic .controls input {
+  background: #050505;
+  color: white;
+  border: 1px solid #666;
+  padding: 8px;
+  width: 90px;
+  font-size: 18px
+}
+body.theme-classic .controls button, body.theme-classic .settings {
+  background: #2a2a32;
+  color: white;
+  border: 1px solid #666;
+  padding: 9px 12px;
+  cursor: pointer;
+  border-radius: 5px
+}
+body.theme-classic .settings {
+  position: fixed;
+  bottom: 9px;
+  right: 9px;
+  z-index: 19;
+  opacity: .2;
+  font-size: 14px
+}
+body.theme-classic .settings:hover, body.theme-classic .settings:focus {
+  opacity: 1
+}
+body.theme-classic .controls label {
+  font-size: 14px
+}
+body.theme-classic .notice {
+  font-size: 12px;
+  color: #aaa
+}
+body.theme-classic .drink-emoji.beericon {
+  animation: classic-glass 5s ease-in-out infinite
+}
+@keyframes classic-glass {
+  50% {
+    transform: rotate(-4deg)
+  }
+}
+@keyframes classic-talk {
+
+  0%,
+  100% {
+    transform: scale(1.04) translateY(0)
+  }
+
+  25% {
+    transform: scale(1.047) translateY(2px)
+  }
+
+  50% {
+    transform: scale(1.04) translateY(-3px)
+  }
+
+  75% {
+    transform: scale(1.045) translateY(1px)
+  }
+}
+@keyframes classic-wave {
+  to {
+    height: 25px
+  }
+}
+@keyframes classic-livepulse {
+  50% {
+    box-shadow: 0 0 25px #e00034b0
+  }
+}
+@keyframes classic-marquee {
+  to {
+    transform: translate3d(-50%, 0, 0)
+  }
+}
+@media(max-width:1000px) {
+body.theme-classic .main {
+    grid-template-columns: 1fr 280px
+  }
+body.theme-classic .market-top {
+    grid-template-columns: 1fr;
+    gap: 6px
+  }
+body.theme-classic .chart-wrap {
+    height: 240px
+  }
+body.theme-classic .drinks {
+    grid-template-columns: repeat(5, minmax(0, 1fr))
+  }
+body.theme-classic .reporter {
+    min-height: 480px
+  }
+body.theme-classic .drink {
+    min-height: 135px
+  }
+}
+@media(max-width:700px) {
+body.theme-classic .screen {
+    padding: 10px
+  }
+body.theme-classic .main {
+    grid-template-columns: 1fr
+  }
+body.theme-classic .reporter {
+    height: 460px;
+    min-height: 460px
+  }
+body.theme-classic .market-top {
+    min-height: 0
+  }
+body.theme-classic .beer-price {
+    font-size: 70px
+  }
+body.theme-classic .drinks {
+    grid-template-columns: repeat(3, minmax(0, 1fr))
+  }
+body.theme-classic .header-right {
+    gap: 7px;
+    font-size: 12px
+  }
+body.theme-classic .live {
+    padding: 6px;
+    font-size: 15px
+  }
+body.theme-classic .subtitle {
+    letter-spacing: .2em
+  }
+}
+/* Breites Studiobild: Beide Reporter bleiben vollständig sichtbar. */
+body.theme-classic .main { grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); align-items: center; }
+body.theme-classic .market-top { grid-template-columns: 1fr; }
+body.theme-classic .chart-wrap { height: 220px; min-height: 180px; }
+body.theme-classic .reporter { min-height: 0; height: auto; background: #080e1b; }
+body.theme-classic .reporter img, body.theme-classic .reporter-portrait {
+  position: relative; inset: auto; display: block; width: 100%; height: auto;
+  aspect-ratio: 1672 / 941; object-fit: contain; filter: none; animation: none;
+}
+body.theme-classic .reporter img.reporter-source { display: none; }
+body.theme-classic .reporter:after { display: none; }
+body.theme-classic .reporter-bottom { position: relative; }
+body.theme-classic .reporter-caption { font-size: 12px; letter-spacing: .06em; }
+body.theme-classic .reporter-headline { font-size: clamp(18px, 1.8vw, 28px); }
+body.theme-classic .reporter-text { min-height: 86px; line-height: 1.5; }
+@media (max-width: 1000px) {
+body.theme-classic .main { grid-template-columns: 1fr; }
+body.theme-classic .market-top { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); }
+body.theme-classic .reporter { width: 100%; max-width: 900px; justify-self: center; }
+}
+@media (max-width: 600px) {
+body.theme-classic .market-top { grid-template-columns: 1fr; }
+}
+/* Feste 16:9-Bühne, passend für Fernseher und Beamer. */
+body.theme-classic {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+}
+body.theme-classic .screen {
+  width: min(100vw, 177.777778vh);
+  aspect-ratio: 16 / 9;
+  min-height: 0;
+  container-type: inline-size;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) 18% 6%;
+  gap: clamp(4px, .7vw, 12px);
+  padding: clamp(6px, 1vw, 18px);
+  overflow: hidden;
+}
+body.theme-classic header { gap: 1cqw; padding-bottom: .7cqw; }
+body.theme-classic .brand { font-size: 3.1cqw; letter-spacing: -.08cqw; }
+body.theme-classic .subtitle { font-size: .9cqw; letter-spacing: .35em; }
+body.theme-classic .header-right { font-size: 1.2cqw; gap: 1cqw; }
+body.theme-classic .live { font-size: 1.5cqw; padding: .5cqw 1cqw; }
+body.theme-classic .main {
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 1cqw;
+  align-items: stretch;
+}
+body.theme-classic .market, body.theme-classic .market-top { min-height: 0; height: 100%; }
+body.theme-classic .market-top {
+  grid-template-columns: 1fr;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: .7cqw;
+}
+body.theme-classic .hero { display: grid; grid-template-columns: auto 1fr; align-items: center; column-gap: 1cqw; }
+body.theme-classic .beer-title { font-size: 4.7cqw; letter-spacing: -.2cqw; }
+body.theme-classic .beer-price { font-size: 7cqw; letter-spacing: -.2cqw; margin: 0; text-align: right; }
+body.theme-classic .beer-sub { grid-column: 1 / -1; font-size: 1.8cqw; }
+body.theme-classic .chart-wrap { height: 100%; min-height: 0; }
+body.theme-classic .chart-label { font-size: .8cqw; top: .6cqw; left: .6cqw; }
+body.theme-classic .reporter {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  min-height: 0;
+}
+body.theme-classic .reporter img, body.theme-classic .reporter-portrait {
+  flex: 1 1 0;
+  min-height: 0;
+  height: 0;
+  aspect-ratio: auto;
+  object-fit: contain;
+}
+body.theme-classic .reporter-bottom { flex: 0 0 auto; }
+body.theme-classic .reporter-caption { font-size: .85cqw; padding: .35cqw .8cqw; }
+body.theme-classic .reporter-headline { font-size: 1.5cqw; padding: .4cqw .8cqw; }
+body.theme-classic .reporter-text { font-size: 1.05cqw; min-height: 4.1cqw; padding: .4cqw .8cqw; line-height: 1.35; }
+body.theme-classic .drinks { grid-template-columns: repeat(10, minmax(0, 1fr)); gap: .5cqw; margin-top: 0; min-height: 0; }
+body.theme-classic .drink { min-height: 0; gap: .25cqw; padding: .6cqw .25cqw; }
+body.theme-classic .drink-name { font-size: 1cqw; }
+body.theme-classic .drink-emoji { font-size: 2.5cqw; }
+body.theme-classic .drink-price { font-size: 1.8cqw; }
+body.theme-classic .spark { height: .9cqw; }
+body.theme-classic .ticker-outer { min-height: 0; gap: .7cqw; }
+body.theme-classic .ticker-live { font-size: 1cqw; padding: .4cqw .7cqw; }
+body.theme-classic .ticker-track { font-size: 1.1cqw; }
+body.theme-classic .market-halted { display: flex; flex-direction: column; background: #090e17; border: 1px solid #303847; overflow: hidden; }
+body.theme-classic .chart-status { display: flex; justify-content: space-between; align-items: center; gap: .6cqw; padding: .65cqw .8cqw .1cqw; color: #c2cad7; font-size: 1.1cqw; letter-spacing: .03em; }
+body.theme-classic .halt-badge { color: #efc46b; background: #e7b34b15; border: 1px solid #e7b34b44; padding: .3cqw .5cqw; font-weight: 800; }
+body.theme-classic .crash-chart { display: block; flex: 1 1 0; width: 100%; min-height: 0; }
+body.theme-classic .halt-summary { display: flex; align-items: center; justify-content: space-between; gap: .5cqw; padding: .45cqw .8cqw; border-top: 1px solid #303847; color: #d5dbe5; font-size: 1.05cqw; }
+body.theme-classic .halt-summary strong { color: #efc46b; font-size: 2cqw; }
+body.theme-classic .halt-ticker { color: #efc46b; }
+/* Sachliche Kurstafel mit zurückhaltenden Halloween-Akzenten. */
+body.theme-classic {
+  --red: #f36b59;
+  --white: #e9eef5;
+  --line: #2c3d52;
+  --orange: #f7a541;
+}
+body.theme-classic {
+  background: #02060c;
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+body.theme-classic .screen {
+  background: radial-gradient(ellipse at 100% 0, #5c2b101c, transparent 45%), #080f1b;
+  border-top: .25cqw solid var(--orange);
+}
+body.theme-classic header { border-bottom: 1px solid #36485e; }
+body.theme-classic .brand { font-size: 2.8cqw; font-weight: 650; letter-spacing: .01em; }
+body.theme-classic .brand span { color: var(--orange); font-weight: 400; }
+body.theme-classic .subtitle { color: #a7b6c9; letter-spacing: .18em; font-weight: 500; }
+body.theme-classic .header-right, body.theme-classic .beer-price, body.theme-classic .drink-price, body.theme-classic .halt-summary strong, body.theme-classic .crash-chart text, body.theme-classic .ticker-track {
+  font-family: "Cascadia Mono", Consolas, "Liberation Mono", monospace;
+  font-variant-numeric: tabular-nums;
+}
+body.theme-classic .live {
+  background: #152438;
+  border: 1px solid #52667e;
+  color: #dfe8f4;
+  box-shadow: none;
+  animation: none;
+  font-weight: 500;
+  letter-spacing: .06em;
+}
+body.theme-classic .hero { padding: .2cqw .75cqw .6cqw; border-left: .2cqw solid var(--orange); }
+body.theme-classic .beer-title { font-size: 3.9cqw; letter-spacing: .04em; font-weight: 500; }
+body.theme-classic .beer-price { font-size: 6.4cqw; letter-spacing: -.05em; font-weight: 500; line-height: 1.1; }
+body.theme-classic .beer-price small { font-size: .4em; color: #a7b6c9; }
+body.theme-classic .beer-sub { font-size: 1.8cqw; font-weight: 500; }
+body.theme-classic .beer-sub span { font-size: .65em; margin-left: .6cqw; color: #b3c0d0; }
+body.theme-classic .market-halted { background: #0b1727; border: 1px solid #344963; border-radius: 0; }
+body.theme-classic .chart-status { border-bottom: 1px solid #2c3d52; padding: .5cqw .75cqw; color: #b3c0d0; font-weight: 500; }
+body.theme-classic .halt-badge { border: 0; border-left: .2cqw solid var(--orange); background: #f7a54112; color: #ffbd67; }
+body.theme-classic .crash-chart > g:first-of-type { stroke: #354961; opacity: .65; }
+body.theme-classic .crash-chart text { font-weight: 400; }
+body.theme-classic .crash-chart .price-history { stroke: #c0d9f3; stroke-width: 1.8; stroke-linejoin: miter; }
+body.theme-classic .crash-chart .price-crash { stroke: #f36b59; stroke-width: 2.2; fill: none; }
+body.theme-classic .halt-summary { background: #101f31; border-color: #344963; letter-spacing: .02em; }
+body.theme-classic .halt-summary strong { color: #ffbd67; font-weight: 500; }
+body.theme-classic .reporter { border-color: #344963; border-radius: 0; }
+body.theme-classic .reporter-caption { background: #b85b20; color: #fff5e9; font-weight: 600; }
+body.theme-classic .reporter-headline { background: #101f31; border-top: 1px solid #425c78; font-weight: 600; letter-spacing: .025em; }
+body.theme-classic .reporter-text { background: #0b1727; color: #ced8e5; }
+body.theme-classic .drink {
+  background: #0d1929;
+  border: 1px solid #30445d;
+  border-radius: 0;
+  box-shadow: none;
+  text-align: left;
+  padding: .6cqw .65cqw;
+}
+body.theme-classic .drink.beer { border-color: #b47839; background: #211c19; box-shadow: none; }
+body.theme-classic .drink-name { color: #b9c9db; font-weight: 600; letter-spacing: .025em; }
+body.theme-classic .drink.beer .drink-name { color: #ffbd67; }
+body.theme-classic .drink-emoji { font-size: 1.8cqw; filter: saturate(.65); }
+body.theme-classic .drink-price { font-weight: 500; font-size: 1.9cqw; letter-spacing: -.05em; }
+body.theme-classic .spark path { stroke: #91abc7; stroke-width: 1.2; }
+body.theme-classic .beer .spark path { stroke: #f36b59; }
+body.theme-classic .ticker-outer { background: #0d1929; border-top: 1px solid #425c78; }
+body.theme-classic .ticker-live { background: #b85b20; font-weight: 600; letter-spacing: .06em; }
+body.theme-classic .ticker-track { color: #b5c4d6; font-weight: 400; }
+body.theme-classic .ticker-track b { font-weight: 500; }
+body.theme-classic .brand .brand-skull { color: #e9eef5; font-size: .85em; margin-left: .25em; }
+body.theme-classic .ticker-track {
+  gap: 0;
+  animation: classic-marquee var(--ticker-duration, 65s) linear infinite;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+body.theme-classic .ticker-group {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 2.5cqw;
+  padding-right: 2.5cqw;
+}
+body.theme-classic .ticker-group > span { flex: 0 0 auto; }
+body.theme-classic .ticker-group > span + span { border-left: 1px solid #425c78; padding-left: 2.5cqw; }
+body.theme-classic .beer-title.long-name { font-size: 2.6cqw; letter-spacing: .01em; }
+body.theme-classic .brand .brand-venue { color: #e9eef5; font-size: .65em; font-weight: 600; margin-left: .6em; letter-spacing: .08em; white-space: nowrap; }
+body.theme-classic .rotation-info { grid-column: 1 / -1; color: #a7b6c9; font-size: .85cqw; margin-top: .3cqw; letter-spacing: .04em; }
+body.theme-classic .happy-hour-active { color: #ffbd67; }
+body.theme-classic .halt-badge.trading-open { color: #7ee7b0; border-color: #7ee7b0; }
+body.theme-classic .admin-toggle { position: fixed; right: 8px; bottom: 6px; z-index: 30; border: 1px solid #52667e; background: #101f31; color: #fff; padding: 7px 12px; border-radius: 4px; cursor: pointer; opacity: .45; }
+body.theme-classic .admin-toggle:hover, body.theme-classic .admin-toggle:focus-visible { opacity: 1; }
+body.theme-classic .happy-dialog { width: min(460px, calc(100vw - 24px)); max-height: 90vh; overflow: auto; background: #101f31; color: #e9eef5; border: 1px solid #b47839; border-radius: 8px; padding: 24px; font: 16px "Segoe UI", Arial, sans-serif; }
+body.theme-classic .happy-dialog::backdrop { background: #000b; }
+body.theme-classic .happy-dialog h2 { font-size: 24px; margin: 0 0 12px; }
+body.theme-classic .happy-dialog p { line-height: 1.45; color: #c7d0de; }
+body.theme-classic .happy-dialog label { display: block; margin-top: 16px; margin-bottom: 6px; }
+body.theme-classic .happy-dialog input { box-sizing: border-box; width: 100%; font: inherit; padding: 10px; background: #080f1b; color: #fff; border: 1px solid #52667e; border-radius: 4px; }
+body.theme-classic .happy-dialog small { display: block; margin-top: 6px; color: #a7b6c9; }
+body.theme-classic .happy-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 20px; }
+body.theme-classic .happy-dialog button { font: inherit; cursor: pointer; border: 1px solid #52667e; background: #24374f; color: #fff; padding: 10px 12px; border-radius: 4px; }
+body.theme-classic .happy-dialog button[type="submit"] { background: #b85b20; border-color: #f7a541; }
+body.theme-classic #happy-feedback { color: #ffbd67; min-height: 1.4em; }
+body.theme-classic .price-event { fill: none; stroke: #f36b59; stroke-width: 3; }
+body.theme-classic .price-event.recovery { stroke: #7ee7b0; }
+body.theme-classic .price-event.trading { stroke-dasharray: 1; stroke-dashoffset: 1; animation: classic-trade-reveal 5s linear forwards; }
+@keyframes classic-trade-reveal { to { stroke-dashoffset: 0; } }
+@media (prefers-reduced-motion: reduce) {
+body.theme-classic .price-event.trading { animation: none; stroke-dashoffset: 0; }
+}
+/* Szenen-Bauchbinden sind in normaler Schreibweise hinterlegt; das klassische Design zeigt sie in Versalien. */
+body.theme-classic .reporter-caption { text-transform: uppercase; }
