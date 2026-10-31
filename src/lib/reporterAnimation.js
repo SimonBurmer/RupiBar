@@ -1,37 +1,11 @@
-import { fmt } from './market.js';
+import { TURN_DURATION } from './scenes.js';
 
-// Dialog der beiden Reporter: [Sprecher (0 = Reporterin, 1 = Reporter), Schlagzeile, Text(market)].
-export const TURNS = [
-  [0, 'GETRÄNKE-CRASH: HANDEL GESTOPPT', market => `${market.name}: von ${fmt(market.opening)} auf ${fmt(market.price)} Euro! Der Handel wurde ausgesetzt. Was bedeutet das für die Gäste?`],
-  [1, 'DIE KURVE FÄLLT. DIE LAUNE STEIGT.', market => `Ganz einfach: ${market.name} bleibt bei ${fmt(market.price)} Euro. Die Börse macht Pause, die Bar zum Glück nicht.`],
-  [0, 'EIL: JOHANNES BERUFT KRISENSTAB EIN', () => 'Heimleiter Johannes führt Krisengespräche mit Heimsprecherin Sarah. Auf der Tagesordnung: Wie konnte der Kurs so tief und die Stimmung so hoch steigen?'],
-  [1, 'SARAH FORDERT FLÜSSIGE MITTEL', () => 'Sarah verlangt sofortige Liquidität. Johannes hat vorsorglich nachgefragt, ob damit das Heimkonto oder der nächste Krug gemeint ist.'],
-  [0, 'HEIMLEITER UNTER DRUCK', () => 'Johannes steht unter Druck. Sarah prüft die Lage. Die Bar stellt klar: Beim Fass ist Druck ausdrücklich erwünscht.'],
-  [1, 'RETTUNGSSCHIRM WIRD AUFGESPANNT', () => 'Johannes und Sarah beraten das weitere Vorgehen. Ein Rettungsschirm ist im Gespräch. Bisher verfügbar: drei Cocktail-Schirmchen.'],
-  [0, 'KRISENGIPFEL GEHT IN VERLÄNGERUNG', () => 'Noch keine Einigung zwischen Johannes und Sarah. Man hat sich aber einstimmig darauf verständigt, die nächste Runde einzuläuten.'],
-  [1, 'ERSTER BESCHLUSS: RUHE BEWAHREN', market => `Der Krisenstab meldet: ${market.name} bleibt bei ${fmt(market.price)} Euro. Johannes bittet um Ruhe. Sarah bestellt sie vorsichtshalber auf Eis.`],
-  [0, 'AXEL FRIDOLIN ÜBERNIMMT DAS RUDER', () => 'Barchef Axel Fridolin legt seinen Rettungsplan vor: kurze Wege zur Theke, lange Öffnungszeiten. Johannes fragt, ob das schon als Strukturreform zählt.'],
-  [1, 'BAR STABIL. KRISENSTAB DURSTIG.', () => 'Sarah fordert einen Lagebericht. Axel Fridolin meldet: Eis vorhanden, Gläser bereit. Damit ist die Bar besser vorbereitet als der Krisenstab.'],
-  [0, 'KEVIN G PRÜFT DIE VERBINDUNG', () => 'Netzwerkler-CEO Kevin G wurde zur Krisensitzung gerufen. Seine erste Diagnose: Das Netzwerk steht. Abgestürzt sind nur die Preise.'],
-  [1, 'NEUSTART VORERST ABGELEHNT', () => 'Kevin G empfiehlt: einmal aus- und wieder einschalten. Sarah lehnt ab. Bei diesen Preisen möchte niemand riskieren, dass die Börse wieder hochfährt.'],
-  [0, 'SIMON B MIT SONDERAUFTRAG', () => 'Johannes schickt Simon B zur Lageerkundung an die Bar. Er soll prüfen, ob die günstigen Kurse auch in der Praxis funktionieren.'],
-  [1, 'PRÜFUNG DAUERT AN', () => 'Simon B meldet sich von der Theke: Die Stichprobe sei vielversprechend, aber noch nicht repräsentativ. Er bittet um Verlängerung seines Forschungsauftrags.']
-];
-
-// Wie lange jede Meldung stehen bleibt (ms).
-export const TURN_DURATION = 9000;
-
-export const captionFor = speaker => (speaker === 0 ? 'Reporterin · live im Gespräch' : 'Reporter · live im Gespräch');
+export { TURN_DURATION } from './scenes.js';
 
 const smooth = value => {
   const t = Math.max(0, Math.min(1, value));
   return t * t * (3 - 2 * t);
 };
-
-const FACES = [
-  { x: 603, y: 486, radius: 46, eyes: [[574, 366], [671, 377]], phase: 0 },
-  { x: 1183, y: 435, radius: 42, eyes: [[1133, 305], [1209, 300]], phase: 2.1 }
-];
 
 // Unterschiedlich lange Silben und Lippenverschlüsse statt einer Sinuswelle.
 const SYLLABLES = [
@@ -54,12 +28,12 @@ function mouthOpening(elapsed) {
 }
 
 /**
- * Startet die Gesichts- und Körperanimation auf `canvas` anhand des Studiobilds
- * `photo` (Gesichtspunkte im Studiobild 1672 × 941).
- * `onFrame(time)` liefert den aktuellen Sprecherindex (0/1) zurück.
+ * Startet die Gesichts- und Körperanimation einer Szene (siehe scenes.js) auf
+ * `canvas`. `photo` ist das geladene Szenenbild. `onFrame(time)` liefert
+ * { speaker, turnElapsed } zurück: wer gerade spricht und seit wann (ms).
  * Gibt eine Stopp-Funktion zurück.
  */
-export function startReporterAnimation(photo, canvas, onFrame) {
+export function startReporterAnimation(sceneConfig, photo, canvas, onFrame) {
   canvas.width = photo.naturalWidth;
   canvas.height = photo.naturalHeight;
   const output = canvas.getContext('2d');
@@ -68,20 +42,18 @@ export function startReporterAnimation(photo, canvas, onFrame) {
   scene.height = canvas.height;
   const context = scene.getContext('2d');
   if (!context || !output) return () => {};
-  const scale = photo.naturalWidth / 1672;
+  const scale = photo.naturalWidth / sceneConfig.width;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const { faces, bodies, noseAnchor, mesh } = sceneConfig;
 
   // Das fertig animierte Gesicht und der Körper bewegen sich gemeinsam.
-  // Studio-Logos und Bauchbinde bleiben dabei fest an ihrer Position.
+  // Logos und Bauchbinde liegen außerhalb von `mesh` und bleiben fest.
   function bodyPoint(x, y, seconds, active, speaking) {
-    const edge = smooth((y - 85) / 70) * smooth((789 - y) / 65)
-      * smooth(x / 100) * smooth((1672 - x) / 70);
+    const edge = smooth((y - mesh.top) / mesh.fadeTop) * smooth((mesh.bottom - y) / mesh.fadeBottom)
+      * smooth((x - mesh.left) / mesh.fadeLeft) * smooth((mesh.right - x) / mesh.fadeRight);
     let dx = 0;
     let dy = 0;
-    [
-      { x: 530, headX: 580, headY: 335, phase: 0 },
-      { x: 1300, headX: 1255, headY: 285, phase: 1.8 }
-    ].forEach((person, index) => {
+    bodies.forEach((person, index) => {
       const phase = seconds + person.phase;
       const body = Math.exp(-(((x - person.x) / 285) ** 4));
       const head = Math.exp(-(((x - person.headX) / 210) ** 4)
@@ -89,7 +61,7 @@ export function startReporterAnimation(photo, canvas, onFrame) {
       const chest = smooth((y - 380) / 220);
       const isTalking = active === index && speaking;
       const breath = Math.sin(phase * 1.65);
-      const sway = Math.sin(phase * 0.8) * 3.5;
+      const sway = Math.sin(phase * 0.8) * (person.sway ?? 3.5);
       const angle = Math.sin(phase * 1.1) * 0.006
         + (isTalking ? Math.sin(phase * 3.6) * 0.009 : Math.sin(phase * 2.1) * 0.003);
       dx += body * (sway + (x - person.x) * breath * 0.004 * chest);
@@ -98,14 +70,17 @@ export function startReporterAnimation(photo, canvas, onFrame) {
       dy += ((x - person.headX) * angle
         + Math.sin(phase * (isTalking ? 4.1 : 1.7)) * (isTalking ? 3.2 : 1.2)) * head;
       // Kleine Bewegung der Mikrofonhand, ohne neue Armhaltungen zu erfinden.
-      const hand = Math.exp(-(((x - (index === 0 ? 610 : 1170)) / 105) ** 2)
-        - (((y - 719) / 100) ** 2));
-      dy += hand * Math.sin(phase * 2.8) * (isTalking ? 3.5 : 1);
+      if (person.hand) {
+        const hand = Math.exp(-(((x - person.hand[0]) / 105) ** 2)
+          - (((y - person.hand[1]) / 100) ** 2));
+        dy += hand * Math.sin(phase * 2.8) * (isTalking ? 3.5 : 1);
+      }
     });
-    // Die linke Nase bleibt ein fester Anker, auch beim Kopfnicken.
-    const noseDistance = Math.hypot((x - 611) / 44, (y - 439) / 30);
-    const noseAnchor = smooth((noseDistance - 1) / 0.8);
-    return { x: (x + dx * edge * noseAnchor) * scale, y: (y + dy * edge * noseAnchor) * scale };
+    // Optional bleibt ein Punkt (z. B. eine Nase) fest verankert, auch beim Kopfnicken.
+    const anchor = noseAnchor
+      ? smooth((Math.hypot((x - noseAnchor.x) / noseAnchor.rx, (y - noseAnchor.y) / noseAnchor.ry) - 1) / 0.8)
+      : 1;
+    return { x: (x + dx * edge * anchor) * scale, y: (y + dy * edge * anchor) * scale };
   }
 
   function drawTriangle(a, b, c, pa, pb, pc) {
@@ -140,8 +115,8 @@ export function startReporterAnimation(photo, canvas, onFrame) {
     for (let row = 0; row <= rows; row++) {
       vertices[row] = [];
       for (let column = 0; column <= columns; column++) {
-        const x = column / columns * 1672;
-        const y = 85 + row / rows * (789 - 85);
+        const x = mesh.left + column / columns * (mesh.right - mesh.left);
+        const y = mesh.top + row / rows * (mesh.bottom - mesh.top);
         vertices[row][column] = {
           source: { x: x * scale, y: y * scale },
           target: bodyPoint(x, y, time / 1000, active, speaking)
@@ -164,14 +139,18 @@ export function startReporterAnimation(photo, canvas, onFrame) {
     const phase = (time / 1000 + face.phase) % 5.3;
     const closure = phase < 0.19 ? Math.sin(phase / 0.19 * Math.PI) ** 2 : 0;
     if (closure < 0.01) return;
+    const width = face.eyeWidth ?? 23;
+    const height = face.eyeHeight ?? 12;
+    const reachX = Math.round(width * 35 / 23);
+    const reachY = Math.round(height * 38 / 12);
     face.eyes.forEach(([eyeX, eyeY]) => {
-      for (let x = eyeX - 35; x < eyeX + 35; x += 2) {
-        const horizontal = Math.exp(-(((x + 1 - eyeX) / 23) ** 4));
+      for (let x = eyeX - reachX; x < eyeX + reachX; x += 2) {
+        const horizontal = Math.exp(-(((x + 1 - eyeX) / width) ** 4));
         const targetY = y => {
           const d = y - eyeY;
-          return eyeY + d * (1 - closure * 0.92 * horizontal * Math.exp(-((d / 12) ** 2)));
+          return eyeY + d * (1 - closure * 0.92 * horizontal * Math.exp(-((d / height) ** 2)));
         };
-        for (let y = eyeY - 38; y < eyeY + 38; y += 2) {
+        for (let y = eyeY - reachY; y < eyeY + reachY; y += 2) {
           const from = targetY(y);
           const to = targetY(y + 2);
           context.drawImage(photo, x * scale, y * scale, 2 * scale, 2 * scale,
@@ -188,23 +167,20 @@ export function startReporterAnimation(photo, canvas, onFrame) {
     frame = requestAnimationFrame(render);
     if (document.hidden || time - previousFrame < 40) return;
     previousFrame = time;
-    const active = onFrame(time);
+    const { speaker: active, turnElapsed: elapsed } = onFrame(time);
     context.drawImage(photo, 0, 0);
     if (reducedMotion.matches) {
       output.drawImage(scene, 0, 0);
       return;
     }
-    const turnStarted = time - time % TURN_DURATION;
-    const elapsed = time - turnStarted;
     const speaking = elapsed > 250 && elapsed < TURN_DURATION - 750 && elapsed % 1900 < 1550;
     const syllable = speaking ? mouthOpening(elapsed - 250) : 0;
 
-    FACES.forEach((face, index) => {
+    faces.forEach((face, index) => {
       // Vorhandene Lippen und Zähne werden geschlossen/geöffnet, ohne
       // gezeichneten Mund oder fremde Zahnbereiche einzublenden.
-      const openness = index === active && speaking
-        ? 0.2 + syllable * (index === 0 ? 1.55 : 1.35)
-        : 0.2;
+      const rest = face.rest ?? 0.2;
+      const openness = index === active && speaking ? rest + syllable * face.gain : rest;
       const cx = face.x * scale;
       const cy = face.y * scale;
       const radius = face.radius * scale;
@@ -213,8 +189,8 @@ export function startReporterAnimation(photo, canvas, onFrame) {
         const weightX = Math.exp(-(((x + step / 2 - cx) / radius) ** 4));
         const targetY = y => {
           const d = y - cy;
-          // Oberhalb der linken Oberlippe keine Verformung der Nase.
-          const lipOnly = index === 0 ? smooth((y / scale - 463) / 14) : 1;
+          // Oberhalb der Oberlippe (lipTop) keine Verformung der Nase.
+          const lipOnly = face.lipTop === undefined ? 1 : smooth((y / scale - face.lipTop) / face.lipFade);
           return cy + d * (1 + (openness - 1) * weightX * lipOnly * Math.exp(-((d / (radius * 0.72)) ** 2)));
         };
         for (let y = cy - radius * 2.5; y < cy + radius * 2.5; y += step) {
@@ -227,6 +203,7 @@ export function startReporterAnimation(photo, canvas, onFrame) {
     });
     animateBodies(time, active, speaking);
   }
-  frame = requestAnimationFrame(render);
+  // Erstes Bild sofort zeichnen, damit beim Szenenwechsel kein leerer Rahmen aufblitzt.
+  render(performance.now());
   return () => cancelAnimationFrame(frame);
 }
