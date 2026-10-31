@@ -5,7 +5,13 @@ export const THEMES = ['modern', 'classic'];
 export const DEFAULT_THEME = 'modern';
 // Anzeige-Einstellungen: Getränkeleiste fest / laufend / blätternd, Tempo in Sekunden, Laufband an/aus.
 export const TILE_MODES = ['scroll', 'page', 'fixed'];
-export const DEFAULT_SETTINGS = { tileMode: 'scroll', tileSeconds: 5, showTicker: true };
+// Reporter: Szenenwechsel und Meldungsdauer in Sekunden.
+export const DEFAULT_SETTINGS = { tileMode: 'scroll', tileSeconds: 5, showTicker: true, sceneSeconds: 30, newsSeconds: 9 };
+const SECOND_LIMITS = {
+  tileSeconds: [1, 120, 'Tempo der Getränkeleiste'],
+  sceneSeconds: [5, 600, 'Szenenwechsel'],
+  newsSeconds: [3, 60, 'Meldungsdauer']
+};
 
 // Zustand des Servers. Liegt nur im Speicher und startet nach jedem Deploy mit den Standardwerten.
 // Jede Methode liefert { ok: true } oder { ok: false, error }.
@@ -92,10 +98,11 @@ export function createStore() {
         if (!TILE_MODES.includes(input.tileMode)) return { ok: false, error: 'Unbekannter Modus für die Getränkeleiste.' };
         next.tileMode = input.tileMode;
       }
-      if ('tileSeconds' in input) {
-        const seconds = Number(input.tileSeconds);
-        if (!Number.isInteger(seconds) || seconds < 1 || seconds > 120) return { ok: false, error: 'Tempo: bitte 1 bis 120 Sekunden eingeben.' };
-        next.tileSeconds = seconds;
+      for (const [key, [min, max, label]] of Object.entries(SECOND_LIMITS)) {
+        if (!(key in input)) continue;
+        const seconds = Number(input[key]);
+        if (!Number.isInteger(seconds) || seconds < min || seconds > max) return { ok: false, error: `${label}: bitte ${min} bis ${max} Sekunden eingeben.` };
+        next[key] = seconds;
       }
       if ('showTicker' in input) {
         if (typeof input.showTicker !== 'boolean') return { ok: false, error: 'Laufband: an oder aus.' };

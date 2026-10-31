@@ -135,3 +135,5 @@
 .admin-inline button { padding: 8px 14px; }
 .admin-hint { display: block; margin-top: 8px; line-height: 1.45; }
 .admin-spaced { margin-top: 20px; }
+.admin-inline + .admin-inline { margin-top: 10px; }
+.admin-inline label { flex-basis: 100%; margin-bottom: -4px; }

@@ -10,6 +10,7 @@ export default function Reporter({ liveRef }) {
   const imagesRef = useRef([])
   const loadedRef = useRef(SCENES.map(() => false))
   const startRef = useRef(null)
+  const timingRef = useRef(null)
   const [loaded, setLoaded] = useState(() => SCENES.map(() => false))
   const [sceneIndex, setSceneIndex] = useState(0)
   const [dialogue, setDialogue] = useState({
@@ -41,7 +42,14 @@ export default function Reporter({ liveRef }) {
     if (startRef.current === null) startRef.current = performance.now()
     const turns = scene.turns
     return startReporterAnimation(scene, imagesRef.current[sceneIndex], canvasRef.current, () => {
-      const schedule = scheduleAt(performance.now() - startRef.current)
+      const { sceneMs, turnMs } = liveRef.current.timing ?? {}
+      const timingKey = `${sceneMs}/${turnMs}`
+      // Neues Tempo aus /admin: die aktuelle Szene bleibt und beginnt ihren Takt neu.
+      if (timingRef.current !== null && timingRef.current !== timingKey) {
+        startRef.current = performance.now() - sceneIndex * (sceneMs ?? 0)
+      }
+      timingRef.current = timingKey
+      const schedule = scheduleAt(performance.now() - startRef.current, SCENES, sceneMs, turnMs)
       const current = schedule.sceneIndex === sceneIndex
       // Nächste Szene erst zeigen, wenn ihr Bild geladen ist.
       if (!current && loadedRef.current[schedule.sceneIndex]) setSceneIndex(schedule.sceneIndex)
@@ -54,7 +62,7 @@ export default function Reporter({ liveRef }) {
         text: news ? news.text : text(market)
       }
       setDialogue(prev => (prev.caption === next.caption && prev.headline === next.headline && prev.text === next.text ? prev : next))
-      return { speaker, turnElapsed: schedule.turnElapsed }
+      return { speaker, turnElapsed: schedule.turnElapsed, turnDuration: turnMs }
     })
   }, [ready, scene, sceneIndex, liveRef])
 

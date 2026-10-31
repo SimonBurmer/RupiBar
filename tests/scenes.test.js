@@ -66,3 +66,11 @@ test('Brauerei-Szene nutzt den Live-Kurs', () => {
   const brauerei = SCENES.find(scene => scene.id === 'brauerei')
   assert(brauerei.turns.some(([, , text]) => text(MARKET).includes('Bier bei 2,00 Euro')))
 })
+
+test('Szenen- und Meldungstakt sind einstellbar', () => {
+  assert.equal(scheduleAt(10000, SCENES, 10000, 5000).sceneIndex, 1 % SCENES.length)
+  assert.equal(scheduleAt(9999, SCENES, 10000, 5000).sceneIndex, 0)
+  const turn = scheduleAt(5000, SCENES, 10000, 5000)
+  assert.equal(turn.turnElapsed, 0)
+  assert.equal(scheduleAt(4999, SCENES, 10000, 5000).turnIndex + 1, turn.turnIndex)
+})

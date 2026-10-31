@@ -167,13 +167,13 @@ export function startReporterAnimation(sceneConfig, photo, canvas, onFrame) {
     frame = requestAnimationFrame(render);
     if (document.hidden || time - previousFrame < 40) return;
     previousFrame = time;
-    const { speaker: active, turnElapsed: elapsed } = onFrame(time);
+    const { speaker: active, turnElapsed: elapsed, turnDuration = TURN_DURATION } = onFrame(time);
     context.drawImage(photo, 0, 0);
     if (reducedMotion.matches) {
       output.drawImage(scene, 0, 0);
       return;
     }
-    const speaking = elapsed > 250 && elapsed < TURN_DURATION - 750 && elapsed % 1900 < 1550;
+    const speaking = elapsed > 250 && elapsed < turnDuration - 750 && elapsed % 1900 < 1550;
     const syllable = speaking ? mouthOpening(elapsed - 250) : 0;
 
     faces.forEach((face, index) => {

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { DEFAULT_PRICES } from './market.js'
 import { INITIAL_HAPPY } from './happyHour.js'
 
-export const DEFAULT_SETTINGS = { tileMode: 'scroll', tileSeconds: 5, showTicker: true }
+export const DEFAULT_SETTINGS = { tileMode: 'scroll', tileSeconds: 5, showTicker: true, sceneSeconds: 30, newsSeconds: 9 }
 
 // Live-Preise vom Server. `offset` gleicht die Uhr dieses Geräts an die Serverzeit an.
 export function useExchange() {

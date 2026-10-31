@@ -9,6 +9,23 @@ const draftsFrom = prices => Object.fromEntries(DRINKS.map(({ name }) => [name, 
 const THEME_OPTIONS = [['modern', 'Neu'], ['classic', 'Klassisch']]
 const TILE_MODE_OPTIONS = [['scroll', 'Laufend'], ['page', 'Blättern'], ['fixed', 'Fest']]
 
+// Zahlenfeld für eine Sekunden-Einstellung mit eigenem Übernehmen-Knopf.
+function SecondsSetting({ id, label, min, max, value, disabled, onSave }) {
+  const [draft, setDraft] = useState(null)
+  const submit = async event => {
+    event.preventDefault()
+    if (await onSave(Number(draft))) setDraft(null)
+  }
+  return (
+    <form className="admin-inline" onSubmit={submit}>
+      <label htmlFor={id}>{label}</label>
+      <input id={id} type="number" inputMode="numeric" min={min} max={max} step="1" required
+        value={draft ?? String(value)} onChange={event => setDraft(event.target.value)} />
+      <button type="submit" disabled={disabled || draft === null || Number(draft) === value}>Übernehmen</button>
+    </form>
+  )
+}
+
 export default function AdminPage() {
   const { prices, happy, alarmAt, theme, settings, offset, synced, connected } = useExchange()
   const [drafts, setDrafts] = useState(null)
@@ -19,7 +36,6 @@ export default function AdminPage() {
   const [resetFeedback, setResetFeedback] = useState({ text: '', error: false })
   const [happyDrink, setHappyDrink] = useState('Bier')
   const [displayFeedback, setDisplayFeedback] = useState({ text: '', error: false })
-  const [tileSeconds, setTileSeconds] = useState(null)
   const [happyPrice, setHappyPrice] = useState('1.50')
   const [happyMinutes, setHappyMinutes] = useState('60')
   const [busy, setBusy] = useState(false)
@@ -91,12 +107,6 @@ export default function AdminPage() {
 
   function changeSettings(update, message) {
     return run(() => sendChange('PUT', '/api/settings', update), setDisplayFeedback, () => message)
-  }
-
-  async function saveTileSeconds(event) {
-    event.preventDefault()
-    const state = await changeSettings({ tileSeconds: Number(tileSeconds) }, `Tempo: ${tileSeconds} Sekunden.`)
-    if (state) setTileSeconds(null)
   }
 
   async function resetAll() {
@@ -202,14 +212,20 @@ export default function AdminPage() {
             </button>
           ))}
         </fieldset>
-        <form className="admin-inline" onSubmit={saveTileSeconds}>
-          <label htmlFor="tile-seconds">Tempo (Sekunden)</label>
-          <input id="tile-seconds" type="number" inputMode="numeric" min="1" max="120" step="1" required
-            value={tileSeconds ?? String(settings.tileSeconds)} onChange={event => setTileSeconds(event.target.value)} />
-          <button type="submit" disabled={busy || !connected || tileSeconds === null || Number(tileSeconds) === settings.tileSeconds}>Übernehmen</button>
-        </form>
+        <SecondsSetting id="tile-seconds" label="Tempo (Sekunden)" min={1} max={120} value={settings.tileSeconds}
+          disabled={busy || !connected} onSave={value => changeSettings({ tileSeconds: value }, `Tempo der Getränkeleiste: ${value} Sekunden.`)} />
         <small className="admin-hint">
           Laufend: alle {settings.tileSeconds} s ein Getränk weiter. Blättern: alle {settings.tileSeconds} s die nächsten fünf Getränke. Fest: alle zehn stehen still.
+        </small>
+        <fieldset className="admin-choice admin-spaced">
+          <legend>Reporter</legend>
+        </fieldset>
+        <SecondsSetting id="scene-seconds" label="Szene wechseln alle (Sekunden)" min={5} max={600} value={settings.sceneSeconds}
+          disabled={busy || !connected} onSave={value => changeSettings({ sceneSeconds: value }, `Szenenwechsel alle ${value} Sekunden.`)} />
+        <SecondsSetting id="news-seconds" label="Neue Meldung alle (Sekunden)" min={3} max={60} value={settings.newsSeconds}
+          disabled={busy || !connected} onSave={value => changeSettings({ newsSeconds: value }, `Neue Meldung alle ${value} Sekunden.`)} />
+        <small className="admin-hint">
+          Die Szenen (Studio, Brauerei, Getränkemarkt …) wechseln der Reihe nach. Eilmeldungen zu Preisänderungen bleiben immer 24 Sekunden stehen.
         </small>
         <fieldset className="admin-choice admin-spaced">
           <legend>Laufband unten</legend>

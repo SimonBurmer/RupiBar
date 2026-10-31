@@ -86,7 +86,7 @@ export default function App() {
   const flash = alarm ? [] : happyFlash(happy, prices, serverNow)
 
   const liveRef = useRef(null)
-  liveRef.current = { market, happy, offset }
+  liveRef.current = { market, happy, offset, timing: { sceneMs: settings.sceneSeconds * 1000, turnMs: settings.newsSeconds * 1000 } }
 
   const { Header, MarketHero, CrashChart, DrinkGrid, Ticker, happyInfo } = THEMES[theme] ?? THEMES.modern
 

@@ -113,25 +113,26 @@ export const SCENES = [
 // Wie lange jede Meldung stehen bleibt (ms).
 export const TURN_DURATION = 9000;
 
-const TURNS_PER_VISIT = Math.ceil(SCENE_DURATION / TURN_DURATION);
 
 /**
  * Welche Szene und welche Meldung `elapsed` ms nach dem Start zu sehen sind.
- * Die Szenen wechseln alle SCENE_DURATION ms der Reihe nach. Jede Szene setzt
+ * Die Szenen wechseln alle `sceneDuration` ms (Standard SCENE_DURATION) der Reihe nach,
+ * Meldungen alle `turnDuration` ms (Standard TURN_DURATION). Jede Szene setzt
  * ihren Dialog beim nächsten Besuch dort fort, wo er aufgehört hat; die erste
  * Meldung eines Besuchs startet mit dem Szenenwechsel.
  */
-export function scheduleAt(elapsed, scenes = SCENES) {
-  const slot = Math.floor(Math.max(0, elapsed) / SCENE_DURATION);
+export function scheduleAt(elapsed, scenes = SCENES, sceneDuration = SCENE_DURATION, turnDuration = TURN_DURATION) {
+  const turnsPerVisit = Math.ceil(sceneDuration / turnDuration);
+  const slot = Math.floor(Math.max(0, elapsed) / sceneDuration);
   const sceneIndex = slot % scenes.length;
   const visit = Math.floor(slot / scenes.length);
-  const inScene = Math.max(0, elapsed) - slot * SCENE_DURATION;
-  const turnInVisit = Math.floor(inScene / TURN_DURATION);
+  const inScene = Math.max(0, elapsed) - slot * sceneDuration;
+  const turnInVisit = Math.floor(inScene / turnDuration);
   const turnCount = scenes[sceneIndex].turns.length;
   return {
     sceneIndex,
-    turnIndex: (visit * TURNS_PER_VISIT + turnInVisit) % turnCount,
-    turnElapsed: inScene - turnInVisit * TURN_DURATION,
-    sceneRemaining: SCENE_DURATION - inScene
+    turnIndex: (visit * turnsPerVisit + turnInVisit) % turnCount,
+    turnElapsed: inScene - turnInVisit * turnDuration,
+    sceneRemaining: sceneDuration - inScene
   };
 }

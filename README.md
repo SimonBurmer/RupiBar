@@ -39,12 +39,12 @@ Auf `/admin`:
   Eilmeldung und blendet während einer Happy Hour alle 3 Minuten groß „HAPPY HOUR“ ein.
 - **Design der Anzeige**: „Neu“ oder „Klassisch“ (das ursprüngliche Design).
 - **Anzeige**: Getränkeleiste laufend, blätternd (fünf je Seite) oder fest, Tempo in
-  Sekunden, und das Laufband unten an oder aus.
+  Sekunden, Szenenwechsel und Meldungsdauer der Reporter, und das Laufband unten an oder aus.
 - **Alarm**: färbt alle Anzeigen für 6 Sekunden rot mit blinkendem ALARM.
 - **Alles zurücksetzen**: Standardpreise, alle Happy Hours beendet, Alarm gestoppt
   (Design und Anzeige-Einstellungen bleiben).
 
-Der Reporterbereich wechselt alle 30 Sekunden zwischen den Szenen in
+Der Reporterbereich wechselt (Standard: alle 30 Sekunden, einstellbar) zwischen den Szenen in
 `src/lib/scenes.js` (Studio, Brauerei, Getränkemarkt).
 
 Die Preise liegen nur im Speicher des Servers. `/admin` ist nicht passwortgeschützt,
