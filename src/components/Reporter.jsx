@@ -10,7 +10,7 @@ export default function Reporter({ liveRef }) {
   const canvasRef = useRef(null)
   const [ready, setReady] = useState(false)
   const [dialogue, setDialogue] = useState({
-    caption: 'MARKET UPDATE',
+    caption: 'Marktbericht',
     headline: 'BIER UNTER DRUCK',
     text: 'Dramatische Szenen an der Halloween Exchange. Der Bierindex steht unter massivem Druck.'
   })

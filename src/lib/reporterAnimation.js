@@ -21,7 +21,7 @@ export const TURNS = [
 // Wie lange jede Meldung stehen bleibt (ms).
 export const TURN_DURATION = 9000;
 
-export const captionFor = speaker => (speaker === 0 ? 'REPORTERIN · LIVE IM GESPRÄCH' : 'REPORTER · LIVE IM GESPRÄCH');
+export const captionFor = speaker => (speaker === 0 ? 'Reporterin · live im Gespräch' : 'Reporter · live im Gespräch');
 
 const smooth = value => {
   const t = Math.max(0, Math.min(1, value));

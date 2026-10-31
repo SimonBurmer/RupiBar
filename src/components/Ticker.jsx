@@ -4,8 +4,7 @@ import { fmt } from '../lib/market.js'
 function Quotes({ drinks }) {
   return drinks.map((drink, index) => (
     <span key={drink.name} className={index === 0 ? 'bier' : ''}>
-      <b>{drink.name.toUpperCase()}</b>
-      {'   '}
+      <b>{drink.name}</b>
       <span>{`${fmt(drink.price)} €`}</span>
     </span>
   ))
@@ -34,7 +33,7 @@ export default function Ticker({ drinks }) {
 
   return (
     <footer className="ticker-outer">
-      <div className="ticker-live">● LIVE</div>
+      <div className="ticker-live">Kurse</div>
       <div className="ticker-viewport">
         <div className="ticker-track" id="ticker" ref={trackRef}>
           <div className="ticker-group" ref={groupRef}><Quotes drinks={drinks} /></div>

@@ -78,9 +78,9 @@ export default function AdminPage() {
     <main className="admin">
       <header className="admin-header">
         <div>
-          <h1>🎃 RUPI BAR <span>Admin</span></h1>
+          <h1>Rupi Bar <span>Admin</span></h1>
           <p className={`admin-status${connected ? ' online' : ''}`}>
-            {connected ? '● Live verbunden – Änderungen erscheinen sofort auf der Anzeige' : '○ Keine Verbindung zum Server …'}
+            {connected ? 'Verbunden – Änderungen erscheinen sofort auf der Anzeige.' : 'Keine Verbindung zum Server …'}
           </p>
         </div>
         <a className="admin-link" href="/">Zur Anzeige →</a>
@@ -90,7 +90,7 @@ export default function AdminPage() {
         <h2>Alarm</h2>
         <p className="admin-current">Färbt alle Anzeigen für {ALARM_MS / 1000} Sekunden rot mit blinkendem ALARM.</p>
         <button type="button" className="alarm-button" onClick={triggerAlarm} disabled={busy || !connected}>
-          {isAlarmActive(alarmAt, now + offset) ? '🚨 Alarm läuft …' : '🚨 Alarm'}
+          {isAlarmActive(alarmAt, now + offset) ? 'Alarm läuft …' : 'Alarm'}
         </button>
         <p className={`admin-feedback${alarmFeedback.error ? ' error' : ''}`} role="status" aria-live="polite">{alarmFeedback.text}</p>
       </section>
@@ -131,10 +131,9 @@ export default function AdminPage() {
         ) : (
           <form onSubmit={savePrices}>
             <ul className="admin-prices">
-              {DRINKS.map(({ name, emoji }) => (
+              {DRINKS.map(({ name }) => (
                 <li key={name} className={changed.includes(name) ? 'changed' : ''}>
                   <label htmlFor={`price-${name}`}>
-                    <span className="admin-emoji" aria-hidden="true">{emoji}</span>
                     {name}
                     {name === 'Bier' && <small> (Normalpreis)</small>}
                   </label>

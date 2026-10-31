@@ -1,19 +1,18 @@
 export default function Header({ now }) {
-  const clock = new Date(now).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
+  const time = new Date(now)
+  const clock = time.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
+  const date = time.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' })
   return (
     <header>
-      <div>
-        <div className="brand">
-          {'🎃 HALLOWEEN '}
-          <span>EXCHANGE</span>
-          <span className="brand-venue">RUPI BAR</span>
-          <span className="brand-skull" aria-label="Totenkopf">☠</span>
-        </div>
-        <div className="subtitle">GETRÄNKEBÖRSE LIVE</div>
+      <div className="brand">
+        <span className="brand-name">Rupi Bar</span>
+        <span className="brand-sub">Halloween Exchange</span>
+        <span className="brand-tag">Getränkebörse</span>
       </div>
       <div className="header-right">
+        <span className="date">{date}</span>
         <span id="clock">{clock}</span>
-        <span className="live">● LIVE</span>
+        <span className="live">Live</span>
       </div>
     </header>
   )

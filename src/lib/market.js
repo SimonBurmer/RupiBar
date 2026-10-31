@@ -32,7 +32,9 @@ export function buildBoard(prices, beerPrice) {
   const priceOf = name => (name === 'Bier' ? beerPrice : prices[name]);
   return {
     markets: MARKETS.map(market => ({ ...market, price: priceOf(market.name) })),
-    drinks: DRINKS.map(({ name, emoji }) => ({ name, emoji, price: priceOf(name) }))
+    drinks: DRINKS.map(({ name, emoji }) => ({
+      name, emoji, price: priceOf(name), opening: MARKETS.find(market => market.name === name)?.opening ?? null
+    }))
   };
 }
 

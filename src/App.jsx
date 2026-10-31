@@ -72,7 +72,7 @@ export default function App() {
                 market={market}
                 index={activeIndex}
                 happyHourInfo={promotion
-                  ? `HAPPY HOUR · ${fmt(happy.price)} € · ${happy.expiresAt ? 'BIS ' : ''}${formatEnd(happy).toUpperCase()}`
+                  ? `Happy Hour: ${fmt(happy.price)} € ${happy.expiresAt ? `bis ${formatEnd(happy)} Uhr` : 'bis auf Weiteres'}`
                   : null}
               />
               <CrashChart
