@@ -11,8 +11,8 @@
   padding: 2.2cqw 3cqw 1.6cqw;
 }
 
-/* Getränkekarte */
-.menu-screen { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 2cqw; }
+/* Getränkekarte: neutral, mit Gold statt Kürbis-Orange. */
+.menu-screen { --accent: #d4a95a; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 2cqw; }
 .menu-header {
   display: flex;
   justify-content: space-between;
@@ -59,22 +59,26 @@
 }
 .menu-footer-offer { color: var(--accent); font-weight: 600; }
 
-/* Geister-Glücksrad */
-.wheel-screen { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 3cqw; align-items: center; }
+/* Glücksrad: neutral und bunt. */
+.wheel-screen { --accent: #e9c46a; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 3cqw; align-items: center; }
 .wheel-stage { height: 100%; display: grid; place-items: center; min-height: 0; }
 .wheel-svg { width: 100%; height: 100%; max-height: 50cqw; overflow: visible; }
 .wheel-disc { transform-origin: 0 0; transform-box: view-box; }
 .wheel-disc.animate { transition-property: transform; transition-timing-function: cubic-bezier(.12, .7, .1, 1); }
-.wheel-rim { fill: #2a1a0c; stroke: #5a3412; stroke-width: 2; }
-.wheel-seg { stroke: #0f0f0d; stroke-width: .6; }
-.wheel-seg.light { fill: #ff7a1a; }
-.wheel-seg.dark { fill: #1d1b17; }
-.wheel-label { font-family: var(--cond); font-weight: 700; font-size: 8.2px; fill: #fff7ec; }
-.wheel-seg.light + g .wheel-label { fill: #1a1006; }
-.wheel-price { font-family: var(--mono); font-size: 6.4px; fill: #ffd9b0; }
-.wheel-seg.light + g .wheel-price { fill: #3a2008; }
-.wheel-stud { fill: #ffd28a; }
-.wheel-hub { fill: #0f0f0d; stroke: #ff7a1a; stroke-width: 2; }
+.wheel-rim { fill: #26262a; stroke: #3a3a40; stroke-width: 2; }
+.wheel-seg { stroke: #111114; stroke-width: .6; }
+/* Fünf fröhliche Farben, abwechselnd mit heller und dunkler Schrift. */
+.wheel-seg.c0 { fill: #e63946; }
+.wheel-seg.c1 { fill: #f4a261; }
+.wheel-seg.c2 { fill: #2a9d8f; }
+.wheel-seg.c3 { fill: #e9c46a; }
+.wheel-seg.c4 { fill: #457b9d; }
+.wheel-label { font-family: var(--cond); font-weight: 700; font-size: 8.2px; fill: #ffffff; }
+.wheel-price { font-family: var(--mono); font-size: 6.4px; fill: #f1faee; }
+.wheel-seg.c1 + g .wheel-label, .wheel-seg.c3 + g .wheel-label { fill: #1d1d1f; }
+.wheel-seg.c1 + g .wheel-price, .wheel-seg.c3 + g .wheel-price { fill: #3a3a3c; }
+.wheel-stud { fill: #f1faee; }
+.wheel-hub { fill: #111114; stroke: #e9c46a; stroke-width: 2; }
 .wheel-hub-icon { font-size: 22px; }
 .wheel-pointer { fill: #ece7dc; stroke: #0f0f0d; stroke-width: 1.5; stroke-linejoin: round; }
 

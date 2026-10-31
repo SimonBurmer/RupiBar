@@ -1,4 +1,4 @@
-// Themen der Anzeige: Börse (Kurstafel), Getränkekarte und Geister-Glücksrad.
+// Themen der Anzeige: Börse (Kurstafel, Halloween), Getränkekarte und Glücksrad (beide neutral).
 // Preise, Happy Hours und Alarm gelten für alle Themen; jedes Thema hat eigene Einstellungen.
 export const TOPICS = [
   { id: 'exchange', label: 'Börse' },
@@ -10,13 +10,13 @@ export const DEFAULT_TOPIC = 'exchange';
 
 export const DEFAULT_MENU = {
   title: 'Getränkekarte',
-  subtitle: 'Rupi Bar · Halloween',
+  subtitle: 'Rupi Bar',
   note: 'Alle Preise in Euro. Wohl bekomm’s!',
   showEmoji: true
 };
 
 export const DEFAULT_WHEEL = {
-  title: 'Geister-Glücksrad',
+  title: 'Glücksrad',
   spinSeconds: 30,
   showPrices: true
 };

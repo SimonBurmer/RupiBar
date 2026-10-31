@@ -28,14 +28,14 @@ wird automatisch deployt.
 
 Auf `/admin` wählt man das **Thema der Anzeige**:
 
-- **Börse** – die Kurstafel (Details unten).
-- **Getränkekarte** – ruhige Preistafel in drei Spalten; Happy-Hour-Preise mit
+- **Börse** – die Halloween-Kurstafel (Details unten).
+- **Getränkekarte** – ruhige, neutrale Preistafel in drei Spalten; Happy-Hour-Preise mit
   durchgestrichenem Normalpreis. Einstellungen: Titel, Untertitel, Hinweis, Emojis.
-- **Glücksrad** – das Geister-Glücksrad dreht sich im eingestellten Takt und kürt den
+- **Glücksrad** – ein buntes Glücksrad dreht sich im eingestellten Takt und kürt den
   „Drink der Runde“ (auf allen Anzeigen gleich). Einstellungen: Titel, Takt, Preise.
 
 Preise, Happy Hours, Alarm und „Alles zurücksetzen“ gelten für alle Themen; die
-Einstellungen sind je Thema getrennt.
+Einstellungen sind je Thema getrennt; /admin zeigt automatisch die des aktiven Themas.
 
 ### Börse
 

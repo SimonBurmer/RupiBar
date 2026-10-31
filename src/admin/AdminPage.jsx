@@ -52,9 +52,8 @@ export default function AdminPage() {
   const [happyFeedback, setHappyFeedback] = useState({ text: '', error: false })
   const [alarmFeedback, setAlarmFeedback] = useState({ text: '', error: false })
   const [topicFeedback, setTopicFeedback] = useState({ text: '', error: false })
-  const [tabChoice, setTab] = useState(null)
-  // Der Einstellungs-Reiter folgt dem aktiven Thema, bis man selbst einen Reiter wählt.
-  const settingsTab = tabChoice ?? topic ?? 'exchange'
+  // Die Einstellungen zeigen immer das aktive Thema.
+  const settingsTab = topic ?? 'exchange'
   const [resetFeedback, setResetFeedback] = useState({ text: '', error: false })
   const [happyDrink, setHappyDrink] = useState('Bier')
   const [displayFeedback, setDisplayFeedback] = useState({ text: '', error: false })
@@ -158,6 +157,20 @@ export default function AdminPage() {
         <a className="admin-link" href="/">Zur Anzeige →</a>
       </header>
 
+      <section className="admin-card">
+        <h2>Thema der Anzeige</h2>
+        <div className="admin-choice admin-topics" role="group" aria-label="Thema">
+          {TOPICS.map(({ id, label }) => (
+            <button key={id} type="button" aria-pressed={topic === id}
+              className={topic === id ? 'selected' : ''} onClick={() => chooseTopic(id)} disabled={busy || !connected}>
+              {label}
+            </button>
+          ))}
+        </div>
+        <small className="admin-hint">Preise, Happy Hours und Alarm gelten für alle Themen.</small>
+        <p className={`admin-feedback${topicFeedback.error ? ' error' : ''}`} role="status" aria-live="polite">{topicFeedback.text}</p>
+      </section>
+
       <section className="admin-card admin-alarm">
         <h2>Alarm</h2>
         <p className="admin-current">Färbt alle Anzeigen für {ALARM_MS / 1000} Sekunden rot mit blinkendem ALARM.</p>
@@ -219,32 +232,10 @@ export default function AdminPage() {
       </section>
 
       <section className="admin-card">
-        <h2>Thema der Anzeige</h2>
-        <div className="admin-choice admin-topics" role="group" aria-label="Thema">
-          {TOPICS.map(({ id, label }) => (
-            <button key={id} type="button" aria-pressed={topic === id}
-              className={topic === id ? 'selected' : ''} onClick={() => chooseTopic(id)} disabled={busy || !connected}>
-              {label}
-            </button>
-          ))}
-        </div>
-        <small className="admin-hint">Preise, Happy Hours und Alarm gelten für alle Themen.</small>
-        <p className={`admin-feedback${topicFeedback.error ? ' error' : ''}`} role="status" aria-live="polite">{topicFeedback.text}</p>
-      </section>
-
-      <section className="admin-card">
-        <h2>Einstellungen</h2>
-        <div className="admin-tabs" role="tablist" aria-label="Einstellungen je Thema">
-          {TOPICS.map(({ id, label }) => (
-            <button key={id} type="button" role="tab" aria-selected={settingsTab === id}
-              className={settingsTab === id ? 'selected' : ''} onClick={() => setTab(id)}>
-              {label}{topic === id && <span className="admin-tab-live"> · aktiv</span>}
-            </button>
-          ))}
-        </div>
+        <h2>Einstellungen · {TOPICS.find(item => item.id === settingsTab).label}</h2>
 
         {settingsTab === 'exchange' && (
-          <div role="tabpanel">
+          <div>
             <fieldset className="admin-choice">
               <legend>Design</legend>
               {THEME_OPTIONS.map(([value, label]) => (
@@ -298,7 +289,7 @@ export default function AdminPage() {
         )}
 
         {settingsTab === 'menu' && (
-          <div role="tabpanel">
+          <div>
             <TextSetting id="menu-title" label="Titel" value={menu.title} disabled={busy || !connected}
               onSave={value => changeTopicSettings('menu', { title: value }, 'Titel gespeichert.')} />
             <TextSetting id="menu-subtitle" label="Untertitel" value={menu.subtitle} allowEmpty disabled={busy || !connected}
@@ -319,7 +310,7 @@ export default function AdminPage() {
         )}
 
         {settingsTab === 'wheel' && (
-          <div role="tabpanel">
+          <div>
             <TextSetting id="wheel-title" label="Titel" value={wheel.title} disabled={busy || !connected}
               onSave={value => changeTopicSettings('wheel', { title: value }, 'Titel gespeichert.')} />
             <SecondsSetting id="wheel-seconds" label="Drehen alle (Sekunden)" min={10} max={600} value={wheel.spinSeconds}

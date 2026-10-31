@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { fmt } from '../lib/market.js'
-import { FORTUNES, SEGMENT_DEG, SPIN_ANIMATION_MS, SPOOKY_LINES, wheelRound } from '../lib/wheel.js'
+import { FORTUNES, FUN_LINES, SEGMENT_DEG, SPIN_ANIMATION_MS, wheelRound } from '../lib/wheel.js'
 
 const point = (deg, radius) => {
   const rad = deg * Math.PI / 180
@@ -13,7 +13,7 @@ function segmentPath(index, radius) {
   return `M0 0 L${x1.toFixed(3)} ${y1.toFixed(3)} A${radius} ${radius} 0 0 1 ${x2.toFixed(3)} ${y2.toFixed(3)} Z`
 }
 
-// Geister-Glücksrad: dreht sich im eingestellten Takt und kürt den „Drink der Runde“.
+// Glücksrad: dreht sich im eingestellten Takt und kürt den „Drink der Runde“.
 // Gewinner und Runde kommen aus der Serverzeit, damit alle Anzeigen dasselbe zeigen.
 export default function WheelBoard({ drinks, wheel, now, serverNow }) {
   const spinMs = wheel.spinSeconds * 1000
@@ -52,7 +52,7 @@ export default function WheelBoard({ drinks, wheel, now, serverNow }) {
               const angle = index * SEGMENT_DEG
               return (
                 <g key={drink.name}>
-                  <path d={segmentPath(index, 98)} className={`wheel-seg ${index % 2 ? 'dark' : 'light'}`} />
+                  <path d={segmentPath(index, 98)} className={`wheel-seg c${index % 5}`} />
                   {angle > 180 ? (
                     // Linke Hälfte: um 180° gedreht, damit die Schrift nicht auf dem Kopf steht.
                     <g transform={`rotate(${angle + 90})`}>
@@ -74,7 +74,7 @@ export default function WheelBoard({ drinks, wheel, now, serverNow }) {
             })}
           </g>
           <circle r="22" className="wheel-hub" />
-          <text y="7" className="wheel-hub-icon" textAnchor="middle">🎃</text>
+          <text y="7" className="wheel-hub-icon" textAnchor="middle">🍻</text>
           <path d="M-9 -113 L9 -113 L0 -96 Z" className="wheel-pointer" />
         </svg>
       </div>
@@ -90,10 +90,10 @@ export default function WheelBoard({ drinks, wheel, now, serverNow }) {
               <p className="wheel-fortune">{FORTUNES[round.fortune]}</p>
               <p className="wheel-winner" data-drink={winner.name}>{winner.name}</p>
               {wheel.showPrices && <p className="wheel-winner-price">{fmt(winner.price)} €</p>}
-              <p className="wheel-line">{SPOOKY_LINES[round.round % SPOOKY_LINES.length]}</p>
+              <p className="wheel-line">{FUN_LINES[round.round % FUN_LINES.length]}</p>
             </>
           ) : (
-            <p className="wheel-spinning">Die Geister drehen am Rad …</p>
+            <p className="wheel-spinning">Das Rad dreht sich …</p>
           )}
         </div>
         <footer className="wheel-footer">

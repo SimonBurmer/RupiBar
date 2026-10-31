@@ -25,23 +25,23 @@ export function wheelRound(now, spinMs) {
 }
 
 export const FORTUNES = [
-  'Die Geister haben entschieden:',
-  'Aus dem Jenseits flüstert es:',
-  'Der Kürbis hat gesprochen:',
-  'Die Kristallkugel zeigt eindeutig:',
-  'Das Orakel der Theke verkündet:',
-  'Ein Skelett an der Bar empfiehlt:',
-  'Die Fledermäuse sind sich einig:',
-  'Um Mitternacht trinkt man:',
-  'Graf Dracula bestellt heute:',
-  'Die Hexe hat umgerührt und sieht:'
+  'Das Rad hat entschieden:',
+  'Die nächste Runde geht auf:',
+  'Heute empfiehlt die Bar:',
+  'Und der Gewinner ist:',
+  'Das Glück sagt eindeutig:',
+  'Frisch vom Rad:',
+  'Die Theke hat gesprochen:',
+  'Jetzt ist es Zeit für:',
+  'Das Schicksal bestellt:',
+  'Ganz klar:'
 ];
 
-export const SPOOKY_LINES = [
-  'Wer nicht bestellt, wird heimgesucht.',
-  'Widerstand ist zwecklos.',
-  'Das Schicksal duldet keinen Aufschub.',
-  'Die Geister zählen bis drei.',
-  'Bestellt jetzt – oder spukt für immer.',
-  'Mit freundlichen Grüßen aus der Gruft.'
+export const FUN_LINES = [
+  'Wer zögert, zahlt die nächste Runde.',
+  'Prost auf den Zufall!',
+  'Einfach an der Theke bestellen.',
+  'Das Rad irrt sich nie.',
+  'Gute Wahl – auch wenn sie nicht deine war.',
+  'Auf ein Neues in der nächsten Runde!'
 ];

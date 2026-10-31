@@ -138,21 +138,5 @@
 .admin-inline + .admin-inline { margin-top: 10px; }
 .admin-inline label { flex-basis: 100%; margin-bottom: -4px; }
 
-.admin-tabs { display: flex; gap: 0; margin: 4px 0 18px; border-bottom: 1px solid var(--line-strong); overflow-x: auto; }
-.admin .admin-tabs button {
-  border: 0;
-  border-bottom: 2px solid transparent;
-  border-radius: 0;
-  margin-bottom: -1px;
-  padding: 10px 14px;
-  font-family: var(--cond);
-  font-size: 17px;
-  color: var(--muted);
-  white-space: nowrap;
-}
-.admin .admin-tabs button.selected { color: var(--text); border-bottom-color: var(--accent); }
-.admin .admin-tabs button:not(:disabled):hover { border-color: transparent; color: var(--text); }
-.admin .admin-tabs button.selected:hover { border-bottom-color: var(--accent); }
-.admin-tab-live { color: var(--accent); font-family: var(--sans); font-size: 13px; font-weight: 400; }
 .admin .admin-topics button { font-size: 18px; padding: 12px 18px; }
 .admin-text input { width: auto; flex: 1 1 180px; text-align: left; font-family: var(--sans); }
