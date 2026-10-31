@@ -6,9 +6,10 @@ import { INITIAL_HAPPY, INVALID_INPUT_MESSAGE, isExpired, isPromotion, nextState
 export function createStore() {
   let prices = { ...DEFAULT_PRICES };
   let happy = { ...INITIAL_HAPPY };
+  let alarmAt = 0;
 
   return {
-    snapshot: () => ({ prices: { ...prices }, happy: { ...happy } }),
+    snapshot: () => ({ prices: { ...prices }, happy: { ...happy }, alarmAt }),
 
     setPrices(input, now) {
       if (!input || typeof input !== 'object' || Array.isArray(input)) return { ok: false, error: 'Keine Preise übergeben.' };
@@ -36,6 +37,12 @@ export function createStore() {
 
     resetHappyHour(now) {
       happy = nextState(happy, prices.Bier, 0, now);
+      return { ok: true };
+    },
+
+    // Alarm auf allen Anzeigen auslösen (Dauer: ALARM_MS).
+    triggerAlarm(now) {
+      alarmAt = now;
       return { ok: true };
     },
 

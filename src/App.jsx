@@ -6,11 +6,11 @@ import Reporter from './components/Reporter.jsx'
 import DrinkGrid from './components/DrinkGrid.jsx'
 import Ticker from './components/Ticker.jsx'
 import { MARKET_COUNT, MARKET_ROTATION_MS, buildBoard, fmt } from './lib/market.js'
-import { formatEnd, isOpen, isPromotion } from './lib/happyHour.js'
+import { formatEnd, isAlarmActive, isOpen, isPromotion } from './lib/happyHour.js'
 import { useExchange } from './lib/useExchange.js'
 
 export default function App() {
-  const { prices, happy, offset, synced } = useExchange()
+  const { prices, happy, alarmAt, offset, synced } = useExchange()
   const [now, setNow] = useState(() => Date.now())
   const [activeIndex, setActiveIndex] = useState(0)
   const rotationStarted = useRef(performance.now())
@@ -56,35 +56,44 @@ export default function App() {
   const promotion = beerVisible && isPromotion(happy, beerBase)
   const trade = beerVisible ? { ...happy, open: isOpen(happy, serverNow) } : null
 
+  const alarm = isAlarmActive(alarmAt, serverNow)
+
   const liveRef = useRef(null)
   liveRef.current = { market, happy, offset }
 
   return (
-    <div className="screen">
-      <Header now={now} />
-      <section className="main">
-        <div className="market">
-          <div className="market-top">
-            <MarketHero
-              market={market}
-              index={activeIndex}
-              happyHourInfo={promotion
-                ? `HAPPY HOUR · ${fmt(happy.price)} € · ${happy.expiresAt ? 'BIS ' : ''}${formatEnd(happy).toUpperCase()}`
-                : null}
-            />
-            <CrashChart
-              market={market}
-              trade={trade}
-              beerBase={beerBase}
-              open={open}
-              haltUntil={beerVisible && happy.expiresAt ? `bis ${formatEnd(happy)} Uhr` : 'bis zur Wiederaufnahme'}
-            />
+    <>
+      <div className="screen">
+        <Header now={now} />
+        <section className="main">
+          <div className="market">
+            <div className="market-top">
+              <MarketHero
+                market={market}
+                index={activeIndex}
+                happyHourInfo={promotion
+                  ? `HAPPY HOUR · ${fmt(happy.price)} € · ${happy.expiresAt ? 'BIS ' : ''}${formatEnd(happy).toUpperCase()}`
+                  : null}
+              />
+              <CrashChart
+                market={market}
+                trade={trade}
+                beerBase={beerBase}
+                open={open}
+                haltUntil={beerVisible && happy.expiresAt ? `bis ${formatEnd(happy)} Uhr` : 'bis zur Wiederaufnahme'}
+              />
+            </div>
           </div>
+          <Reporter liveRef={liveRef} />
+        </section>
+        <DrinkGrid drinks={drinks} activeName={market.name} />
+        <Ticker drinks={drinks} />
+      </div>
+      {alarm && (
+        <div className="alarm-overlay" role="alert">
+          <div className="alarm-text">⚠ ALARM ⚠</div>
         </div>
-        <Reporter liveRef={liveRef} />
-      </section>
-      <DrinkGrid drinks={drinks} activeName={market.name} />
-      <Ticker drinks={drinks} />
-    </div>
+      )}
+    </>
   )
 }

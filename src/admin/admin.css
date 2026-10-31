@@ -95,3 +95,16 @@
   .admin-happy, .admin-prices { grid-template-columns: 1fr; }
   .admin h1 { font-size: 24px; }
 }
+
+.admin-alarm { border-left-color: #e0001f; }
+.admin .alarm-button {
+  width: 100%;
+  padding: 16px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  background: #c4001b;
+  border: 2px solid #ff4d5e;
+  box-shadow: 0 0 18px #ff00224d;
+}

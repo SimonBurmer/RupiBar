@@ -3,6 +3,7 @@ import { DEFAULT_PRICES, fmt, parsePrice } from './market.js';
 export const TRADING_WINDOW_MS = 6000;
 export const BULLETIN_MS = 24000;
 export const MAX_MINUTES = 10080;
+export const ALARM_MS = 6000;
 export const INVALID_INPUT_MESSAGE = `Bitte einen Preis von 0 bis 99 € und eine Laufzeit von 0 bis ${MAX_MINUTES} Minuten eingeben.`;
 
 // Bierkurs: aktueller Preis, Preis davor, Ablauf der Happy Hour (null = keine/unbegrenzt) und Zeitpunkt der letzten Änderung.
@@ -12,6 +13,7 @@ export const INITIAL_HAPPY = {
 
 export const isExpired = (state, now) => state.expiresAt !== null && now >= state.expiresAt;
 export const isOpen = (state, now) => state.eventAt > 0 && now - state.eventAt < TRADING_WINDOW_MS;
+export const isAlarmActive = (alarmAt, now) => alarmAt > 0 && now >= alarmAt - 1000 && now - alarmAt < ALARM_MS;
 export const isPromotion = (state, base) => state.price !== base || state.expiresAt !== null;
 
 export function formatEnd(state) {

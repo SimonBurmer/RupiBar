@@ -1,7 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { DEFAULT_PRICES, buildBoard, chartGeometry, fmt, parsePrice } from '../src/lib/market.js'
-import { INITIAL_HAPPY, bulletin, formatEnd, isExpired, isOpen, isPromotion, nextState, parseInput } from '../src/lib/happyHour.js'
+import { ALARM_MS, INITIAL_HAPPY, bulletin, isAlarmActive, formatEnd, isExpired, isOpen, isPromotion, nextState, parseInput } from '../src/lib/happyHour.js'
 import { createStore } from '../src/lib/store.js'
 
 const T0 = 1800000000000
@@ -87,4 +87,16 @@ test('Eingabeprüfung', () => {
   assert.deepEqual(parseInput('1,555', '5'), { price: 1.56, minutes: 5 })
   assert.equal(parsePrice(' 2,5 '), 2.5)
   assert.equal(parsePrice('abc'), null)
+})
+
+test('Alarm ist für ALARM_MS aktiv', () => {
+  const store = createStore()
+  assert.equal(store.snapshot().alarmAt, 0)
+  assert.equal(isAlarmActive(0, T0), false)
+  store.triggerAlarm(T0)
+  const { alarmAt } = store.snapshot()
+  assert.equal(alarmAt, T0)
+  assert.equal(isAlarmActive(alarmAt, T0), true)
+  assert.equal(isAlarmActive(alarmAt, T0 + ALARM_MS - 1), true)
+  assert.equal(isAlarmActive(alarmAt, T0 + ALARM_MS), false)
 })

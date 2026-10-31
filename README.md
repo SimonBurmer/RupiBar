@@ -36,6 +36,9 @@ wählbarer Laufzeit (`0` Minuten = bis zur manuellen Rücksetzung); danach gilt 
 der Normalpreis. Die Anzeige erzählt dazu eine kurze Handelsöffnung mit Preissturz
 beziehungsweise Kurserholung und zeigt eine Minute lang das Bier.
 
+Der Button **Alarm** auf `/admin` färbt alle Anzeigen für 6 Sekunden rot und lässt
+in der Mitte einen großen ALARM-Schriftzug blinken.
+
 Die Preise liegen nur im Speicher des Servers. `/admin` ist nicht passwortgeschützt,
 und nach jedem Deploy oder Neustart gelten wieder die Standardpreise.
 
@@ -43,7 +46,7 @@ und nach jedem Deploy oder Neustart gelten wieder die Standardpreise.
 
 - `server.js` – liefert die App aus und stellt die Preis-API bereit
   (`GET /api/state`, Live-Updates über `GET /api/events`, `PUT /api/prices`,
-  `POST /api/happy-hour`, `POST /api/happy-hour/reset`).
+  `POST /api/happy-hour`, `POST /api/happy-hour/reset`, `POST /api/alarm`).
 - `src/App.jsx` – Börsenanzeige; `src/admin/AdminPage.jsx` – Admin-Seite.
 - `src/components/` – Kopfzeile, Kursanzeige, Crash-Chart, Reporter,
   Getränkekacheln und Laufband.

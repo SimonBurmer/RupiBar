@@ -750,3 +750,33 @@ header { border-bottom: 1px solid #36485e; }
 /* React-Einbindung: #root nimmt keinen eigenen Platz ein, damit .screen wie
    bisher direkt im Body-Grid zentriert wird. */
 #root { display: contents; }
+
+/* Alarm aus /admin: ganze Anzeige rot, großer blinkender Schriftzug. */
+.alarm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: #e0001fb8;
+  box-shadow: inset 0 0 18vmin 4vmin #ff0022;
+  animation: alarm-flash .5s linear infinite;
+  pointer-events: none;
+}
+.alarm-text {
+  font-family: Impact, "Arial Black", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 900;
+  font-size: min(13vw, 28vh);
+  line-height: 1;
+  letter-spacing: .02em;
+  color: #fff;
+  text-shadow: 0 0 .08em #000, 0 0 .3em #ff0022, .03em .03em 0 #7a0010;
+  -webkit-text-stroke: .015em #7a0010;
+  white-space: nowrap;
+  animation: alarm-blink .5s linear infinite;
+}
+@keyframes alarm-flash { 0%, 49.9% { background: #e0001fb8; } 50%, 100% { background: #8a0014d9; } }
+@keyframes alarm-blink { 0%, 59.9% { opacity: 1; } 60%, 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .alarm-overlay, .alarm-text { animation: none; }
+}

@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react'
 import { DRINKS, fmt, parsePrice } from '../lib/market.js'
-import { MAX_MINUTES, formatEnd, isOpen, isPromotion } from '../lib/happyHour.js'
+import { ALARM_MS, MAX_MINUTES, formatEnd, isAlarmActive, isOpen, isPromotion } from '../lib/happyHour.js'
 import { sendChange, useExchange } from '../lib/useExchange.js'
 import './admin.css'
 
 const toInput = price => price.toFixed(2)
 
 export default function AdminPage() {
-  const { prices, happy, offset, synced, connected } = useExchange()
+  const { prices, happy, alarmAt, offset, synced, connected } = useExchange()
   const [drafts, setDrafts] = useState(null)
   const [priceFeedback, setPriceFeedback] = useState({ text: '', error: false })
   const [happyFeedback, setHappyFeedback] = useState({ text: '', error: false })
+  const [alarmFeedback, setAlarmFeedback] = useState({ text: '', error: false })
   const [happyPrice, setHappyPrice] = useState('1.50')
   const [happyMinutes, setHappyMinutes] = useState('60')
   const [busy, setBusy] = useState(false)
@@ -18,7 +19,7 @@ export default function AdminPage() {
 
   useEffect(() => { document.title = 'RUPI BAR – Admin' }, [])
   useEffect(() => {
-    const timer = setInterval(() => setNow(Date.now()), 1000)
+    const timer = setInterval(() => setNow(Date.now()), 250)
     return () => clearInterval(timer)
   }, [])
   // Eingabefelder einmalig mit den Serverpreisen füllen.
@@ -64,6 +65,10 @@ export default function AdminPage() {
       state => `Übernommen: ${fmt(state.happy.price)} € · ${formatEnd(state.happy)}.`)
   }
 
+  function triggerAlarm() {
+    run(() => sendChange('POST', '/api/alarm'), setAlarmFeedback, () => 'Alarm ausgelöst.')
+  }
+
   function resetHappyHour() {
     run(() => sendChange('POST', '/api/happy-hour/reset'), setHappyFeedback,
       state => `Zurückgesetzt auf ${fmt(state.happy.price)} €.`)
@@ -80,6 +85,15 @@ export default function AdminPage() {
         </div>
         <a className="admin-link" href="/">Zur Anzeige →</a>
       </header>
+
+      <section className="admin-card admin-alarm">
+        <h2>Alarm</h2>
+        <p className="admin-current">Färbt alle Anzeigen für {ALARM_MS / 1000} Sekunden rot mit blinkendem ALARM.</p>
+        <button type="button" className="alarm-button" onClick={triggerAlarm} disabled={busy || !connected}>
+          {isAlarmActive(alarmAt, now + offset) ? '🚨 Alarm läuft …' : '🚨 Alarm'}
+        </button>
+        <p className={`admin-feedback${alarmFeedback.error ? ' error' : ''}`} role="status" aria-live="polite">{alarmFeedback.text}</p>
+      </section>
 
       <section className="admin-card">
         <h2>Bier · Happy Hour</h2>
