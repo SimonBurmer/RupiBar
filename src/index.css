@@ -1,46 +1,12 @@
-:root {
-  --bg: #fdf8f3;
-  --fg: #2b211b;
-  --muted: #7a6a5e;
-  --card: #ffffff;
-  --accent: #e8572a;
-  --border: #eadfd5;
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  color-scheme: light dark;
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background: #02060c;
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #1a1512;
-    --fg: #f3ebe4;
-    --muted: #b3a497;
-    --card: #241d18;
-    --border: #3a2f27;
-  }
+.exchange-display {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
 }
-* { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--fg); }
-.page { max-width: 720px; margin: 0 auto; padding: 0 16px 48px; }
-.hero { text-align: center; padding: 64px 0 32px; }
-.hero h1 { font-size: 3rem; margin: 0; color: var(--accent); letter-spacing: -0.02em; }
-.hero p { color: var(--muted); margin-top: 8px; }
-h2 { font-size: 1.25rem; }
-.menu { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
-.card {
-  display: flex; justify-content: space-between; align-items: center; gap: 16px;
-  background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px;
-}
-.card h3 { margin: 0 0 4px; font-size: 1.05rem; }
-.card p { margin: 0; color: var(--muted); font-size: 0.9rem; }
-.card-actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
-.price { font-weight: 600; }
-button {
-  background: var(--accent); color: #fff; border: 0; border-radius: 8px;
-  padding: 8px 14px; font: inherit; font-weight: 600; cursor: pointer;
-}
-button:hover { filter: brightness(1.08); }
-button.ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
-.cart {
-  margin-top: 24px; display: flex; align-items: center; gap: 16px; justify-content: flex-end;
-  padding: 16px; border-top: 1px solid var(--border);
-}
-footer { text-align: center; color: var(--muted); font-size: 0.8rem; margin-top: 48px; }
