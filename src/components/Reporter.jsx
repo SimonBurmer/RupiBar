@@ -3,7 +3,7 @@ import studioImage from '../assets/reporter-studio.png'
 import { bulletin } from '../lib/happyHour.js'
 import { TURNS, TURN_DURATION, captionFor, startReporterAnimation } from '../lib/reporterAnimation.js'
 
-// `liveRef.current` hält { market, happy } für den Animationsloop aktuell,
+// `liveRef.current` hält { market, happy, offset } für den Animationsloop aktuell,
 // ohne die Animation bei jedem Render neu zu starten.
 export default function Reporter({ liveRef }) {
   const photoRef = useRef(null)
@@ -24,8 +24,8 @@ export default function Reporter({ liveRef }) {
     if (!ready) return undefined
     return startReporterAnimation(photoRef.current, canvasRef.current, time => {
       const [speaker, headline, text] = TURNS[Math.floor(time / TURN_DURATION) % TURNS.length]
-      const { market, happy } = liveRef.current
-      const news = bulletin(happy, Date.now())
+      const { market, happy, offset } = liveRef.current
+      const news = bulletin(happy, Date.now() + offset)
       const next = {
         caption: captionFor(speaker),
         headline: news ? news.headline : headline,

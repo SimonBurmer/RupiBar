@@ -1,64 +1,80 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { buildBoard, chartGeometry, fmt } from '../src/lib/market.js'
-import {
-  INITIAL_STATE, STORAGE_KEY, bootState, bulletin, formatEnd, isExpired, isOpen,
-  isPromotion, nextState, parseInput, saveState
-} from '../src/lib/happyHour.js'
+import { DEFAULT_PRICES, buildBoard, chartGeometry, fmt, parsePrice } from '../src/lib/market.js'
+import { INITIAL_HAPPY, bulletin, formatEnd, isExpired, isOpen, isPromotion, nextState, parseInput } from '../src/lib/happyHour.js'
+import { createStore } from '../src/lib/store.js'
 
-const memoryStorage = (map = new Map()) => ({
-  getItem: key => map.get(key) ?? null,
-  setItem: (key, value) => map.set(key, value)
-})
 const T0 = 1800000000000
 
-test('Preisübernahme wirkt auf Kurs, Getränkekarte und Ticker', () => {
-  const { markets, drinks } = buildBoard(1.5)
+test('Preise wirken auf Kurse, Getränkekarte und Ticker', () => {
+  const { markets, drinks } = buildBoard({ ...DEFAULT_PRICES, 'Gin Tonic': 5 }, 1.5)
   assert.equal(markets[0].price, 1.5)
   assert.equal(drinks[0].price, 1.5)
   assert.equal(fmt(drinks[0].price), '1,50')
-  assert.equal(buildBoard(2).markets[0].price, 2)
+  assert.equal(markets.find(market => market.name === 'Gin Tonic').price, 5)
+  assert.equal(drinks.find(drink => drink.name === 'Gin Tonic').price, 5)
 })
 
 test('Handelsphasen: kurz geöffnet, danach ausgesetzt', () => {
-  const state = nextState(INITIAL_STATE, 1.5, 30, T0)
+  const state = nextState(INITIAL_HAPPY, 1.5, 30, T0)
   assert.equal(isOpen(state, T0), true)
   assert(bulletin(state, T0).headline.includes('ABGESTÜRZT'))
   assert.equal(isOpen(state, T0 + 6500), false)
-  assert.equal(isPromotion(state), true)
+  assert.equal(isPromotion(state, 2), true)
 })
 
-test('Neuladen übernimmt gespeicherten Zustand', () => {
-  const storage = memoryStorage()
-  const state = nextState(INITIAL_STATE, 1.5, 30, T0)
-  assert.equal(saveState(storage, state), true)
-  const { state: loaded } = bootState(storage, T0 + 1000)
-  assert.equal(loaded.price, 1.5)
-  assert.equal(loaded.expiresAt, state.expiresAt)
-})
-
-test('Ablauf führt zur Kurserholung auf 2 Euro', () => {
-  const state = nextState(INITIAL_STATE, 1.5, 30, T0)
+test('Happy Hour läuft ab und der Kurs erholt sich auf den Normalpreis', () => {
+  const store = createStore()
+  assert.equal(store.setHappyHour('1.5', '30', T0).ok, true)
+  assert.equal(store.snapshot().happy.price, 1.5)
   const end = T0 + 30 * 60000
-  assert.equal(isExpired(state, end - 1), false)
-  assert.equal(isExpired(state, end), true)
-  const recovered = nextState(state, 2, 0, end)
-  assert.equal(recovered.price, 2)
-  assert(bulletin(recovered, end).headline.includes('ERHOLT'))
-  const geometry = chartGeometry(buildBoard(2).markets[0], { ...recovered, open: true })
+  assert.equal(store.tick(end - 1), false)
+  assert.equal(store.tick(end), true)
+  const { happy } = store.snapshot()
+  assert.equal(happy.price, 2)
+  assert(bulletin(happy, end).headline.includes('ERHOLT'))
+  const geometry = chartGeometry(buildBoard(DEFAULT_PRICES, 2).markets[0], { ...happy, open: true }, 2)
   assert.equal(geometry.recovery, true)
   assert.equal(geometry.trading, true)
   assert.notEqual(geometry.eventPath, '')
 })
 
 test('Unbegrenzte Laufzeit und manuelles Zurücksetzen', () => {
-  const state = nextState(INITIAL_STATE, 1.25, 0, T0)
-  assert.equal(state.expiresAt, null)
-  assert.equal(isExpired(state, T0 + 8 * 3600000), false)
-  assert.equal(formatEnd(state), 'bis zur Rücksetzung')
-  const reset = nextState(state, 2, 0, T0 + 1)
-  assert.equal(reset.price, 2)
-  assert.equal(isPromotion(reset), false)
+  const store = createStore()
+  store.setHappyHour(1.25, 0, T0)
+  const { happy } = store.snapshot()
+  assert.equal(happy.expiresAt, null)
+  assert.equal(isExpired(happy, T0 + 8 * 3600000), false)
+  assert.equal(formatEnd(happy), 'bis zur Rücksetzung')
+  store.resetHappyHour(T0 + 1)
+  assert.equal(store.snapshot().happy.price, 2)
+  assert.equal(isPromotion(store.snapshot().happy, 2), false)
+})
+
+test('Getränkepreise ändern', () => {
+  const store = createStore()
+  assert.equal(store.setPrices({ Vodka: '1,20', 'Aperol Spritz': 4.5 }, T0).ok, true)
+  assert.equal(store.snapshot().prices.Vodka, 1.2)
+  assert.equal(store.snapshot().prices['Aperol Spritz'], 4.5)
+  assert.equal(store.snapshot().happy.eventAt, 0, 'andere Getränke lösen keine Biermeldung aus')
+  assert.equal(store.setPrices({ Cola: 2 }, T0).ok, false)
+  assert.equal(store.setPrices({ Vodka: -1 }, T0).ok, false)
+  assert.equal(store.setPrices({ Vodka: '' }, T0).ok, false)
+  assert.equal(store.setPrices(null, T0).ok, false)
+  assert.equal(store.snapshot().prices.Vodka, 1.2, 'ungültige Eingaben ändern nichts')
+})
+
+test('Neuer Bier-Normalpreis: Kurs folgt sofort, außer während einer Happy Hour', () => {
+  const store = createStore()
+  store.setPrices({ Bier: 2.5 }, T0)
+  assert.equal(store.snapshot().happy.price, 2.5)
+  assert.equal(store.snapshot().happy.eventAt, T0)
+
+  store.setHappyHour(1, 10, T0 + 1000)
+  store.setPrices({ Bier: 3 }, T0 + 2000)
+  assert.equal(store.snapshot().happy.price, 1, 'Happy Hour läuft weiter')
+  store.tick(T0 + 1000 + 10 * 60000)
+  assert.equal(store.snapshot().happy.price, 3, 'nach Ablauf gilt der neue Normalpreis')
 })
 
 test('Eingabeprüfung', () => {
@@ -66,21 +82,9 @@ test('Eingabeprüfung', () => {
   assert.equal(parseInput('1.5', '0.5'), null)
   assert.equal(parseInput('100', '1'), null)
   assert.equal(parseInput('1', '10081'), null)
+  assert.equal(parseInput('', ''), null)
   assert.deepEqual(parseInput('0', '1'), { price: 0, minutes: 1 })
   assert.deepEqual(parseInput('1,555', '5'), { price: 1.56, minutes: 5 })
-})
-
-test('Abgelaufener Preis beim Neuladen fällt auf 2 Euro zurück', () => {
-  const storage = memoryStorage()
-  saveState(storage, nextState(INITIAL_STATE, 0, 1, T0))
-  const { state } = bootState(storage, T0 + 61000)
-  assert.equal(state.price, 2)
-  assert.equal(state.previousPrice, 0)
-  assert.equal(JSON.parse(storage.getItem(STORAGE_KEY)).price, 2)
-})
-
-test('Ungültiger oder fehlender Speicher startet mit Normalpreis', () => {
-  assert.equal(bootState(memoryStorage(new Map([[STORAGE_KEY, '{"price":500}']])), T0).state.price, 2)
-  assert.equal(bootState(null, T0).state.price, 2)
-  assert.equal(saveState(null, INITIAL_STATE), false)
+  assert.equal(parsePrice(' 2,5 '), 2.5)
+  assert.equal(parsePrice('abc'), null)
 })

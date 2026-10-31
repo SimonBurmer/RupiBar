@@ -9,40 +9,49 @@ Node.js ab Version 20:
 
 ```sh
 npm ci
-npm run dev
-npm test
 npm run build
+npm start          # Server auf http://localhost:3000 (Anzeige und /admin)
+npm test
 ```
 
-`npm start` stellt den Produktionsbuild auf dem von Railway gesetzten Port bereit.
-Die bestehende Railway-Konfiguration bleibt erhalten. Laut bisherigem Setup
-erfolgt das automatische Deployment bei einem Push auf `main`.
+Für die Entwicklung `npm run dev:server` und `npm run dev` parallel starten;
+Vite leitet `/api` an den lokalen Server weiter.
+
+Railway baut mit `npm run build` und startet `npm start`. Jeder Push auf `main`
+wird automatisch deployt.
 
 ## Anzeige und Bedienung
 
-- Wechsel im Minutentakt: Bier, Gin Tonic, Vodka Bull, Aperol Spritz.
-- Crash-Charts mit ausgesetztem Handel und festen Barpreisen.
-- Animiertes Reporterduo mit Eilmeldungen, Preisband und zehn Getränkekacheln.
+- `/` – Börsenanzeige für den Fernseher oder Beamer (16:9).
+- `/admin` – Preise ändern, z. B. vom Handy aus. Änderungen erscheinen sofort auf
+  allen geöffneten Anzeigen.
 
-Unten rechts öffnet **⚙ Happy Hour** die Bierpreissteuerung. Preis und Laufzeit
-sind frei einstellbar; `0` Minuten bedeutet bis zur manuellen Rücksetzung.
-Nach Ablauf oder per Rücksetztaste gilt wieder der Normalpreis von 2,00 €.
-Die Anzeige erzählt dazu eine kurze Handelsöffnung mit Preissturz beziehungsweise
-Kurserholung. Der Zustand wird im lokalen Browser gespeichert und wirkt nur dort,
-nicht automatisch auf andere Geräte.
+Wechsel im Minutentakt: Bier, Gin Tonic, Vodka Bull, Aperol Spritz. Dazu Crash-Charts
+mit ausgesetztem Handel, das animierte Reporterduo mit Eilmeldungen, Preisband und
+zehn Getränkekacheln.
+
+Auf `/admin` lassen sich alle zehn Getränkepreise setzen. Der Bierpreis dort ist der
+Normalpreis. Die **Happy Hour** setzt einen vorübergehenden Bierpreis mit frei
+wählbarer Laufzeit (`0` Minuten = bis zur manuellen Rücksetzung); danach gilt wieder
+der Normalpreis. Die Anzeige erzählt dazu eine kurze Handelsöffnung mit Preissturz
+beziehungsweise Kurserholung und zeigt eine Minute lang das Bier.
+
+Die Preise liegen nur im Speicher des Servers. `/admin` ist nicht passwortgeschützt,
+und nach jedem Deploy oder Neustart gelten wieder die Standardpreise.
 
 ## Dateien
 
-Die Anzeige ist eine React-App (Vite):
-
-- `src/App.jsx` – Zustand (Happy Hour, Kursrotation, Uhr) und Aufbau der Anzeige.
-- `src/components/` – Kopfzeile, Kursanzeige, Crash-Chart, Reporter, Getränkekacheln,
-  Laufband und Happy-Hour-Dialog.
-- `src/lib/market.js` – Kurse, Getränke und Chart-Geometrie.
-- `src/lib/happyHour.js` – Happy-Hour-Logik und Speicherung im Browser.
+- `server.js` – liefert die App aus und stellt die Preis-API bereit
+  (`GET /api/state`, Live-Updates über `GET /api/events`, `PUT /api/prices`,
+  `POST /api/happy-hour`, `POST /api/happy-hour/reset`).
+- `src/App.jsx` – Börsenanzeige; `src/admin/AdminPage.jsx` – Admin-Seite.
+- `src/components/` – Kopfzeile, Kursanzeige, Crash-Chart, Reporter,
+  Getränkekacheln und Laufband.
+- `src/lib/market.js` – Getränke, Standardpreise und Chart-Geometrie.
+- `src/lib/happyHour.js` – Happy-Hour-Logik; `src/lib/store.js` – Preiszustand des Servers.
+- `src/lib/useExchange.js` – Live-Verbindung des Browsers zum Server.
 - `src/lib/reporterAnimation.js` – Dialog und Canvas-Animation der Reporter.
-- `src/index.css` – Gestaltung der 16:9-Anzeige.
-- `src/assets/reporter-studio.png` – Studiobild der Reporter.
+- `src/index.css` – Gestaltung der Anzeige; `src/admin/admin.css` – Gestaltung von `/admin`.
 
-`tests/happy-hour.test.js` prüft Preisübernahme, Handelsphasen, Ablaufzeit,
-Neuladen, unbegrenzte Laufzeit, manuelles Zurücksetzen und die Eingabeprüfung.
+`tests/happy-hour.test.js` prüft Preisänderungen, Handelsphasen, Ablauf,
+unbegrenzte Laufzeit, Zurücksetzen und die Eingabeprüfung.
