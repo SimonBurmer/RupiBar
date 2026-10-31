@@ -18,7 +18,8 @@ export const TURNS = [
   [1, 'PRÜFUNG DAUERT AN', () => 'Simon B meldet sich von der Theke: Die Stichprobe sei vielversprechend, aber noch nicht repräsentativ. Er bittet um Verlängerung seines Forschungsauftrags.']
 ];
 
-export const TURN_DURATION = 6200;
+// Wie lange jede Meldung stehen bleibt (ms).
+export const TURN_DURATION = 9000;
 
 export const captionFor = speaker => (speaker === 0 ? 'REPORTERIN · LIVE IM GESPRÄCH' : 'REPORTER · LIVE IM GESPRÄCH');
 
@@ -195,7 +196,7 @@ export function startReporterAnimation(photo, canvas, onFrame) {
     }
     const turnStarted = time - time % TURN_DURATION;
     const elapsed = time - turnStarted;
-    const speaking = elapsed > 250 && elapsed < 5450 && elapsed % 1900 < 1550;
+    const speaking = elapsed > 250 && elapsed < TURN_DURATION - 750 && elapsed % 1900 < 1550;
     const syllable = speaking ? mouthOpening(elapsed - 250) : 0;
 
     FACES.forEach((face, index) => {
