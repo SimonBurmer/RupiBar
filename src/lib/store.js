@@ -6,9 +6,10 @@ export const DEFAULT_THEME = 'modern';
 // Anzeige-Einstellungen: Getränkeleiste fest / laufend / blätternd, Tempo in Sekunden, Laufband an/aus.
 export const TILE_MODES = ['scroll', 'page', 'fixed'];
 // Reporter: Szenenwechsel und Meldungsdauer in Sekunden.
-export const DEFAULT_SETTINGS = { tileMode: 'scroll', tileSeconds: 5, showTicker: true, sceneSeconds: 30, newsSeconds: 9 };
+export const DEFAULT_SETTINGS = { tileMode: 'scroll', tileSeconds: 5, showTicker: true, sceneSeconds: 30, newsSeconds: 9, marketSeconds: 5 };
 const SECOND_LIMITS = {
   tileSeconds: [1, 120, 'Tempo der Getränkeleiste'],
+  marketSeconds: [3, 600, 'Kursübersicht'],
   sceneSeconds: [5, 600, 'Szenenwechsel'],
   newsSeconds: [3, 60, 'Meldungsdauer']
 };

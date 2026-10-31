@@ -202,7 +202,10 @@ export default function AdminPage() {
 
       <section className="admin-card">
         <h2>Anzeige</h2>
-        <fieldset className="admin-choice">
+        <SecondsSetting id="market-seconds" label="Kursübersicht mit Chart wechseln alle (Sekunden)" min={3} max={600} value={settings.marketSeconds}
+          disabled={busy || !connected} onSave={value => changeSettings({ marketSeconds: value }, `Kursübersicht wechselt alle ${value} Sekunden.`)} />
+        <small className="admin-hint">Bier → Gin Tonic → Vodka Bull → Aperol Spritz. Nach einer Preisänderung bleibt das Getränk 24 Sekunden stehen.</small>
+        <fieldset className="admin-choice admin-spaced">
           <legend>Getränkeleiste (über dem Laufband)</legend>
           {TILE_MODE_OPTIONS.map(([value, label]) => (
             <button key={value} type="button" aria-pressed={settings.tileMode === value}

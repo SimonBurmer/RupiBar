@@ -135,10 +135,10 @@ test('Eingabeprüfung', () => {
 
 test('Anzeige-Einstellungen: Getränkeleiste, Tempo, Laufband', () => {
   const store = createStore()
-  assert.deepEqual(store.snapshot().settings, { tileMode: 'scroll', tileSeconds: 5, showTicker: true, sceneSeconds: 30, newsSeconds: 9 })
+  assert.deepEqual(store.snapshot().settings, { tileMode: 'scroll', tileSeconds: 5, showTicker: true, sceneSeconds: 30, newsSeconds: 9, marketSeconds: 5 })
   assert.equal(store.setSettings({ tileMode: 'page', tileSeconds: 8 }).ok, true)
   assert.equal(store.setSettings({ showTicker: false }).ok, true)
-  assert.deepEqual(store.snapshot().settings, { tileMode: 'page', tileSeconds: 8, showTicker: false, sceneSeconds: 30, newsSeconds: 9 })
+  assert.deepEqual(store.snapshot().settings, { tileMode: 'page', tileSeconds: 8, showTicker: false, sceneSeconds: 30, newsSeconds: 9, marketSeconds: 5 })
   assert.equal(store.setSettings({ tileMode: 'wild' }).ok, false)
   assert.equal(store.setSettings({ tileSeconds: 0 }).ok, false)
   assert.equal(store.setSettings({ tileSeconds: 2.5 }).ok, false)
@@ -157,4 +157,12 @@ test('Reporter-Takt einstellen', () => {
   assert.equal(store.setSettings({ sceneSeconds: 2 }).ok, false)
   assert.equal(store.setSettings({ newsSeconds: 120 }).ok, false)
   assert.equal(store.snapshot().settings.sceneSeconds, 15)
+})
+
+test('Kursübersicht-Takt einstellen', () => {
+  const store = createStore()
+  assert.equal(store.snapshot().settings.marketSeconds, 5)
+  assert.equal(store.setSettings({ marketSeconds: 20 }).ok, true)
+  assert.equal(store.setSettings({ marketSeconds: 2 }).ok, false)
+  assert.equal(store.snapshot().settings.marketSeconds, 20)
 })

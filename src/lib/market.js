@@ -25,7 +25,8 @@ const MARKETS = [
 ];
 
 export const MARKET_COUNT = MARKETS.length;
-export const MARKET_ROTATION_MS = 60000;
+// Nach einer Preisänderung bleibt das Getränk so lange stehen wie die Eilmeldung (24 s).
+export const MARKET_PIN_MS = 24000;
 
 // Getränke mit eigener Kursübersicht; für sie ist eine Happy Hour möglich.
 export const HAPPY_DRINKS = MARKETS.map(market => market.name);

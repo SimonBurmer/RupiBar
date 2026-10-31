@@ -26,7 +26,7 @@ wird automatisch deployt.
 - `/admin` – Preise ändern, z. B. vom Handy aus. Änderungen erscheinen sofort auf
   allen geöffneten Anzeigen.
 
-Wechsel im Minutentakt: Bier, Gin Tonic, Vodka Bull, Aperol Spritz. Dazu Crash-Charts
+Wechsel der Kursübersicht (Standard alle 5 Sekunden, einstellbar): Bier, Gin Tonic, Vodka Bull, Aperol Spritz. Dazu Crash-Charts
 mit ausgesetztem Handel, das animierte Reporterduo mit Eilmeldungen, Preisband und
 zehn Getränkekacheln.
 
@@ -38,7 +38,7 @@ Auf `/admin`:
   möglich. Die Anzeige zeigt das Getränk eine Minute lang mit Handelsöffnung und
   Eilmeldung und blendet während einer Happy Hour alle 3 Minuten groß „HAPPY HOUR“ ein.
 - **Design der Anzeige**: „Neu“ oder „Klassisch“ (das ursprüngliche Design).
-- **Anzeige**: Getränkeleiste laufend, blätternd (fünf je Seite) oder fest, Tempo in
+- **Anzeige**: Wechseltakt der Kursübersicht mit Chart (Standard 5 s), Getränkeleiste laufend, blätternd (fünf je Seite) oder fest, Tempo in
   Sekunden, Szenenwechsel und Meldungsdauer der Reporter, und das Laufband unten an oder aus.
 - **Alarm**: färbt alle Anzeigen für 6 Sekunden rot mit blinkendem ALARM.
 - **Alles zurücksetzen**: Standardpreise, alle Happy Hours beendet, Alarm gestoppt

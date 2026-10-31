@@ -10,7 +10,7 @@ import ClassicCrashChart from './components/classic/CrashChart.jsx'
 import ClassicDrinkGrid from './components/classic/DrinkGrid.jsx'
 import ClassicTicker from './components/classic/Ticker.jsx'
 import Reporter from './components/Reporter.jsx'
-import { MARKET_COUNT, MARKET_ROTATION_MS, buildBoard, fmt } from './lib/market.js'
+import { MARKET_COUNT, MARKET_PIN_MS, buildBoard, fmt } from './lib/market.js'
 import { formatEnd, happyFlash, isAlarmActive, isOpen, isPromotion, latestEvent } from './lib/happyHour.js'
 import { useExchange } from './lib/useExchange.js'
 import { applyTheme, storedTheme } from './lib/theme.js'
@@ -37,16 +37,25 @@ export default function App() {
 
   useEffect(() => { applyTheme(theme, true) }, [theme])
 
-  // Uhr und Handelsphasen aktualisieren; Kursübersicht im Minutentakt wechseln.
+  // Kursübersicht im eingestellten Takt wechseln (Standard 5 s). Ein neues Tempo aus /admin
+  // lässt das aktuelle Getränk stehen und startet den Takt von dort.
+  const rotationMs = settings.marketSeconds * 1000
+  const rotationMsRef = useRef(rotationMs)
+  if (rotationMsRef.current !== rotationMs) {
+    rotationStarted.current = performance.now() - activeIndex * rotationMs
+    rotationMsRef.current = rotationMs
+  }
+
+  // Uhr und Handelsphasen aktualisieren; Kursübersicht weiterschalten.
   useEffect(() => {
     const rotate = () => {
       if (Date.now() < marketPinnedUntil.current) return
-      const index = Math.floor((performance.now() - rotationStarted.current) / MARKET_ROTATION_MS) % MARKET_COUNT
-      setActiveIndex(index)
+      const elapsed = Math.max(0, performance.now() - rotationStarted.current)
+      setActiveIndex(Math.floor(elapsed / rotationMsRef.current) % MARKET_COUNT)
     }
     const tick = () => setNow(Date.now())
     const onVisibility = () => { rotate(); tick() }
-    const rotation = setInterval(rotate, 1000)
+    const rotation = setInterval(rotate, 250)
     const clock = setInterval(tick, 500)
     document.addEventListener('visibilitychange', onVisibility)
     return () => {
@@ -61,15 +70,17 @@ export default function App() {
     [prices, happy]
   )
 
-  // Nach einer Kursänderung aus /admin dieses Getränk eine Minute lang zeigen.
+  // Nach einer Kursänderung aus /admin dieses Getränk zeigen.
   const eventName = latestEvent(happy)
   const eventKey = eventName ? `${eventName}@${happy[eventName].eventAt}` : ''
   useEffect(() => {
     if (!synced) return
     if (lastEvent.current !== null && eventKey && eventKey !== lastEvent.current) {
-      rotationStarted.current = performance.now()
-      marketPinnedUntil.current = Date.now() + MARKET_ROTATION_MS
-      setActiveIndex(Math.max(0, markets.findIndex(market => market.name === eventName)))
+      const index = Math.max(0, markets.findIndex(market => market.name === eventName))
+      // Getränk für die Dauer der Eilmeldung zeigen, danach im Takt ab diesem Getränk weiter.
+      marketPinnedUntil.current = Date.now() + MARKET_PIN_MS
+      rotationStarted.current = performance.now() + MARKET_PIN_MS - index * rotationMsRef.current
+      setActiveIndex(index)
     }
     lastEvent.current = eventKey
   }, [synced, eventKey, eventName, markets])
