@@ -1,5 +1,6 @@
 import { DEFAULT_PRICES, HAPPY_DRINKS, parsePrice } from './market.js';
 import { INITIAL_HAPPY, INVALID_INPUT_MESSAGE, isExpired, isPromotion, nextState, parseInput } from './happyHour.js';
+import { DEFAULT_MENU, DEFAULT_TOPIC, DEFAULT_WHEEL, TOPIC_IDS, mergeMenu, mergeWheel } from './topics.js';
 
 export const THEMES = ['modern', 'classic'];
 export const DEFAULT_THEME = 'modern';
@@ -22,11 +23,14 @@ export function createStore() {
   let alarmAt = 0;
   let theme = DEFAULT_THEME;
   let settings = { ...DEFAULT_SETTINGS };
+  let topic = DEFAULT_TOPIC;
+  let menu = { ...DEFAULT_MENU };
+  let wheel = { ...DEFAULT_WHEEL };
 
   const happyDrink = drink => (HAPPY_DRINKS.includes(drink) ? drink : null);
 
   return {
-    snapshot: () => ({ prices: { ...prices }, happy: structuredClone(happy), alarmAt, theme, settings: { ...settings } }),
+    snapshot: () => ({ prices: { ...prices }, happy: structuredClone(happy), alarmAt, theme, settings: { ...settings }, topic, menu: { ...menu }, wheel: { ...wheel } }),
 
     setPrices(input, now) {
       if (!input || typeof input !== 'object' || Array.isArray(input)) return { ok: false, error: 'Keine Preise übergeben.' };
@@ -65,7 +69,7 @@ export function createStore() {
       return { ok: true };
     },
 
-    // Preise auf Standard, alle Happy Hours beenden, Alarm stoppen. Design und Anzeige-Einstellungen bleiben.
+    // Preise auf Standard, alle Happy Hours beenden, Alarm stoppen. Thema, Design und Einstellungen bleiben.
     resetAll(now) {
       prices = { ...DEFAULT_PRICES };
       const next = { ...happy };
@@ -91,7 +95,27 @@ export function createStore() {
       return { ok: true };
     },
 
-    // Teilweise Änderung der Anzeige-Einstellungen; ungültige Werte ändern nichts.
+    setTopic(value) {
+      if (!TOPIC_IDS.includes(value)) return { ok: false, error: 'Unbekanntes Thema.' };
+      topic = value;
+      return { ok: true };
+    },
+
+    setMenu(input) {
+      const result = mergeMenu(menu, input);
+      if (result.error) return { ok: false, error: result.error };
+      menu = result.value;
+      return { ok: true };
+    },
+
+    setWheel(input) {
+      const result = mergeWheel(wheel, input);
+      if (result.error) return { ok: false, error: result.error };
+      wheel = result.value;
+      return { ok: true };
+    },
+
+    // Teilweise Änderung der Börsen-Einstellungen; ungültige Werte ändern nichts.
     setSettings(input) {
       if (!input || typeof input !== 'object' || Array.isArray(input)) return { ok: false, error: 'Keine Einstellungen übergeben.' };
       const next = { ...settings };

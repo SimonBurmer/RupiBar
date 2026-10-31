@@ -11,6 +11,7 @@ import '@fontsource/ibm-plex-mono/latin-400.css'
 import '@fontsource/ibm-plex-mono/latin-500.css'
 import './themes/modern.css'
 import './themes/classic.css'
+import './topics.css'
 import './index.css'
 import { applyTheme, storedTheme } from './lib/theme.js'
 

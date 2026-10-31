@@ -56,7 +56,10 @@ const ACTIONS = {
   'POST /api/reset': (_body, now) => store.resetAll(now),
   'POST /api/alarm': (_body, now) => store.triggerAlarm(now),
   'PUT /api/theme': body => store.setTheme(body.theme),
-  'PUT /api/settings': body => store.setSettings(body)
+  'PUT /api/settings': body => store.setSettings(body),
+  'PUT /api/topic': body => store.setTopic(body.topic),
+  'PUT /api/menu': body => store.setMenu(body),
+  'PUT /api/wheel': body => store.setWheel(body)
 };
 
 async function handleApi(req, res, pathname) {

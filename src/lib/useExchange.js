@@ -1,20 +1,21 @@
 import { useEffect, useState } from 'react'
 import { DEFAULT_PRICES } from './market.js'
 import { INITIAL_HAPPY } from './happyHour.js'
+import { DEFAULT_MENU, DEFAULT_WHEEL } from './topics.js'
 
 export const DEFAULT_SETTINGS = { tileMode: 'scroll', tileSeconds: 5, showTicker: true, sceneSeconds: 30, newsSeconds: 9, marketSeconds: 5 }
 
 // Live-Preise vom Server. `offset` gleicht die Uhr dieses Geräts an die Serverzeit an.
 export function useExchange() {
   const [live, setLive] = useState({
-    prices: DEFAULT_PRICES, happy: INITIAL_HAPPY, alarmAt: 0, theme: null, settings: DEFAULT_SETTINGS, offset: 0, synced: false, connected: false
+    prices: DEFAULT_PRICES, happy: INITIAL_HAPPY, alarmAt: 0, theme: null, settings: DEFAULT_SETTINGS, topic: null, menu: DEFAULT_MENU, wheel: DEFAULT_WHEEL, offset: 0, synced: false, connected: false
   })
 
   useEffect(() => {
     const source = new EventSource('/api/events')
     source.onmessage = event => {
       const data = JSON.parse(event.data)
-      setLive({ prices: data.prices, happy: data.happy, alarmAt: data.alarmAt ?? 0, theme: data.theme ?? 'modern', settings: { ...DEFAULT_SETTINGS, ...data.settings }, offset: data.serverTime - Date.now(), synced: true, connected: true })
+      setLive({ prices: data.prices, happy: data.happy, alarmAt: data.alarmAt ?? 0, theme: data.theme ?? 'modern', settings: { ...DEFAULT_SETTINGS, ...data.settings }, topic: data.topic ?? 'exchange', menu: { ...DEFAULT_MENU, ...data.menu }, wheel: { ...DEFAULT_WHEEL, ...data.wheel }, offset: data.serverTime - Date.now(), synced: true, connected: true })
     }
     source.onerror = () => setLive(prev => ({ ...prev, connected: false }))
     return () => source.close()

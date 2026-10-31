@@ -2,16 +2,23 @@ export const fmt = value => Number(value).toFixed(2).replace('.', ',');
 
 // Getränkekarte mit Standardpreisen. Die aktuellen Preise kommen vom Server (/admin).
 export const DRINKS = [
-  { name: 'Bier', emoji: '🍺', defaultPrice: 2 },
-  { name: 'Weinschorle', emoji: '🥂', defaultPrice: 2.5 },
-  { name: 'Jägermeister', emoji: '🥃', defaultPrice: 1 },
-  { name: 'Tequila', emoji: '🥃', defaultPrice: 1 },
-  { name: 'Pfeffi', emoji: '🟢', defaultPrice: 1 },
-  { name: 'Vodka', emoji: '🥃', defaultPrice: 1 },
-  { name: 'Ficken', emoji: '🔴', defaultPrice: 1 },
-  { name: 'Gin Tonic', emoji: '🍸', defaultPrice: 4 },
-  { name: 'Vodka Bull', emoji: '🥤', defaultPrice: 4 },
-  { name: 'Aperol Spritz', emoji: '🍹', defaultPrice: 4 }
+  { name: 'Bier', emoji: '🍺', defaultPrice: 2, category: 'bier' },
+  { name: 'Weinschorle', emoji: '🥂', defaultPrice: 2.5, category: 'bier' },
+  { name: 'Jägermeister', emoji: '🥃', defaultPrice: 1, category: 'shots' },
+  { name: 'Tequila', emoji: '🥃', defaultPrice: 1, category: 'shots' },
+  { name: 'Pfeffi', emoji: '🟢', defaultPrice: 1, category: 'shots' },
+  { name: 'Vodka', emoji: '🥃', defaultPrice: 1, category: 'shots' },
+  { name: 'Ficken', emoji: '🔴', defaultPrice: 1, category: 'shots' },
+  { name: 'Gin Tonic', emoji: '🍸', defaultPrice: 4, category: 'longdrinks' },
+  { name: 'Vodka Bull', emoji: '🥤', defaultPrice: 4, category: 'longdrinks' },
+  { name: 'Aperol Spritz', emoji: '🍹', defaultPrice: 4, category: 'longdrinks' }
+];
+
+// Abschnitte der Getränkekarte.
+export const CATEGORIES = [
+  { id: 'bier', title: 'Bier & Wein' },
+  { id: 'shots', title: 'Shots' },
+  { id: 'longdrinks', title: 'Longdrinks & Cocktails' }
 ];
 
 export const DEFAULT_PRICES = Object.fromEntries(DRINKS.map(drink => [drink.name, drink.defaultPrice]));
@@ -36,8 +43,8 @@ export function buildBoard(prices, current = {}) {
   const priceOf = name => current[name] ?? prices[name];
   return {
     markets: MARKETS.map(market => ({ ...market, price: priceOf(market.name) })),
-    drinks: DRINKS.map(({ name, emoji }) => ({
-      name, emoji, price: priceOf(name), opening: MARKETS.find(market => market.name === name)?.opening ?? null
+    drinks: DRINKS.map(({ name, emoji, category }) => ({
+      name, emoji, category, price: priceOf(name), base: prices[name], opening: MARKETS.find(market => market.name === name)?.opening ?? null
     }))
   };
 }

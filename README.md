@@ -22,9 +22,22 @@ wird automatisch deployt.
 
 ## Anzeige und Bedienung
 
-- `/` – Börsenanzeige für den Fernseher oder Beamer (16:9).
-- `/admin` – Preise ändern, z. B. vom Handy aus. Änderungen erscheinen sofort auf
+- `/` – Anzeige für den Fernseher oder Beamer (16:9).
+- `/admin` – Bedienung, z. B. vom Handy aus. Änderungen erscheinen sofort auf
   allen geöffneten Anzeigen.
+
+Auf `/admin` wählt man das **Thema der Anzeige**:
+
+- **Börse** – die Kurstafel (Details unten).
+- **Getränkekarte** – ruhige Preistafel in drei Spalten; Happy-Hour-Preise mit
+  durchgestrichenem Normalpreis. Einstellungen: Titel, Untertitel, Hinweis, Emojis.
+- **Glücksrad** – das Geister-Glücksrad dreht sich im eingestellten Takt und kürt den
+  „Drink der Runde“ (auf allen Anzeigen gleich). Einstellungen: Titel, Takt, Preise.
+
+Preise, Happy Hours, Alarm und „Alles zurücksetzen“ gelten für alle Themen; die
+Einstellungen sind je Thema getrennt.
+
+### Börse
 
 Wechsel der Kursübersicht (Standard alle 5 Sekunden, einstellbar): Bier, Gin Tonic, Vodka Bull, Aperol Spritz. Dazu Crash-Charts
 mit ausgesetztem Handel, das animierte Reporterduo mit Eilmeldungen, Preisband und
@@ -55,8 +68,11 @@ und nach jedem Deploy oder Neustart gelten wieder die Standardpreise.
 - `server.js` – liefert die App aus und stellt die Preis-API bereit
   (`GET /api/state`, Live-Updates über `GET /api/events`, `PUT /api/prices`,
   `POST /api/happy-hour`, `POST /api/happy-hour/reset`, `POST /api/reset`,
-  `POST /api/alarm`, `PUT /api/theme`).
-- `src/App.jsx` – Börsenanzeige; `src/admin/AdminPage.jsx` – Admin-Seite.
+  `POST /api/alarm`, `PUT /api/theme`, `PUT /api/settings`, `PUT /api/topic`,
+  `PUT /api/menu`, `PUT /api/wheel`).
+- `src/App.jsx` – wählt das Thema; `src/components/ExchangeBoard.jsx`, `MenuBoard.jsx`,
+  `WheelBoard.jsx` – die drei Themen; `src/admin/AdminPage.jsx` – Admin-Seite.
+- `src/lib/topics.js` – Themen und ihre Einstellungen; `src/lib/wheel.js` – Glücksrad.
 - `src/components/` – Kopfzeile, Kursanzeige, Crash-Chart, Reporter,
   Getränkekacheln und Laufband.
 - `src/lib/market.js` – Getränke, Standardpreise und Chart-Geometrie.
