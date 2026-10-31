@@ -743,7 +743,10 @@
       .happy-dialog h2 { font-size: 24px; margin: 0 0 12px; }
       .happy-dialog p { line-height: 1.45; color: #c7d0de; }
       .happy-dialog label { display: block; margin-top: 16px; margin-bottom: 6px; }
-      .happy-dialog input { box-sizing: border-box; width: 100%; font: inherit; padding: 10px; background: #080f1b; color: #fff; border: 1px solid #52667e; border-radius: 4px; }
+      .happy-dialog input, .happy-dialog select { box-sizing: border-box; width: 100%; font: inherit; padding: 10px; background: #080f1b; color: #fff; border: 1px solid #52667e; border-radius: 4px; }
+      #happy-overview { list-style: none; padding: 0; margin: 14px 0; font-size: 14px; color: #c7d0de; }
+      #happy-overview li { padding: 7px 0; border-bottom: 1px solid #30445d; }
+      #happy-overview .promotion { color: #ffbd67; }
       .happy-dialog small { display: block; margin-top: 6px; color: #a7b6c9; }
       .happy-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 20px; }
       .happy-dialog button { font: inherit; cursor: pointer; border: 1px solid #52667e; background: #24374f; color: #fff; padding: 10px 12px; border-radius: 4px; }
@@ -838,14 +841,22 @@
     </div>
     <button class="admin-toggle" id="happy-toggle" type="button" aria-haspopup="dialog">⚙ Happy Hour</button>
     <dialog class="happy-dialog" id="happy-dialog" aria-labelledby="happy-title">
-      <h2 id="happy-title">Bierpreis &amp; Happy Hour</h2>
+      <h2 id="happy-title">Getränkepreise &amp; Happy Hour</h2>
+      <ul id="happy-overview" aria-label="Aktuelle Getränkepreise"></ul>
+      <label for="happy-drink">Getränk auswählen</label>
+      <select id="happy-drink">
+        <option value="0">Bier</option>
+        <option value="1">Gin Tonic</option>
+        <option value="2">Vodka Bull</option>
+        <option value="3">Aperol Spritz</option>
+      </select>
       <p id="happy-current"></p>
       <form id="happy-form">
-        <label for="happy-price">Neuer Bierpreis (€)</label>
+        <label for="happy-price">Neuer Preis (€)</label>
         <input id="happy-price" type="number" min="0" max="99" step="0.01" value="1.50" required>
         <label for="happy-minutes">Laufzeit (Minuten)</label>
         <input id="happy-minutes" type="number" min="0" max="10080" step="1" value="60" required>
-        <small>0 = bis zur manuellen Rücksetzung. Nach Ablauf gilt wieder 2,00 €.</small>
+        <small id="happy-help">0 = bis zur manuellen Rücksetzung. Nach Ablauf gilt wieder der Normalpreis.</small>
         <div class="happy-actions">
           <button type="submit">Preis übernehmen</button>
           <button type="button" id="happy-reset">Jetzt zurück auf 2,00 €</button>

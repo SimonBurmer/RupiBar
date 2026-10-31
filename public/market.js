@@ -1,11 +1,11 @@
-// Ausgesetzter Bierhandel: letzter Kurs und Barpreis sind fest auf 2 Euro gesetzt.
+// Normalpreise nach dem Crash; Happy Hours können jedes Getränk einzeln ändern.
 const beer = 2;
 const fmt = value => Number(value).toFixed(2).replace('.', ',');
 const markets = [
-  { name: 'Bier', opening: 4.5, price: 2 },
-  { name: 'Gin Tonic', opening: 10, price: 4 },
-  { name: 'Vodka Bull', opening: 9, price: 4 },
-  { name: 'Aperol Spritz', opening: 8, price: 4 }
+  { name: 'Bier', opening: 4.5, price: 2, normalPrice: 2 },
+  { name: 'Gin Tonic', opening: 10, price: 4, normalPrice: 4 },
+  { name: 'Vodka Bull', opening: 9, price: 4, normalPrice: 4 },
+  { name: 'Aperol Spritz', opening: 8, price: 4, normalPrice: 4 }
 ];
 let activeMarketIndex = 0;
 function getActiveMarket() { return markets[activeMarketIndex]; }
@@ -69,8 +69,8 @@ function showMarket(index) {
   document.getElementById('crash-description').textContent = `Kursverlust ${percentage} Prozent. Handel ausgesetzt. Preis fixiert bei ${fmt(market.price)} Euro.`;
 
   const chart = document.querySelector('.crash-chart');
-  const trade = market.name === 'Bier' && window.getBeerTradeState ? window.getBeerTradeState() : null;
-  const reference = market.name === 'Bier' ? 2 : market.price;
+  const trade = window.getMarketTradeState ? window.getMarketTradeState(market.name) : null;
+  const reference = market.normalPrice;
   const lower = Math.min(market.price, reference, trade?.previousPrice ?? reference);
   const upper = Math.max(market.opening, market.price, trade?.previousPrice ?? reference);
   const range = Math.max(0.5, upper - lower);

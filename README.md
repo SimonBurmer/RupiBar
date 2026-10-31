@@ -24,9 +24,11 @@ erfolgt das automatische Deployment bei einem Push auf `main`.
 - Crash-Charts mit ausgesetztem Handel und festen Barpreisen.
 - Animiertes Reporterduo mit Eilmeldungen, Preisband und zehn Getränkekacheln.
 
-Unten rechts öffnet **⚙ Happy Hour** die Bierpreissteuerung. Preis und Laufzeit
-sind frei einstellbar; `0` Minuten bedeutet bis zur manuellen Rücksetzung.
-Nach Ablauf oder per Rücksetztaste gilt wieder der Normalpreis von 2,00 €.
+Unten rechts öffnet **⚙ Happy Hour** die Preissteuerung. Bier, Gin Tonic,
+Vodka Bull und Aperol Spritz lassen sich unabhängig auswählen und gleichzeitig
+mit unterschiedlichen Preisen und Laufzeiten steuern. `0` Minuten bedeutet bis
+zur manuellen Rücksetzung. Nach Ablauf oder per Rücksetztaste gilt wieder der
+Normalpreis: 2,00 € für Bier, 4,00 € für die drei Mixgetränke.
 Die Anzeige erzählt dazu eine kurze Handelsöffnung mit Preissturz beziehungsweise
 Kurserholung. Der Zustand wird im lokalen Browser gespeichert und wirkt nur dort,
 nicht automatisch auf andere Geräte.
@@ -38,5 +40,6 @@ Sie benötigt im selben Ordner `market.js`, `happy-hour.js`, `reporter-dialog.js
 und `Live Börsenstudio_ Rasende Reporter.png`. Vite übernimmt diese Dateien
 unverändert in den Build. Die HTML-Datei lässt sich lokal auch direkt öffnen.
 
-`tests/test-happy-hour.cjs` prüft Preisübernahme, Handelsphasen, Ablaufzeit,
-Neuladen, unbegrenzte Laufzeit und manuelles Zurücksetzen.
+`tests/test-happy-hour.cjs` prüft Preisübernahme, Handelsphasen, unabhängige und
+gleichzeitige Ablaufzeiten, Neuladen, unbegrenzte Laufzeit, manuelles Zurücksetzen,
+Fortsetzung der Rotation und Übernahme einer gespeicherten Bier-Happy-Hour.
