@@ -1,12 +1,752 @@
-html, body, #root {
-  width: 100%;
-  height: 100%;
+:root {
+  --red: #ff273d;
+  --green: #21df92;
+  --white: #f5f5f7;
+  --line: #303039
+}
+
+* {
+  box-sizing: border-box
+}
+
+body {
   margin: 0;
-  background: #02060c;
+  background: #050507;
+  color: var(--white);
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 600
 }
-.exchange-display {
-  display: block;
+
+.screen {
+  min-height: 100vh;
+  padding: 16px 20px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: radial-gradient(ellipse at 60% 20%, #1c070b 0%, #08080b 42%, #030304 90%)
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #444;
+  padding-bottom: 12px;
+  gap: 12px
+}
+
+.brand {
+  font-size: clamp(23px, 3.5vw, 54px);
+  font-weight: 950;
+  letter-spacing: -1.5px
+}
+
+.brand span {
+  color: var(--red)
+}
+
+.subtitle {
+  font-size: clamp(10px, 1.15vw, 17px);
+  letter-spacing: .45em;
+  font-weight: 400;
+  margin-top: 2px
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 16px;
+  white-space: nowrap
+}
+
+.live {
+  background: #b60016;
+  border: 1px solid #ff334a;
+  box-shadow: 0 0 18px #e0003440;
+  padding: 10px 23px;
+  font-size: 24px;
+  font-weight: 900;
+  animation: livepulse 2s infinite
+}
+
+.main {
+  display: grid;
+  grid-template-columns: minmax(0, 2.05fr) minmax(260px, .95fr);
+  gap: 15px;
+  min-height: 0;
+  flex: 1
+}
+
+.market {
+  min-width: 0;
+  display: flex;
+  flex-direction: column
+}
+
+.market-top {
+  display: grid;
+  grid-template-columns: minmax(250px, .85fr) minmax(300px, 1.2fr);
+  gap: 14px;
+  align-items: center;
+  flex: 1;
+  min-height: 270px
+}
+
+.beer-title {
+  font-size: clamp(52px, 7vw, 112px);
+  font-weight: 950;
+  letter-spacing: -4px;
+  line-height: 1
+}
+
+.beer-price {
+  font-size: clamp(66px, 8vw, 138px);
+  font-weight: 950;
+  white-space: nowrap;
+  letter-spacing: -4px;
+  margin: 8px 0
+}
+
+.beer-price small {
+  font-size: .45em
+}
+
+.beer-sub {
+  font-size: clamp(20px, 2.7vw, 42px);
+  color: var(--red);
+  font-weight: 900
+}
+
+.beer-sub span {
+  font-size: .55em;
+  color: #aaa
+}
+
+.chart-wrap {
+  position: relative;
+  min-width: 0;
+  height: 80%;
+  min-height: 240px;
+  border-left: 1px solid #45454b;
+  border-bottom: 1px solid #45454b;
+  background: linear-gradient(180deg, #26080caa, #0b0507)
+}
+
+#chart {
   width: 100%;
   height: 100%;
-  border: 0;
+  display: block
 }
+
+.chart-label {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  color: #bbb;
+  font-size: 12px
+}
+
+.reporter {
+  position: relative;
+  min-height: 520px;
+  border: 1px solid #444;
+  border-radius: 5px;
+  overflow: hidden;
+  background: #100d18
+}
+
+.reporter img,
+.reporter-portrait {
+  width: 100%;
+  height: calc(100% - 150px);
+  position: absolute;
+  inset: 40px 0 auto;
+  object-fit: contain;
+  object-position: center;
+  filter: contrast(1.07) saturate(.75) brightness(.75);
+  animation: talk 3s ease-in-out infinite
+}
+
+.reporter-portrait {
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reporter img,
+  .reporter-portrait {
+    animation: none;
+  }
+}
+
+.reporter:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, #000 0%, transparent 45%), linear-gradient(110deg, #060b32aa, transparent 35%, #62020d55);
+  pointer-events: none
+}
+
+.reporter-live {
+  position: absolute;
+  z-index: 2;
+  top: 12px;
+  left: 12px;
+  background: #ed001f;
+  padding: 9px 16px;
+  font-weight: 900;
+  font-size: 20px
+}
+
+.reporter-bottom {
+  position: absolute;
+  z-index: 3;
+  bottom: 0;
+  left: 0;
+  right: 0
+}
+
+.reporter-caption {
+  background: var(--red);
+  display: inline-block;
+  padding: 6px 15px;
+  font-size: 14px
+}
+
+.reporter-headline {
+  font-size: clamp(19px, 2vw, 31px);
+  font-weight: 950;
+  background: #050505b8;
+  padding: 8px 13px;
+  border-top: 2px solid var(--red)
+}
+
+.reporter-text {
+  padding: 9px 13px 13px;
+  background: #09090ce8;
+  font-size: clamp(13px, 1.15vw, 18px);
+  font-weight: 400;
+  min-height: 66px
+}
+
+.voice {
+  position: absolute;
+  z-index: 4;
+  right: 12px;
+  top: 13px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  background: #0009;
+  padding: 8px
+}
+
+.voice i {
+  width: 3px;
+  height: 10px;
+  background: #ff344c;
+  animation: wave .65s ease-in-out infinite alternate
+}
+
+.voice i:nth-child(2) {
+  animation-delay: .15s
+}
+
+.voice i:nth-child(3) {
+  animation-delay: .3s
+}
+
+.voice i:nth-child(4) {
+  animation-delay: .1s
+}
+
+.drinks {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 7px;
+  margin-top: 10px
+}
+
+.drink {
+  border: 1px solid #3b3b44;
+  background: linear-gradient(180deg, #121216, #050507);
+  border-radius: 5px;
+  padding: 12px 5px 10px;
+  text-align: center;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 156px
+}
+
+.drink.beer {
+  border-color: var(--red);
+  box-shadow: inset 0 0 22px #8c001b35, 0 0 9px #ff163633
+}
+
+.drink-name {
+  font-size: clamp(11px, 1.05vw, 18px);
+  font-weight: 900;
+  overflow-wrap: anywhere;
+  text-transform: uppercase
+}
+
+.drink-emoji {
+  font-size: clamp(27px, 3vw, 47px);
+  filter: drop-shadow(0 4px 4px #000)
+}
+
+.drink-price {
+  font-size: clamp(17px, 1.8vw, 31px);
+  font-weight: 950;
+  white-space: nowrap
+}
+
+.spark {
+  height: 15px;
+  width: 100%
+}
+
+.spark path {
+  fill: none;
+  stroke: #eee;
+  stroke-width: 2
+}
+
+.beer .spark path {
+  stroke: var(--red)
+}
+
+.ticker-outer {
+  border-top: 1px solid #555;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  min-height: 50px;
+  gap: 12px
+}
+
+.ticker-live {
+  background: #8e0014;
+  padding: 9px;
+  font-size: 16px;
+  color: white;
+  white-space: nowrap
+}
+
+.ticker-viewport {
+  overflow: hidden;
+  flex: 1
+}
+
+.ticker-track {
+  display: flex;
+  gap: 45px;
+  white-space: nowrap;
+  width: max-content;
+  animation: marquee 38s linear infinite;
+  font-size: clamp(14px, 1.2vw, 19px)
+}
+
+.ticker-track b {
+  color: white
+}
+
+.ticker-track .bier {
+  color: var(--red)
+}
+
+.controls {
+  position: fixed;
+  z-index: 20;
+  right: 12px;
+  bottom: 12px;
+  background: #16161df5;
+  border: 1px solid #666;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px #000;
+  display: none;
+  gap: 8px;
+  align-items: center
+}
+
+.controls.open {
+  display: flex
+}
+
+.controls input {
+  background: #050505;
+  color: white;
+  border: 1px solid #666;
+  padding: 8px;
+  width: 90px;
+  font-size: 18px
+}
+
+.controls button,
+.settings {
+  background: #2a2a32;
+  color: white;
+  border: 1px solid #666;
+  padding: 9px 12px;
+  cursor: pointer;
+  border-radius: 5px
+}
+
+.settings {
+  position: fixed;
+  bottom: 9px;
+  right: 9px;
+  z-index: 19;
+  opacity: .2;
+  font-size: 14px
+}
+
+.settings:hover,
+.settings:focus {
+  opacity: 1
+}
+
+.controls label {
+  font-size: 14px
+}
+
+.notice {
+  font-size: 12px;
+  color: #aaa
+}
+
+.drink-emoji.beericon {
+  animation: glass 5s ease-in-out infinite
+}
+
+@keyframes glass {
+  50% {
+    transform: rotate(-4deg)
+  }
+}
+
+@keyframes talk {
+
+  0%,
+  100% {
+    transform: scale(1.04) translateY(0)
+  }
+
+  25% {
+    transform: scale(1.047) translateY(2px)
+  }
+
+  50% {
+    transform: scale(1.04) translateY(-3px)
+  }
+
+  75% {
+    transform: scale(1.045) translateY(1px)
+  }
+}
+
+@keyframes wave {
+  to {
+    height: 25px
+  }
+}
+
+@keyframes livepulse {
+  50% {
+    box-shadow: 0 0 25px #e00034b0
+  }
+}
+
+@keyframes marquee {
+  to {
+    transform: translate3d(-50%, 0, 0)
+  }
+}
+
+@media(max-width:1000px) {
+  .main {
+    grid-template-columns: 1fr 280px
+  }
+
+  .market-top {
+    grid-template-columns: 1fr;
+    gap: 6px
+  }
+
+  .chart-wrap {
+    height: 240px
+  }
+
+  .drinks {
+    grid-template-columns: repeat(5, minmax(0, 1fr))
+  }
+
+  .reporter {
+    min-height: 480px
+  }
+
+  .drink {
+    min-height: 135px
+  }
+}
+
+@media(max-width:700px) {
+  .screen {
+    padding: 10px
+  }
+
+  .main {
+    grid-template-columns: 1fr
+  }
+
+  .reporter {
+    height: 460px;
+    min-height: 460px
+  }
+
+  .market-top {
+    min-height: 0
+  }
+
+  .beer-price {
+    font-size: 70px
+  }
+
+  .drinks {
+    grid-template-columns: repeat(3, minmax(0, 1fr))
+  }
+
+  .header-right {
+    gap: 7px;
+    font-size: 12px
+  }
+
+  .live {
+    padding: 6px;
+    font-size: 15px
+  }
+
+  .subtitle {
+    letter-spacing: .2em
+  }
+}
+
+
+/* Breites Studiobild: Beide Reporter bleiben vollständig sichtbar. */
+.main { grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); align-items: center; }
+.market-top { grid-template-columns: 1fr; }
+.chart-wrap { height: 220px; min-height: 180px; }
+.reporter { min-height: 0; height: auto; background: #080e1b; }
+.reporter img, .reporter-portrait {
+  position: relative; inset: auto; display: block; width: 100%; height: auto;
+  aspect-ratio: 1672 / 941; object-fit: contain; filter: none; animation: none;
+}
+.reporter img.reporter-source { display: none; }
+.reporter:after { display: none; }
+.reporter-bottom { position: relative; }
+.reporter-caption { font-size: 12px; letter-spacing: .06em; }
+.reporter-headline { font-size: clamp(18px, 1.8vw, 28px); }
+.reporter-text { min-height: 86px; line-height: 1.5; }
+@media (max-width: 1000px) {
+  .main { grid-template-columns: 1fr; }
+  .market-top { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); }
+  .reporter { width: 100%; max-width: 900px; justify-self: center; }
+}
+@media (max-width: 600px) {
+  .market-top { grid-template-columns: 1fr; }
+}
+/* Feste 16:9-Bühne, passend für Fernseher und Beamer. */
+body {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+}
+.screen {
+  width: min(100vw, 177.777778vh);
+  aspect-ratio: 16 / 9;
+  min-height: 0;
+  container-type: inline-size;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) 18% 6%;
+  gap: clamp(4px, .7vw, 12px);
+  padding: clamp(6px, 1vw, 18px);
+  overflow: hidden;
+}
+header { gap: 1cqw; padding-bottom: .7cqw; }
+.brand { font-size: 3.1cqw; letter-spacing: -.08cqw; }
+.subtitle { font-size: .9cqw; letter-spacing: .35em; }
+.header-right { font-size: 1.2cqw; gap: 1cqw; }
+.live { font-size: 1.5cqw; padding: .5cqw 1cqw; }
+.main {
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 1cqw;
+  align-items: stretch;
+}
+.market, .market-top { min-height: 0; height: 100%; }
+.market-top {
+  grid-template-columns: 1fr;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: .7cqw;
+}
+.hero { display: grid; grid-template-columns: auto 1fr; align-items: center; column-gap: 1cqw; }
+.beer-title { font-size: 4.7cqw; letter-spacing: -.2cqw; }
+.beer-price { font-size: 7cqw; letter-spacing: -.2cqw; margin: 0; text-align: right; }
+.beer-sub { grid-column: 1 / -1; font-size: 1.8cqw; }
+.chart-wrap { height: 100%; min-height: 0; }
+.chart-label { font-size: .8cqw; top: .6cqw; left: .6cqw; }
+.reporter {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  min-height: 0;
+}
+.reporter img, .reporter-portrait {
+  flex: 1 1 0;
+  min-height: 0;
+  height: 0;
+  aspect-ratio: auto;
+  object-fit: contain;
+}
+.reporter-bottom { flex: 0 0 auto; }
+.reporter-caption { font-size: .85cqw; padding: .35cqw .8cqw; }
+.reporter-headline { font-size: 1.5cqw; padding: .4cqw .8cqw; }
+.reporter-text { font-size: 1.05cqw; min-height: 4.1cqw; padding: .4cqw .8cqw; line-height: 1.35; }
+.drinks { grid-template-columns: repeat(10, minmax(0, 1fr)); gap: .5cqw; margin-top: 0; min-height: 0; }
+.drink { min-height: 0; gap: .25cqw; padding: .6cqw .25cqw; }
+.drink-name { font-size: 1cqw; }
+.drink-emoji { font-size: 2.5cqw; }
+.drink-price { font-size: 1.8cqw; }
+.spark { height: .9cqw; }
+.ticker-outer { min-height: 0; gap: .7cqw; }
+.ticker-live { font-size: 1cqw; padding: .4cqw .7cqw; }
+.ticker-track { font-size: 1.1cqw; }
+
+.market-halted { display: flex; flex-direction: column; background: #090e17; border: 1px solid #303847; overflow: hidden; }
+.chart-status { display: flex; justify-content: space-between; align-items: center; gap: .6cqw; padding: .65cqw .8cqw .1cqw; color: #c2cad7; font-size: 1.1cqw; letter-spacing: .03em; }
+.halt-badge { color: #efc46b; background: #e7b34b15; border: 1px solid #e7b34b44; padding: .3cqw .5cqw; font-weight: 800; }
+.crash-chart { display: block; flex: 1 1 0; width: 100%; min-height: 0; }
+.halt-summary { display: flex; align-items: center; justify-content: space-between; gap: .5cqw; padding: .45cqw .8cqw; border-top: 1px solid #303847; color: #d5dbe5; font-size: 1.05cqw; }
+.halt-summary strong { color: #efc46b; font-size: 2cqw; }
+.halt-ticker { color: #efc46b; }
+/* Sachliche Kurstafel mit zurückhaltenden Halloween-Akzenten. */
+:root {
+  --red: #f36b59;
+  --white: #e9eef5;
+  --line: #2c3d52;
+  --orange: #f7a541;
+}
+body {
+  background: #02060c;
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.screen {
+  background: radial-gradient(ellipse at 100% 0, #5c2b101c, transparent 45%), #080f1b;
+  border-top: .25cqw solid var(--orange);
+}
+header { border-bottom: 1px solid #36485e; }
+.brand { font-size: 2.8cqw; font-weight: 650; letter-spacing: .01em; }
+.brand span { color: var(--orange); font-weight: 400; }
+.subtitle { color: #a7b6c9; letter-spacing: .18em; font-weight: 500; }
+.header-right, .beer-price, .drink-price, .halt-summary strong,
+.crash-chart text, .ticker-track {
+  font-family: "Cascadia Mono", Consolas, "Liberation Mono", monospace;
+  font-variant-numeric: tabular-nums;
+}
+.live {
+  background: #152438;
+  border: 1px solid #52667e;
+  color: #dfe8f4;
+  box-shadow: none;
+  animation: none;
+  font-weight: 500;
+  letter-spacing: .06em;
+}
+.hero { padding: .2cqw .75cqw .6cqw; border-left: .2cqw solid var(--orange); }
+.beer-title { font-size: 3.9cqw; letter-spacing: .04em; font-weight: 500; }
+.beer-price { font-size: 6.4cqw; letter-spacing: -.05em; font-weight: 500; line-height: 1.1; }
+.beer-price small { font-size: .4em; color: #a7b6c9; }
+.beer-sub { font-size: 1.8cqw; font-weight: 500; }
+.beer-sub span { font-size: .65em; margin-left: .6cqw; color: #b3c0d0; }
+.market-halted { background: #0b1727; border: 1px solid #344963; border-radius: 0; }
+.chart-status { border-bottom: 1px solid #2c3d52; padding: .5cqw .75cqw; color: #b3c0d0; font-weight: 500; }
+.halt-badge { border: 0; border-left: .2cqw solid var(--orange); background: #f7a54112; color: #ffbd67; }
+.crash-chart > g:first-of-type { stroke: #354961; opacity: .65; }
+.crash-chart text { font-weight: 400; }
+.crash-chart .price-history { stroke: #c0d9f3; stroke-width: 1.8; stroke-linejoin: miter; }
+.crash-chart .price-crash { stroke: #f36b59; stroke-width: 2.2; fill: none; }
+.halt-summary { background: #101f31; border-color: #344963; letter-spacing: .02em; }
+.halt-summary strong { color: #ffbd67; font-weight: 500; }
+.reporter { border-color: #344963; border-radius: 0; }
+.reporter-caption { background: #b85b20; color: #fff5e9; font-weight: 600; }
+.reporter-headline { background: #101f31; border-top: 1px solid #425c78; font-weight: 600; letter-spacing: .025em; }
+.reporter-text { background: #0b1727; color: #ced8e5; }
+.drink {
+  background: #0d1929;
+  border: 1px solid #30445d;
+  border-radius: 0;
+  box-shadow: none;
+  text-align: left;
+  padding: .6cqw .65cqw;
+}
+.drink.beer { border-color: #b47839; background: #211c19; box-shadow: none; }
+.drink-name { color: #b9c9db; font-weight: 600; letter-spacing: .025em; }
+.drink.beer .drink-name { color: #ffbd67; }
+.drink-emoji { font-size: 1.8cqw; filter: saturate(.65); }
+.drink-price { font-weight: 500; font-size: 1.9cqw; letter-spacing: -.05em; }
+.spark path { stroke: #91abc7; stroke-width: 1.2; }
+.beer .spark path { stroke: #f36b59; }
+.ticker-outer { background: #0d1929; border-top: 1px solid #425c78; }
+.ticker-live { background: #b85b20; font-weight: 600; letter-spacing: .06em; }
+.ticker-track { color: #b5c4d6; font-weight: 400; }
+.ticker-track b { font-weight: 500; }
+.brand .brand-skull { color: #e9eef5; font-size: .85em; margin-left: .25em; }
+.ticker-track {
+  gap: 0;
+  animation: marquee var(--ticker-duration, 65s) linear infinite;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+.ticker-group {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 2.5cqw;
+  padding-right: 2.5cqw;
+}
+.ticker-group > span { flex: 0 0 auto; }
+.ticker-group > span + span { border-left: 1px solid #425c78; padding-left: 2.5cqw; }
+.beer-title.long-name { font-size: 2.6cqw; letter-spacing: .01em; }
+.brand .brand-venue { color: #e9eef5; font-size: .65em; font-weight: 600; margin-left: .6em; letter-spacing: .08em; white-space: nowrap; }
+.rotation-info { grid-column: 1 / -1; color: #a7b6c9; font-size: .85cqw; margin-top: .3cqw; letter-spacing: .04em; }
+.happy-hour-active { color: #ffbd67; }
+.halt-badge.trading-open { color: #7ee7b0; border-color: #7ee7b0; }
+.admin-toggle { position: fixed; right: 8px; bottom: 6px; z-index: 30; border: 1px solid #52667e; background: #101f31; color: #fff; padding: 7px 12px; border-radius: 4px; cursor: pointer; opacity: .45; }
+.admin-toggle:hover, .admin-toggle:focus-visible { opacity: 1; }
+.happy-dialog { width: min(460px, calc(100vw - 24px)); max-height: 90vh; overflow: auto; background: #101f31; color: #e9eef5; border: 1px solid #b47839; border-radius: 8px; padding: 24px; font: 16px "Segoe UI", Arial, sans-serif; }
+.happy-dialog::backdrop { background: #000b; }
+.happy-dialog h2 { font-size: 24px; margin: 0 0 12px; }
+.happy-dialog p { line-height: 1.45; color: #c7d0de; }
+.happy-dialog label { display: block; margin-top: 16px; margin-bottom: 6px; }
+.happy-dialog input { box-sizing: border-box; width: 100%; font: inherit; padding: 10px; background: #080f1b; color: #fff; border: 1px solid #52667e; border-radius: 4px; }
+.happy-dialog small { display: block; margin-top: 6px; color: #a7b6c9; }
+.happy-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 20px; }
+.happy-dialog button { font: inherit; cursor: pointer; border: 1px solid #52667e; background: #24374f; color: #fff; padding: 10px 12px; border-radius: 4px; }
+.happy-dialog button[type="submit"] { background: #b85b20; border-color: #f7a541; }
+#happy-feedback { color: #ffbd67; min-height: 1.4em; }
+.price-event { fill: none; stroke: #f36b59; stroke-width: 3; }
+.price-event.recovery { stroke: #7ee7b0; }
+.price-event.trading { stroke-dasharray: 1; stroke-dashoffset: 1; animation: trade-reveal 5s linear forwards; }
+@keyframes trade-reveal { to { stroke-dashoffset: 0; } }
+@media (prefers-reduced-motion: reduce) { .price-event.trading { animation: none; stroke-dashoffset: 0; } }
+
+/* React-Einbindung: #root nimmt keinen eigenen Platz ein, damit .screen wie
+   bisher direkt im Body-Grid zentriert wird. */
+#root { display: contents; }

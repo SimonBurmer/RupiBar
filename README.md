@@ -33,10 +33,16 @@ nicht automatisch auf andere Geräte.
 
 ## Dateien
 
-Die eigenständig nutzbare Anzeige liegt in `public/halloween_exchange_animiert.html`.
-Sie benötigt im selben Ordner `market.js`, `happy-hour.js`, `reporter-dialog.js`
-und `Live Börsenstudio_ Rasende Reporter.png`. Vite übernimmt diese Dateien
-unverändert in den Build. Die HTML-Datei lässt sich lokal auch direkt öffnen.
+Die Anzeige ist eine React-App (Vite):
 
-`tests/test-happy-hour.cjs` prüft Preisübernahme, Handelsphasen, Ablaufzeit,
-Neuladen, unbegrenzte Laufzeit und manuelles Zurücksetzen.
+- `src/App.jsx` – Zustand (Happy Hour, Kursrotation, Uhr) und Aufbau der Anzeige.
+- `src/components/` – Kopfzeile, Kursanzeige, Crash-Chart, Reporter, Getränkekacheln,
+  Laufband und Happy-Hour-Dialog.
+- `src/lib/market.js` – Kurse, Getränke und Chart-Geometrie.
+- `src/lib/happyHour.js` – Happy-Hour-Logik und Speicherung im Browser.
+- `src/lib/reporterAnimation.js` – Dialog und Canvas-Animation der Reporter.
+- `src/index.css` – Gestaltung der 16:9-Anzeige.
+- `src/assets/reporter-studio.png` – Studiobild der Reporter.
+
+`tests/happy-hour.test.js` prüft Preisübernahme, Handelsphasen, Ablaufzeit,
+Neuladen, unbegrenzte Laufzeit, manuelles Zurücksetzen und die Eingabeprüfung.
