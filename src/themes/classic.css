@@ -664,3 +664,7 @@ body.theme-classic .price-event.trading { animation: none; stroke-dashoffset: 0;
 }
 /* Szenen-Bauchbinden sind in normaler Schreibweise hinterlegt; das klassische Design zeigt sie in Versalien. */
 body.theme-classic .reporter-caption { text-transform: uppercase; }
+body.theme-classic .screen.no-ticker { grid-template-rows: auto minmax(0, 1fr) 19%; }
+body.theme-classic .drinks-track > .drink { margin-right: .5cqw; }
+body.theme-classic .drinks.mode-page .drink-name { font-size: 1.4cqw; }
+body.theme-classic .drinks.mode-page .drink-price { font-size: 2.6cqw; }

@@ -38,9 +38,11 @@ Auf `/admin`:
   möglich. Die Anzeige zeigt das Getränk eine Minute lang mit Handelsöffnung und
   Eilmeldung und blendet während einer Happy Hour alle 3 Minuten groß „HAPPY HOUR“ ein.
 - **Design der Anzeige**: „Neu“ oder „Klassisch“ (das ursprüngliche Design).
+- **Anzeige**: Getränkeleiste laufend, blätternd (fünf je Seite) oder fest, Tempo in
+  Sekunden, und das Laufband unten an oder aus.
 - **Alarm**: färbt alle Anzeigen für 6 Sekunden rot mit blinkendem ALARM.
 - **Alles zurücksetzen**: Standardpreise, alle Happy Hours beendet, Alarm gestoppt
-  (das Design bleibt).
+  (Design und Anzeige-Einstellungen bleiben).
 
 Der Reporterbereich wechselt alle 30 Sekunden zwischen den Szenen in
 `src/lib/scenes.js` (Studio, Brauerei, Getränkemarkt).

@@ -3,6 +3,9 @@ import { INITIAL_HAPPY, INVALID_INPUT_MESSAGE, isExpired, isPromotion, nextState
 
 export const THEMES = ['modern', 'classic'];
 export const DEFAULT_THEME = 'modern';
+// Anzeige-Einstellungen: Getränkeleiste fest / laufend / blätternd, Tempo in Sekunden, Laufband an/aus.
+export const TILE_MODES = ['scroll', 'page', 'fixed'];
+export const DEFAULT_SETTINGS = { tileMode: 'scroll', tileSeconds: 5, showTicker: true };
 
 // Zustand des Servers. Liegt nur im Speicher und startet nach jedem Deploy mit den Standardwerten.
 // Jede Methode liefert { ok: true } oder { ok: false, error }.
@@ -11,11 +14,12 @@ export function createStore() {
   let happy = structuredClone(INITIAL_HAPPY);
   let alarmAt = 0;
   let theme = DEFAULT_THEME;
+  let settings = { ...DEFAULT_SETTINGS };
 
   const happyDrink = drink => (HAPPY_DRINKS.includes(drink) ? drink : null);
 
   return {
-    snapshot: () => ({ prices: { ...prices }, happy: structuredClone(happy), alarmAt, theme }),
+    snapshot: () => ({ prices: { ...prices }, happy: structuredClone(happy), alarmAt, theme, settings: { ...settings } }),
 
     setPrices(input, now) {
       if (!input || typeof input !== 'object' || Array.isArray(input)) return { ok: false, error: 'Keine Preise übergeben.' };
@@ -54,7 +58,7 @@ export function createStore() {
       return { ok: true };
     },
 
-    // Preise auf Standard, alle Happy Hours beenden, Alarm stoppen. Das Design bleibt.
+    // Preise auf Standard, alle Happy Hours beenden, Alarm stoppen. Design und Anzeige-Einstellungen bleiben.
     resetAll(now) {
       prices = { ...DEFAULT_PRICES };
       const next = { ...happy };
@@ -77,6 +81,27 @@ export function createStore() {
     setTheme(value) {
       if (!THEMES.includes(value)) return { ok: false, error: 'Unbekanntes Design.' };
       theme = value;
+      return { ok: true };
+    },
+
+    // Teilweise Änderung der Anzeige-Einstellungen; ungültige Werte ändern nichts.
+    setSettings(input) {
+      if (!input || typeof input !== 'object' || Array.isArray(input)) return { ok: false, error: 'Keine Einstellungen übergeben.' };
+      const next = { ...settings };
+      if ('tileMode' in input) {
+        if (!TILE_MODES.includes(input.tileMode)) return { ok: false, error: 'Unbekannter Modus für die Getränkeleiste.' };
+        next.tileMode = input.tileMode;
+      }
+      if ('tileSeconds' in input) {
+        const seconds = Number(input.tileSeconds);
+        if (!Number.isInteger(seconds) || seconds < 1 || seconds > 120) return { ok: false, error: 'Tempo: bitte 1 bis 120 Sekunden eingeben.' };
+        next.tileSeconds = seconds;
+      }
+      if ('showTicker' in input) {
+        if (typeof input.showTicker !== 'boolean') return { ok: false, error: 'Laufband: an oder aus.' };
+        next.showTicker = input.showTicker;
+      }
+      settings = next;
       return { ok: true };
     },
 

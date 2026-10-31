@@ -27,7 +27,7 @@ const THEMES = {
 }
 
 export default function App() {
-  const { prices, happy, alarmAt, theme: serverTheme, offset, synced } = useExchange()
+  const { prices, happy, alarmAt, theme: serverTheme, settings, offset, synced } = useExchange()
   const theme = serverTheme ?? storedTheme()
   const [now, setNow] = useState(() => Date.now())
   const [activeIndex, setActiveIndex] = useState(0)
@@ -92,7 +92,7 @@ export default function App() {
 
   return (
     <>
-      <div className="screen">
+      <div className={`screen${settings.showTicker ? '' : ' no-ticker'}`}>
         <Header now={now} />
         <section className="main">
           <div className="market">
@@ -109,8 +109,8 @@ export default function App() {
           </div>
           <Reporter liveRef={liveRef} />
         </section>
-        <DrinkGrid drinks={drinks} activeName={market.name} />
-        <Ticker drinks={drinks} />
+        <DrinkGrid drinks={drinks} activeName={market.name} mode={settings.tileMode} seconds={settings.tileSeconds} now={serverNow} />
+        {settings.showTicker && <Ticker drinks={drinks} />}
       </div>
       {alarm && (
         <div className="alarm-overlay" role="alert">

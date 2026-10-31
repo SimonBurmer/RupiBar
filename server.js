@@ -55,7 +55,8 @@ const ACTIONS = {
   'POST /api/happy-hour/reset': (body, now) => store.resetHappyHour(body.drink ?? 'Bier', now),
   'POST /api/reset': (_body, now) => store.resetAll(now),
   'POST /api/alarm': (_body, now) => store.triggerAlarm(now),
-  'PUT /api/theme': body => store.setTheme(body.theme)
+  'PUT /api/theme': body => store.setTheme(body.theme),
+  'PUT /api/settings': body => store.setSettings(body)
 };
 
 async function handleApi(req, res, pathname) {

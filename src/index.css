@@ -76,3 +76,21 @@
 @media (prefers-reduced-motion: reduce) {
   .happy-overlay, .happy-overlay-title { animation: none; }
 }
+
+/* Getränkeleiste: laufend wie das Laufband, oder blätternd (fünf Kacheln je Seite). */
+body .drinks.mode-scroll { display: block; overflow: hidden; }
+body .drinks-track {
+  display: flex;
+  width: max-content;
+  height: 100%;
+  animation: drinks-marquee var(--drinks-duration, 50s) linear infinite;
+  will-change: transform;
+}
+body .drinks-track > .drink { flex: 0 0 auto; width: var(--drink-width, 11cqw); }
+@keyframes drinks-marquee { to { transform: translate3d(-50%, 0, 0); } }
+body .drinks.mode-page { grid-template-columns: repeat(5, minmax(0, 1fr)); animation: drinks-page .45s ease-out; }
+@keyframes drinks-page { from { opacity: 0; transform: translateY(.6cqw); } }
+@media (prefers-reduced-motion: reduce) {
+  body .drinks-track { animation-duration: calc(var(--drinks-duration, 50s) * 3); }
+  body .drinks.mode-page { animation: none; }
+}

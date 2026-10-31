@@ -7,9 +7,10 @@ import './admin.css'
 const toInput = price => price.toFixed(2)
 const draftsFrom = prices => Object.fromEntries(DRINKS.map(({ name }) => [name, toInput(prices[name])]))
 const THEME_OPTIONS = [['modern', 'Neu'], ['classic', 'Klassisch']]
+const TILE_MODE_OPTIONS = [['scroll', 'Laufend'], ['page', 'Blättern'], ['fixed', 'Fest']]
 
 export default function AdminPage() {
-  const { prices, happy, alarmAt, theme, offset, synced, connected } = useExchange()
+  const { prices, happy, alarmAt, theme, settings, offset, synced, connected } = useExchange()
   const [drafts, setDrafts] = useState(null)
   const [priceFeedback, setPriceFeedback] = useState({ text: '', error: false })
   const [happyFeedback, setHappyFeedback] = useState({ text: '', error: false })
@@ -17,6 +18,8 @@ export default function AdminPage() {
   const [themeFeedback, setThemeFeedback] = useState({ text: '', error: false })
   const [resetFeedback, setResetFeedback] = useState({ text: '', error: false })
   const [happyDrink, setHappyDrink] = useState('Bier')
+  const [displayFeedback, setDisplayFeedback] = useState({ text: '', error: false })
+  const [tileSeconds, setTileSeconds] = useState(null)
   const [happyPrice, setHappyPrice] = useState('1.50')
   const [happyMinutes, setHappyMinutes] = useState('60')
   const [busy, setBusy] = useState(false)
@@ -84,6 +87,16 @@ export default function AdminPage() {
   function chooseTheme(value) {
     run(() => sendChange('PUT', '/api/theme', { theme: value }), setThemeFeedback,
       () => `Design „${THEME_OPTIONS.find(([key]) => key === value)[1]}“ wird angezeigt.`)
+  }
+
+  function changeSettings(update, message) {
+    return run(() => sendChange('PUT', '/api/settings', update), setDisplayFeedback, () => message)
+  }
+
+  async function saveTileSeconds(event) {
+    event.preventDefault()
+    const state = await changeSettings({ tileSeconds: Number(tileSeconds) }, `Tempo: ${tileSeconds} Sekunden.`)
+    if (state) setTileSeconds(null)
   }
 
   async function resetAll() {
@@ -178,6 +191,40 @@ export default function AdminPage() {
       </section>
 
       <section className="admin-card">
+        <h2>Anzeige</h2>
+        <fieldset className="admin-choice">
+          <legend>Getränkeleiste (über dem Laufband)</legend>
+          {TILE_MODE_OPTIONS.map(([value, label]) => (
+            <button key={value} type="button" aria-pressed={settings.tileMode === value}
+              className={settings.tileMode === value ? 'selected' : ''} disabled={busy || !connected}
+              onClick={() => changeSettings({ tileMode: value }, `Getränkeleiste: ${label}.`)}>
+              {label}
+            </button>
+          ))}
+        </fieldset>
+        <form className="admin-inline" onSubmit={saveTileSeconds}>
+          <label htmlFor="tile-seconds">Tempo (Sekunden)</label>
+          <input id="tile-seconds" type="number" inputMode="numeric" min="1" max="120" step="1" required
+            value={tileSeconds ?? String(settings.tileSeconds)} onChange={event => setTileSeconds(event.target.value)} />
+          <button type="submit" disabled={busy || !connected || tileSeconds === null || Number(tileSeconds) === settings.tileSeconds}>Übernehmen</button>
+        </form>
+        <small className="admin-hint">
+          Laufend: alle {settings.tileSeconds} s ein Getränk weiter. Blättern: alle {settings.tileSeconds} s die nächsten fünf Getränke. Fest: alle zehn stehen still.
+        </small>
+        <fieldset className="admin-choice admin-spaced">
+          <legend>Laufband unten</legend>
+          {[[true, 'An'], [false, 'Aus']].map(([value, label]) => (
+            <button key={label} type="button" aria-pressed={settings.showTicker === value}
+              className={settings.showTicker === value ? 'selected' : ''} disabled={busy || !connected}
+              onClick={() => changeSettings({ showTicker: value }, `Laufband ${label.toLowerCase()}.`)}>
+              {label}
+            </button>
+          ))}
+        </fieldset>
+        <p className={`admin-feedback${displayFeedback.error ? ' error' : ''}`} role="status" aria-live="polite">{displayFeedback.text}</p>
+      </section>
+
+      <section className="admin-card">
         <h2>Getränkepreise</h2>
         {drafts === null ? (
           <p className="admin-current">Preise werden geladen …</p>
@@ -214,7 +261,7 @@ export default function AdminPage() {
 
       <section className="admin-card admin-danger">
         <h2>Alles zurücksetzen</h2>
-        <p className="admin-current">Setzt alle Preise auf Standard, beendet alle Happy Hours und stoppt den Alarm. Das Design bleibt.</p>
+        <p className="admin-current">Setzt alle Preise auf Standard, beendet alle Happy Hours und stoppt den Alarm. Design und Anzeige-Einstellungen bleiben.</p>
         <button type="button" className="danger" onClick={resetAll} disabled={busy || !connected}>Alles zurücksetzen</button>
         <p className={`admin-feedback${resetFeedback.error ? ' error' : ''}`} role="status" aria-live="polite">{resetFeedback.text}</p>
       </section>
