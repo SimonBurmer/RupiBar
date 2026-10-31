@@ -78,6 +78,35 @@ export const SCENES = [
       [0, 'LETZTE FRAGE AUS DER BRAUEREI', () => 'Was raten Sie unseren Zuschauern an der Theke?'],
       [1, 'BRAUER-TIPP: JETZT ZUSCHLAGEN', market => `Kaufen, solange ${market.name} bei ${fmt(market.price)} Euro steht. Und bitte Trinkgeld geben. Für mich. Ich brauche das gerade.`]
     ]
+  },
+  {
+    id: 'getraenkemarkt',
+    image: new URL('../assets/scenes/getraenkemarkt.png', import.meta.url).href,
+    alt: 'Unsere Reporterin interviewt den jubelnden Bierliebhaber N. Arens im Getränkemarkt',
+    width: 1600,
+    height: 901,
+    captions: ['Reporterin · live aus München', 'Bierliebhaber · live aus München'],
+    faces: [
+      { x: 538, y: 375, radius: 18, eyes: [[510, 305]], phase: 0.7, gain: 1.3, lipTop: 360, lipFade: 6, eyeWidth: 13, eyeHeight: 6 },
+      { x: 930, y: 315, radius: 30, eyes: [[876, 247], [950, 212]], phase: 2.9, rest: 0.75, gain: 0.5, lipTop: 289, lipFade: 8, eyeWidth: 15, eyeHeight: 7 }
+    ],
+    bodies: [
+      { x: 400, headX: 500, headY: 300, phase: 0.3, hand: [800, 610] },
+      { x: 1060, headX: 930, headY: 250, phase: 2.1, sway: 2, hand: [1215, 265] }
+    ],
+    mesh: { top: 95, bottom: 752, left: 0, right: 1600, fadeTop: 70, fadeBottom: 60, fadeLeft: 100, fadeRight: 70 },
+    turns: [
+      [0, 'KURSSTURZ: DIE ERSTEN GEWINNER', market => `${market.name} bei ${fmt(market.price)} Euro! Wir sind im Getränkemarkt bei Bierliebhaber N. Arens. Wie fühlen Sie sich?`],
+      [1, '„DER BESTE TAG MEINES LEBENS!“', () => 'Ich hab die ganze Nacht die Kurse beobachtet. Als der Bierindex fiel, bin ich sofort los. Das ist kein Kasten, das ist eine Geldanlage.'],
+      [0, 'PRIVATANLEGER GREIFT ZU', () => 'Experten raten eigentlich zur Streuung. Wie viele Kästen sind es denn bei Ihnen?'],
+      [1, 'STREUUNG: HELL, DUNKEL, WEISSBIER', () => 'Ich streue doch! Hell, Dunkel und Weißbier. Breiter kann man ein Portfolio nicht aufstellen.'],
+      [0, 'BRAUER IN DER KRISE – UND SIE?', () => 'Ganz München spricht von einer Brauereikrise. Haben Sie da kein schlechtes Gewissen?'],
+      [1, 'SOLIDARITÄT MIT DEN BRAUERN', () => 'Natürlich! Deshalb kaufe ich ja so viel. Jemand muss die Branche jetzt stützen, und ich nehme diese Verantwortung sehr ernst.'],
+      [0, 'RUPI BAR MELDET ANSTURM', market => `An der Halloween Exchange notiert ${market.name} bei ${fmt(market.price)} Euro, Eröffnung war ${fmt(market.opening)}. Fahren Sie noch hin?`],
+      [1, 'NÄCHSTER HALT: RUPI BAR', () => 'Der Kasten ist für zuhause. Für die Kursbeobachtung vor Ort bin ich heute Abend an der Theke. Man muss nah am Markt sein.'],
+      [0, 'ANLAGETIPP VOM PROFI', () => 'Zum Schluss: Was raten Sie unseren Zuschauern?'],
+      [1, 'KAUFEN, SOLANGE ES BILLIG IST', market => `Nicht lange überlegen. ${market.name} für ${fmt(market.price)} Euro gibt es nicht alle Tage. Prost, München!`]
+    ]
   }
 ];
 

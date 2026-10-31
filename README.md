@@ -43,7 +43,7 @@ Auf `/admin`:
   (das Design bleibt).
 
 Der Reporterbereich wechselt alle 30 Sekunden zwischen den Szenen in
-`src/lib/scenes.js` (Studio, Brauerei).
+`src/lib/scenes.js` (Studio, Brauerei, Getränkemarkt).
 
 Die Preise liegen nur im Speicher des Servers. `/admin` ist nicht passwortgeschützt,
 und nach jedem Deploy oder Neustart gelten wieder die Standardpreise.
