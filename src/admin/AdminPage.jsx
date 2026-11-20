@@ -176,66 +176,6 @@ export default function AdminPage() {
         <p className={`admin-feedback${topicFeedback.error ? ' error' : ''}`} role="status" aria-live="polite">{topicFeedback.text}</p>
       </section>
 
-      <section className="admin-card admin-alarm">
-        <h2>Alarm</h2>
-        <p className="admin-current">Färbt alle Anzeigen für {ALARM_MS / 1000} Sekunden rot mit blinkendem ALARM.</p>
-        <button type="button" className="alarm-button" onClick={triggerAlarm} disabled={busy || !connected}>
-          {isAlarmActive(alarmAt, now + offset) ? 'Alarm läuft …' : 'Alarm'}
-        </button>
-        <p className={`admin-feedback${alarmFeedback.error ? ' error' : ''}`} role="status" aria-live="polite">{alarmFeedback.text}</p>
-      </section>
-
-      <section className="admin-card">
-        <h2>Happy Hour</h2>
-        {promotions.length === 0 ? (
-          <p className="admin-current">Keine Happy Hour aktiv – alle Getränke zum Normalpreis.</p>
-        ) : (
-          <ul className="admin-running">
-            {promotions.map(({ name, state }) => (
-              <li key={name}>
-                <span>
-                  <b>{name}</b> <strong>{fmt(state.price)} €</strong>
-                  {` · ${state.expiresAt ? `bis ${formatEnd(state)} Uhr` : 'bis zur Rücksetzung'}`}
-                  {isOpen(state, serverNow) && <span className="admin-pill">Handel kurz geöffnet</span>}
-                </span>
-                <button type="button" onClick={() => resetHappyHour(name)} disabled={busy || !connected}>
-                  Beenden ({fmt(prices[name])} €)
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-        <form className="admin-happy" onSubmit={startHappyHour}>
-          <fieldset className="admin-choice">
-            <legend>Getränk</legend>
-            {HAPPY_DRINKS.map(name => (
-              <button key={name} type="button" aria-pressed={happyDrink === name}
-                className={happyDrink === name ? 'selected' : ''} onClick={() => setHappyDrink(name)}>
-                {name}
-              </button>
-            ))}
-          </fieldset>
-          <label>
-            Happy-Hour-Preis (€)
-            <input type="number" inputMode="decimal" min="0" max="99" step="0.01" required
-              value={happyPrice} onChange={event => setHappyPrice(event.target.value)} />
-          </label>
-          <label>
-            Laufzeit (Minuten)
-            <input type="number" inputMode="numeric" min="0" max={MAX_MINUTES} step="1" required
-              value={happyMinutes} onChange={event => setHappyMinutes(event.target.value)} />
-          </label>
-          <small>
-            Normalpreis {happyDrink}: {fmt(prices[happyDrink])} €. 0 Minuten = bis zur manuellen Rücksetzung.
-            Während einer Happy Hour blendet die Anzeige alle 3 Minuten „HAPPY HOUR“ ein.
-          </small>
-          <div className="admin-actions">
-            <button type="submit" className="primary" disabled={busy || !connected}>Happy Hour für {happyDrink} starten</button>
-          </div>
-        </form>
-        <p className={`admin-feedback${happyFeedback.error ? ' error' : ''}`} role="status" aria-live="polite">{happyFeedback.text}</p>
-      </section>
-
       <section className="admin-card">
         <h2>Einstellungen · {TOPICS.find(item => item.id === settingsTab).label}</h2>
 
@@ -442,6 +382,66 @@ export default function AdminPage() {
           </form>
         )}
         <p className={`admin-feedback${priceFeedback.error ? ' error' : ''}`} role="status" aria-live="polite">{priceFeedback.text}</p>
+      </section>
+
+      <section className="admin-card admin-alarm">
+        <h2>Alarm</h2>
+        <p className="admin-current">Färbt alle Anzeigen für {ALARM_MS / 1000} Sekunden rot mit blinkendem ALARM.</p>
+        <button type="button" className="alarm-button" onClick={triggerAlarm} disabled={busy || !connected}>
+          {isAlarmActive(alarmAt, now + offset) ? 'Alarm läuft …' : 'Alarm'}
+        </button>
+        <p className={`admin-feedback${alarmFeedback.error ? ' error' : ''}`} role="status" aria-live="polite">{alarmFeedback.text}</p>
+      </section>
+
+      <section className="admin-card">
+        <h2>Happy Hour</h2>
+        {promotions.length === 0 ? (
+          <p className="admin-current">Keine Happy Hour aktiv – alle Getränke zum Normalpreis.</p>
+        ) : (
+          <ul className="admin-running">
+            {promotions.map(({ name, state }) => (
+              <li key={name}>
+                <span>
+                  <b>{name}</b> <strong>{fmt(state.price)} €</strong>
+                  {` · ${state.expiresAt ? `bis ${formatEnd(state)} Uhr` : 'bis zur Rücksetzung'}`}
+                  {isOpen(state, serverNow) && <span className="admin-pill">Handel kurz geöffnet</span>}
+                </span>
+                <button type="button" onClick={() => resetHappyHour(name)} disabled={busy || !connected}>
+                  Beenden ({fmt(prices[name])} €)
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+        <form className="admin-happy" onSubmit={startHappyHour}>
+          <fieldset className="admin-choice">
+            <legend>Getränk</legend>
+            {HAPPY_DRINKS.map(name => (
+              <button key={name} type="button" aria-pressed={happyDrink === name}
+                className={happyDrink === name ? 'selected' : ''} onClick={() => setHappyDrink(name)}>
+                {name}
+              </button>
+            ))}
+          </fieldset>
+          <label>
+            Happy-Hour-Preis (€)
+            <input type="number" inputMode="decimal" min="0" max="99" step="0.01" required
+              value={happyPrice} onChange={event => setHappyPrice(event.target.value)} />
+          </label>
+          <label>
+            Laufzeit (Minuten)
+            <input type="number" inputMode="numeric" min="0" max={MAX_MINUTES} step="1" required
+              value={happyMinutes} onChange={event => setHappyMinutes(event.target.value)} />
+          </label>
+          <small>
+            Normalpreis {happyDrink}: {fmt(prices[happyDrink])} €. 0 Minuten = bis zur manuellen Rücksetzung.
+            Während einer Happy Hour blendet die Anzeige alle 3 Minuten „HAPPY HOUR“ ein.
+          </small>
+          <div className="admin-actions">
+            <button type="submit" className="primary" disabled={busy || !connected}>Happy Hour für {happyDrink} starten</button>
+          </div>
+        </form>
+        <p className={`admin-feedback${happyFeedback.error ? ' error' : ''}`} role="status" aria-live="polite">{happyFeedback.text}</p>
       </section>
 
       <section className="admin-card admin-danger">
