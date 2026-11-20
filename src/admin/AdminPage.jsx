@@ -298,7 +298,9 @@ export default function AdminPage() {
                       <Group title="Anzeige">
                         <TextSetting id="pictures-title" label="Titel neben dem QR-Code" value={pictureSettings.title} disabled={off}
                           onSave={value => changeTopicSettings('picture-settings', { title: value }, 'Titel gespeichert.')} />
-                        <SecondsSetting id="pictures-seconds" label="Bild wechseln alle" min={3} max={120} value={pictureSettings.intervalSeconds}
+                        <Choice label="Größe" options={[['m', 'Normal'], ['l', 'Groß'], ['xl', 'Sehr groß']]} value={pictureSettings.size} disabled={off}
+                onChange={(value, label) => changeTopicSettings('picture-settings', { size: value }, `Bildgröße: ${label}.`)} />
+              <SecondsSetting id="pictures-seconds" label="Bild wechseln alle" min={3} max={120} value={pictureSettings.intervalSeconds}
                           disabled={off} onSave={value => changeTopicSettings('picture-settings', { intervalSeconds: value }, `Neues Bild alle ${value} Sekunden.`)} />
                         <Choice label="QR-Code" options={ON_OFF} value={pictureSettings.showQr} disabled={off}
                           onChange={(value, label) => changeTopicSettings('picture-settings', { showQr: value }, `QR-Code ${label.toLowerCase()}.`)} />

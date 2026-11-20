@@ -3,6 +3,13 @@ import QRCode from 'qrcode'
 
 const PILE = 4
 
+// Je größer die Fotos, desto weniger dürfen sie kippen und verrutschen, damit sie im Bild bleiben.
+const SIZE_LAYOUT = {
+  m: { tilt: 12, shiftX: 8, shiftY: 4 },
+  l: { tilt: 8, shiftX: 5, shiftY: 3 },
+  xl: { tilt: 4, shiftX: 2, shiftY: 1.5 }
+}
+
 // Gleichmäßig verteilte Zufallszahl 0..1 aus der Bildnummer, damit alle Anzeigen
 // die Fotos gleich schräg auf den Stapel legen.
 function hash(n) {
@@ -32,6 +39,8 @@ export default function PicturesBoard({ pictures, settings, serverNow }) {
   const intervalMs = settings.intervalSeconds * 1000
   const slot = Math.floor(serverNow / intervalMs)
   const count = live.length
+  const size = SIZE_LAYOUT[settings.size] ? settings.size : 'l'
+  const layout = SIZE_LAYOUT[size]
 
   // Nächstes Foto vorladen, damit es beim Fallen schon da ist.
   const next = count ? live[(slot + 1) % count] : null
@@ -50,15 +59,15 @@ export default function PicturesBoard({ pictures, settings, serverNow }) {
       picture,
       top: k === 0,
       depth: k,
-      rotate: (hash(s) - 0.5) * 12,
-      x: (hash(s + 101) - 0.5) * 8,
-      y: (hash(s + 202) - 0.5) * 4
+      rotate: (hash(s) - 0.5) * layout.tilt,
+      x: (hash(s + 101) - 0.5) * layout.shiftX,
+      y: (hash(s + 202) - 0.5) * layout.shiftY
     })
   }
   const current = cards.at(-1)?.picture
 
   return (
-    <div className={`pictures-screen${settings.showQr ? '' : ' no-qr'}`}>
+    <div className={`pictures-screen size-${size}${settings.showQr ? '' : ' no-qr'}`}>
       {current && (
         <div key={current.id} className="pictures-backdrop" style={{ backgroundImage: `url(/api/pictures/${current.id})` }} aria-hidden="true" />
       )}

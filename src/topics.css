@@ -117,7 +117,7 @@
   color: var(--text);
   font-family: var(--sans);
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 22cqw;
+  grid-template-columns: minmax(0, 1fr) var(--panel-width, 22cqw);
 }
 .pictures-screen.no-qr { grid-template-columns: minmax(0, 1fr); }
 .pictures-backdrop {
@@ -150,8 +150,8 @@
 .polaroid-photo { overflow: hidden; background: #111; }
 .polaroid-photo img {
   display: block;
-  max-width: 58cqw;
-  max-height: 42cqw;
+  max-width: var(--photo-w, 58cqw);
+  max-height: var(--photo-h, 42cqw);
   width: auto;
   height: auto;
   min-width: 28cqw;
@@ -187,7 +187,7 @@
   text-align: center;
 }
 .pictures-panel h1 { margin: 0 0 .6cqw; font-family: var(--cond); font-weight: 700; font-size: 2.6cqw; line-height: 1.05; }
-.pictures-qr { width: 16.5cqw; aspect-ratio: 1; padding: 1cqw; background: #fff; border-radius: 1cqw; box-shadow: 0 0 0 .35cqw var(--accent); }
+.pictures-qr { width: var(--qr-size, 16.5cqw); aspect-ratio: 1; padding: 1cqw; background: #fff; border-radius: 1cqw; box-shadow: 0 0 0 .35cqw var(--accent); }
 .pictures-qr img { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
 .pictures-qr span { color: #0b1220; font-size: 1cqw; word-break: break-all; }
 .pictures-cta { margin: .4cqw 0 0; font-family: var(--cond); font-weight: 700; font-size: 1.75cqw; color: var(--accent); }
@@ -196,3 +196,14 @@
 @media (prefers-reduced-motion: reduce) {
   .polaroid.top, .polaroid.top .polaroid-photo img, .pictures-backdrop { animation: none; }
 }
+
+/* Bildgröße (Einstellung „Größe“ unter Bilder). */
+.pictures-screen.size-m { --photo-w: 58cqw; --photo-h: 42cqw; --panel-width: 22cqw; --qr-size: 16.5cqw; }
+.pictures-screen.size-l { --photo-w: 66cqw; --photo-h: 46cqw; --panel-width: 19cqw; --qr-size: 14.5cqw; }
+.pictures-screen.size-xl { --photo-w: 76cqw; --photo-h: 48.5cqw; --panel-width: 16cqw; --qr-size: 12.5cqw; }
+.pictures-screen.no-qr.size-l { --photo-w: 76cqw; }
+.pictures-screen.no-qr.size-xl { --photo-w: 88cqw; }
+.pictures-screen.size-xl .polaroid { padding: .8cqw .8cqw 0; }
+.pictures-screen.size-xl .polaroid figcaption { height: 3.4cqw; font-size: 1.5cqw; }
+.pictures-screen.size-xl .pictures-panel h1 { font-size: 2.1cqw; }
+.pictures-screen.size-xl .pictures-cta { font-size: 1.45cqw; }

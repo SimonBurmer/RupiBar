@@ -25,6 +25,7 @@ export const DEFAULT_WHEEL = {
 export const DEFAULT_PICTURES = {
   title: 'Eure Fotos',
   intervalSeconds: 8,
+  size: 'l',
   requireApproval: false,
   showQr: true
 };
@@ -76,7 +77,11 @@ function merge(current, input, fields) {
   return { value: next };
 }
 
+// Größe der Fotos auf der Anzeige: Normal, Groß, Sehr groß.
+export const PICTURE_SIZES = ['m', 'l', 'xl'];
+
 const PICTURE_FIELDS = {
+  size: value => (PICTURE_SIZES.includes(value) ? { value } : { error: 'Unbekannte Bildgröße.' }),
   title: value => text(value, 'Titel', false),
   intervalSeconds: value => seconds(value, 'Bild wechseln alle', 3, 120),
   requireApproval: value => flag(value, 'Freigabe'),

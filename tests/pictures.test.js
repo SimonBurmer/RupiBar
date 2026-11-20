@@ -44,7 +44,9 @@ test('Fotos hochladen, freigeben, löschen, nach Neustart wieder laden', async (
 
 test('Einstellungen für Bilder', () => {
   const store = createStore()
-  assert.deepEqual(store.snapshot().pictureSettings, { title: 'Eure Fotos', intervalSeconds: 8, requireApproval: false, showQr: true })
+  assert.deepEqual(store.snapshot().pictureSettings, { title: 'Eure Fotos', intervalSeconds: 8, size: 'l', requireApproval: false, showQr: true })
+  assert.equal(store.setPictureSettings({ size: 'xl' }).ok, true)
+  assert.equal(store.setPictureSettings({ size: 'riesig' }).ok, false)
   assert.equal(store.setPictureSettings({ intervalSeconds: 12, requireApproval: true }).ok, true)
   assert.equal(store.setPictureSettings({ intervalSeconds: 1 }).ok, false)
   assert.equal(store.setPictureSettings({ showQr: 'ja' }).ok, false)

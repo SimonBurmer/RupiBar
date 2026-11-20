@@ -37,7 +37,8 @@ Auf `/admin` wählt man das **Thema der Anzeige**:
 
 - **Bilder** – Fotos der Gäste fallen wie Polaroids nacheinander auf einen Stapel, mit
   unscharfem Hintergrund und QR-Code zum Hochladen. Gäste laden über `/upload` hoch
-  (das Handy verkleinert das Foto vorher). Einstellungen: Titel, Takt, Freigabe nötig ja/nein,
+  (das Handy verkleinert das Foto vorher). Einstellungen: Titel, Bildgröße (Normal, Groß,
+  Sehr groß), Takt, Freigabe nötig ja/nein,
   QR-Code an/aus; unter „Fotos“ auf `/admin` freigeben und löschen.
 
 Preise, Happy Hours, Alarm und „Alles zurücksetzen“ gelten für alle Themen; die
