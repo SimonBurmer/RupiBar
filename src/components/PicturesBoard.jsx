@@ -50,9 +50,9 @@ export default function PicturesBoard({ pictures, settings, serverNow }) {
       picture,
       top: k === 0,
       depth: k,
-      rotate: (hash(s) - 0.5) * 16,
-      x: (hash(s + 101) - 0.5) * 12,
-      y: (hash(s + 202) - 0.5) * 6
+      rotate: (hash(s) - 0.5) * 12,
+      x: (hash(s + 101) - 0.5) * 8,
+      y: (hash(s + 202) - 0.5) * 4
     })
   }
   const current = cards.at(-1)?.picture
