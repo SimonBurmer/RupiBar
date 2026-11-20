@@ -7,6 +7,12 @@ import './admin.css'
 
 const toInput = price => price.toFixed(2)
 const draftsFrom = prices => Object.fromEntries(DRINKS.map(({ name }) => [name, toInput(prices[name])]))
+const TOPIC_DESCRIPTIONS = {
+  exchange: 'Kurstafel mit Chart, Reportern und Laufband',
+  menu: 'Ruhige Preisliste in drei Spalten',
+  wheel: 'Das Rad kürt den Drink der Runde',
+  pictures: 'Fotos der Gäste mit QR-Code zum Hochladen'
+}
 const THEME_OPTIONS = [['standard', 'Standard'], ['halloween', 'Halloween'], ['bunt', 'Bunt'], ['classic', 'Klassisch']]
 const TILE_MODE_OPTIONS = [['scroll', 'Laufend'], ['page', 'Blättern'], ['fixed', 'Fest']]
 
@@ -94,7 +100,9 @@ export default function AdminPage() {
   const [busy, setBusy] = useState(false)
   const [now, setNow] = useState(() => Date.now())
   // Die Einstellungen zeigen immer das aktive Thema.
-  const settingsTab = topic ?? 'exchange'
+  const [pendingTopic, setPendingTopic] = useState(null)
+  const shownTopic = pendingTopic ?? topic ?? 'exchange'
+  const settingsTab = shownTopic
   const off = busy || !connected
 
   // Rückmeldung zum vorigen Thema ausblenden, sobald ein anderes Thema aktiv ist.
@@ -164,9 +172,10 @@ export default function AdminPage() {
       () => `Design „${THEME_OPTIONS.find(([key]) => key === value)[1]}“ wird angezeigt.`)
   }
 
-  function chooseTopic(value) {
-    run(() => sendChange('PUT', '/api/topic', { topic: value }), setTopicFeedback,
-      () => `Thema „${TOPICS.find(item => item.id === value).label}“ wird angezeigt.`)
+  async function chooseTopic(value) {
+    setPendingTopic(value)
+    await run(() => sendChange('PUT', '/api/topic', { topic: value }), setTopicFeedback, () => '')
+    setPendingTopic(null)
   }
 
   function changeTopicSettings(which, update, message) {
@@ -201,148 +210,156 @@ export default function AdminPage() {
 
       <section className="admin-card">
         <h2>Thema der Anzeige</h2>
-        <div className="admin-choice admin-topics" role="group" aria-label="Thema">
-          {TOPICS.map(({ id, label }) => (
-            <button key={id} type="button" aria-pressed={topic === id}
-              className={topic === id ? 'selected' : ''} onClick={() => chooseTopic(id)} disabled={busy || !connected}>
-              {label}
-            </button>
-          ))}
+        <p className="admin-current">Tippe auf ein Thema, um es anzuzeigen. Darunter erscheinen seine Einstellungen.</p>
+        <div className="topic-cards">
+          {TOPICS.map(({ id, label }) => {
+            const open = shownTopic === id
+            return (
+              <div key={id} className={`topic-card${open ? ' open' : ''}`}>
+                <button type="button" className="topic-card-head" aria-expanded={open} disabled={off && !open}
+                  onClick={() => !open && chooseTopic(id)}>
+                  <span className="topic-card-text">
+                    <span className="topic-card-name">{label}</span>
+                    <span className="topic-card-desc">{TOPIC_DESCRIPTIONS[id]}</span>
+                  </span>
+                  {open ? <span className="topic-card-badge">Wird angezeigt</span> : <span className="topic-card-chevron" aria-hidden="true">›</span>}
+                </button>
+                {open && (
+                  <div className="topic-card-body">
+
+                  {settingsTab === 'exchange' && (
+                    <>
+                      <Group title="Design">
+                        <Choice options={THEME_OPTIONS} value={theme} disabled={off} onChange={chooseTheme} />
+                      </Group>
+                      <Group title="Kursübersicht mit Chart">
+                        <SecondsSetting id="market-seconds" label="Wechseln alle" min={3} max={600} value={settings.marketSeconds}
+                          disabled={off} onSave={value => changeSettings({ marketSeconds: value }, `Kursübersicht wechselt alle ${value} Sekunden.`)} />
+                        <small className="admin-hint">Bier → Gin Tonic → Vodka Bull → Aperol Spritz</small>
+                      </Group>
+                      <Group title="Getränkeleiste">
+                        <Choice options={TILE_MODE_OPTIONS} value={settings.tileMode} disabled={off}
+                          onChange={(value, label) => changeSettings({ tileMode: value }, `Getränkeleiste: ${label}.`)} />
+                        {settings.tileMode !== 'fixed' && (
+                          <>
+                            <SecondsSetting id="tile-seconds" label={settings.tileMode === 'scroll' ? 'Ein Getränk weiter alle' : 'Umblättern alle'}
+                              min={1} max={120} value={settings.tileSeconds} disabled={off}
+                              onSave={value => changeSettings({ tileSeconds: value }, `Tempo der Getränkeleiste: ${value} Sekunden.`)} />
+                          </>
+                        )}
+                      </Group>
+                      <Group title="Reporter">
+                        <SecondsSetting id="scene-seconds" label="Szene wechseln alle" min={5} max={600} value={settings.sceneSeconds}
+                          disabled={off} onSave={value => changeSettings({ sceneSeconds: value }, `Szenenwechsel alle ${value} Sekunden.`)} />
+                        <SecondsSetting id="news-seconds" label="Neue Meldung alle" min={3} max={60} value={settings.newsSeconds}
+                          disabled={off} onSave={value => changeSettings({ newsSeconds: value }, `Neue Meldung alle ${value} Sekunden.`)} />
+                      </Group>
+                      <Group title="Laufband unten">
+                        <Choice options={ON_OFF} value={settings.showTicker} disabled={off}
+                          onChange={(value, label) => changeSettings({ showTicker: value }, `Laufband ${label.toLowerCase()}.`)} />
+                      </Group>
+                    </>
+                  )}
+
+                  {settingsTab === 'menu' && (
+                    <>
+                      <Group title="Texte">
+                        <TextSetting id="menu-title" label="Titel" value={menu.title} disabled={off}
+                          onSave={value => changeTopicSettings('menu', { title: value }, 'Titel gespeichert.')} />
+                        <TextSetting id="menu-subtitle" label="Untertitel" value={menu.subtitle} allowEmpty disabled={off}
+                          onSave={value => changeTopicSettings('menu', { subtitle: value }, 'Untertitel gespeichert.')} />
+                        <TextSetting id="menu-note" label="Hinweis unten" value={menu.note} allowEmpty disabled={off}
+                          onSave={value => changeTopicSettings('menu', { note: value }, 'Hinweis gespeichert.')} />
+                      </Group>
+                      <Group title="Emojis vor den Getränken">
+                        <Choice options={ON_OFF} value={menu.showEmoji} disabled={off}
+                          onChange={(value, label) => changeTopicSettings('menu', { showEmoji: value }, `Emojis ${label.toLowerCase()}.`)} />
+                      </Group>
+                    </>
+                  )}
+
+                  {settingsTab === 'wheel' && (
+                    <>
+                      <Group title="Texte">
+                        <TextSetting id="wheel-title" label="Titel" value={wheel.title} disabled={off}
+                          onSave={value => changeTopicSettings('wheel', { title: value }, 'Titel gespeichert.')} />
+                      </Group>
+                      <Group title="Rad">
+                        <SecondsSetting id="wheel-seconds" label="Drehen alle" min={10} max={600} value={wheel.spinSeconds}
+                          disabled={off} onSave={value => changeTopicSettings('wheel', { spinSeconds: value }, `Das Rad dreht sich alle ${value} Sekunden.`)} />
+                        <Choice label="Preise auf dem Rad" options={ON_OFF} value={wheel.showPrices} disabled={off}
+                          onChange={(value, label) => changeTopicSettings('wheel', { showPrices: value }, `Preise ${label.toLowerCase()}.`)} />
+                      </Group>
+                    </>
+                  )}
+
+                  {settingsTab === 'pictures' && (
+                    <>
+                      <Group title="Anzeige">
+                        <TextSetting id="pictures-title" label="Titel neben dem QR-Code" value={pictureSettings.title} disabled={off}
+                          onSave={value => changeTopicSettings('picture-settings', { title: value }, 'Titel gespeichert.')} />
+                        <SecondsSetting id="pictures-seconds" label="Bild wechseln alle" min={3} max={120} value={pictureSettings.intervalSeconds}
+                          disabled={off} onSave={value => changeTopicSettings('picture-settings', { intervalSeconds: value }, `Neues Bild alle ${value} Sekunden.`)} />
+                        <Choice label="QR-Code" options={ON_OFF} value={pictureSettings.showQr} disabled={off}
+                          onChange={(value, label) => changeTopicSettings('picture-settings', { showQr: value }, `QR-Code ${label.toLowerCase()}.`)} />
+                      </Group>
+                      <Group title="Neue Fotos">
+                        <Choice options={[[false, 'Sofort zeigen'], [true, 'Erst nach Freigabe']]} value={pictureSettings.requireApproval} disabled={off}
+                          onChange={(value, label) => changeTopicSettings('picture-settings', { requireApproval: value }, `Neue Fotos: ${label}.`)} />
+                        <small className="admin-hint">Hochladen: <a href="/upload" target="_blank" rel="noreferrer">{window.location.host}/upload</a></small>
+                      </Group>
+                    </>
+                  )}
+
+                  <p className={`admin-feedback${displayFeedback.error ? ' error' : ''}`} role="status" aria-live="polite">{displayFeedback.text}</p>
+                    {id === 'pictures' && (
+                      <>
+                      {pictures.length === 0 ? (
+                        <Group title="Fotos"><p className="admin-current">Noch keine Fotos hochgeladen.</p></Group>
+                      ) : (
+                        [['pending', 'Warten auf Freigabe'], ['live', 'Auf der Anzeige']].map(([status, label]) => {
+                          const list = pictures.filter(picture => picture.status === status).sort((x, y) => y.at - x.at)
+                          if (!list.length) return null
+                          return (
+                            <Group key={status} title={`${label} (${list.length})`}>
+                              <ul className="admin-photos">
+                                {list.map(picture => (
+                                  <li key={picture.id}>
+                                    <a href={`/api/pictures/${picture.id}`} target="_blank" rel="noreferrer">
+                                      <img src={`/api/pictures/${picture.id}`} alt="" loading="lazy" />
+                                    </a>
+                                    <span className="admin-photo-name">{picture.name || 'ohne Namen'}</span>
+                                    <span className="admin-photo-actions">
+                                      {status === 'pending' && (
+                                        <button type="button" className="primary" disabled={off}
+                                          onClick={() => pictureAction('POST', `/api/pictures/${picture.id}/approve`, 'Foto freigegeben.')}>
+                                          Freigeben
+                                        </button>
+                                      )}
+                                      <button type="button" className="danger" disabled={off}
+                                        onClick={() => window.confirm('Dieses Foto löschen?') && pictureAction('DELETE', `/api/pictures/${picture.id}`, 'Foto gelöscht.')}>
+                                        Löschen
+                                      </button>
+                                    </span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </Group>
+                          )
+                        })
+                      )}
+                      <p className={`admin-feedback${photoFeedback.error ? ' error' : ''}`} role="status" aria-live="polite">{photoFeedback.text}</p>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            )
+          })}
         </div>
         <small className="admin-hint">Preise, Happy Hours und Alarm gelten für alle Themen.</small>
         <p className={`admin-feedback${topicFeedback.error ? ' error' : ''}`} role="status" aria-live="polite">{topicFeedback.text}</p>
       </section>
-
-      <section className="admin-card">
-        <h2>Einstellungen · {TOPICS.find(item => item.id === settingsTab).label}</h2>
-
-        {settingsTab === 'exchange' && (
-          <>
-            <Group title="Design">
-              <Choice options={THEME_OPTIONS} value={theme} disabled={off} onChange={chooseTheme} />
-            </Group>
-            <Group title="Kursübersicht mit Chart">
-              <SecondsSetting id="market-seconds" label="Wechseln alle" min={3} max={600} value={settings.marketSeconds}
-                disabled={off} onSave={value => changeSettings({ marketSeconds: value }, `Kursübersicht wechselt alle ${value} Sekunden.`)} />
-              <small className="admin-hint">Bier → Gin Tonic → Vodka Bull → Aperol Spritz</small>
-            </Group>
-            <Group title="Getränkeleiste">
-              <Choice options={TILE_MODE_OPTIONS} value={settings.tileMode} disabled={off}
-                onChange={(value, label) => changeSettings({ tileMode: value }, `Getränkeleiste: ${label}.`)} />
-              {settings.tileMode !== 'fixed' && (
-                <>
-                  <SecondsSetting id="tile-seconds" label={settings.tileMode === 'scroll' ? 'Ein Getränk weiter alle' : 'Umblättern alle'}
-                    min={1} max={120} value={settings.tileSeconds} disabled={off}
-                    onSave={value => changeSettings({ tileSeconds: value }, `Tempo der Getränkeleiste: ${value} Sekunden.`)} />
-                </>
-              )}
-            </Group>
-            <Group title="Reporter">
-              <SecondsSetting id="scene-seconds" label="Szene wechseln alle" min={5} max={600} value={settings.sceneSeconds}
-                disabled={off} onSave={value => changeSettings({ sceneSeconds: value }, `Szenenwechsel alle ${value} Sekunden.`)} />
-              <SecondsSetting id="news-seconds" label="Neue Meldung alle" min={3} max={60} value={settings.newsSeconds}
-                disabled={off} onSave={value => changeSettings({ newsSeconds: value }, `Neue Meldung alle ${value} Sekunden.`)} />
-            </Group>
-            <Group title="Laufband unten">
-              <Choice options={ON_OFF} value={settings.showTicker} disabled={off}
-                onChange={(value, label) => changeSettings({ showTicker: value }, `Laufband ${label.toLowerCase()}.`)} />
-            </Group>
-          </>
-        )}
-
-        {settingsTab === 'menu' && (
-          <>
-            <Group title="Texte">
-              <TextSetting id="menu-title" label="Titel" value={menu.title} disabled={off}
-                onSave={value => changeTopicSettings('menu', { title: value }, 'Titel gespeichert.')} />
-              <TextSetting id="menu-subtitle" label="Untertitel" value={menu.subtitle} allowEmpty disabled={off}
-                onSave={value => changeTopicSettings('menu', { subtitle: value }, 'Untertitel gespeichert.')} />
-              <TextSetting id="menu-note" label="Hinweis unten" value={menu.note} allowEmpty disabled={off}
-                onSave={value => changeTopicSettings('menu', { note: value }, 'Hinweis gespeichert.')} />
-            </Group>
-            <Group title="Emojis vor den Getränken">
-              <Choice options={ON_OFF} value={menu.showEmoji} disabled={off}
-                onChange={(value, label) => changeTopicSettings('menu', { showEmoji: value }, `Emojis ${label.toLowerCase()}.`)} />
-            </Group>
-          </>
-        )}
-
-        {settingsTab === 'wheel' && (
-          <>
-            <Group title="Texte">
-              <TextSetting id="wheel-title" label="Titel" value={wheel.title} disabled={off}
-                onSave={value => changeTopicSettings('wheel', { title: value }, 'Titel gespeichert.')} />
-            </Group>
-            <Group title="Rad">
-              <SecondsSetting id="wheel-seconds" label="Drehen alle" min={10} max={600} value={wheel.spinSeconds}
-                disabled={off} onSave={value => changeTopicSettings('wheel', { spinSeconds: value }, `Das Rad dreht sich alle ${value} Sekunden.`)} />
-              <Choice label="Preise auf dem Rad" options={ON_OFF} value={wheel.showPrices} disabled={off}
-                onChange={(value, label) => changeTopicSettings('wheel', { showPrices: value }, `Preise ${label.toLowerCase()}.`)} />
-            </Group>
-          </>
-        )}
-
-        {settingsTab === 'pictures' && (
-          <>
-            <Group title="Anzeige">
-              <TextSetting id="pictures-title" label="Titel neben dem QR-Code" value={pictureSettings.title} disabled={off}
-                onSave={value => changeTopicSettings('picture-settings', { title: value }, 'Titel gespeichert.')} />
-              <SecondsSetting id="pictures-seconds" label="Bild wechseln alle" min={3} max={120} value={pictureSettings.intervalSeconds}
-                disabled={off} onSave={value => changeTopicSettings('picture-settings', { intervalSeconds: value }, `Neues Bild alle ${value} Sekunden.`)} />
-              <Choice label="QR-Code" options={ON_OFF} value={pictureSettings.showQr} disabled={off}
-                onChange={(value, label) => changeTopicSettings('picture-settings', { showQr: value }, `QR-Code ${label.toLowerCase()}.`)} />
-            </Group>
-            <Group title="Neue Fotos">
-              <Choice options={[[false, 'Sofort zeigen'], [true, 'Erst nach Freigabe']]} value={pictureSettings.requireApproval} disabled={off}
-                onChange={(value, label) => changeTopicSettings('picture-settings', { requireApproval: value }, `Neue Fotos: ${label}.`)} />
-              <small className="admin-hint">Hochladen: <a href="/upload" target="_blank" rel="noreferrer">{window.location.host}/upload</a></small>
-            </Group>
-          </>
-        )}
-
-        <p className={`admin-feedback${displayFeedback.error ? ' error' : ''}`} role="status" aria-live="polite">{displayFeedback.text}</p>
-      </section>
-
-      {topic === 'pictures' && (
-        <section className="admin-card">
-          <h2>Fotos</h2>
-          {pictures.length === 0 ? (
-            <p className="admin-current">Noch keine Fotos hochgeladen.</p>
-          ) : (
-            [['pending', 'Warten auf Freigabe'], ['live', 'Auf der Anzeige']].map(([status, label]) => {
-              const list = pictures.filter(picture => picture.status === status).sort((x, y) => y.at - x.at)
-              if (!list.length) return null
-              return (
-                <Group key={status} title={`${label} (${list.length})`}>
-                  <ul className="admin-photos">
-                    {list.map(picture => (
-                      <li key={picture.id}>
-                        <a href={`/api/pictures/${picture.id}`} target="_blank" rel="noreferrer">
-                          <img src={`/api/pictures/${picture.id}`} alt="" loading="lazy" />
-                        </a>
-                        <span className="admin-photo-name">{picture.name || 'ohne Namen'}</span>
-                        <span className="admin-photo-actions">
-                          {status === 'pending' && (
-                            <button type="button" className="primary" disabled={off}
-                              onClick={() => pictureAction('POST', `/api/pictures/${picture.id}/approve`, 'Foto freigegeben.')}>
-                              Freigeben
-                            </button>
-                          )}
-                          <button type="button" className="danger" disabled={off}
-                            onClick={() => window.confirm('Dieses Foto löschen?') && pictureAction('DELETE', `/api/pictures/${picture.id}`, 'Foto gelöscht.')}>
-                            Löschen
-                          </button>
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </Group>
-              )
-            })
-          )}
-          <p className={`admin-feedback${photoFeedback.error ? ' error' : ''}`} role="status" aria-live="polite">{photoFeedback.text}</p>
-        </section>
-      )}
 
       <section className="admin-card">
         <h2>Getränkepreise</h2>
