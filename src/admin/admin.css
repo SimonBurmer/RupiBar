@@ -149,3 +149,29 @@
 .admin-photo-actions { display: flex; gap: 6px; }
 .admin .admin-photo-actions button { padding: 7px 10px; font-size: 14px; }
 .admin-hint a { color: var(--accent); }
+
+/* Aufgeräumte Einstellungen: Gruppen mit kleiner Überschrift, Zeilen mit Wert und Einheit. */
+.admin-group { padding: 14px 0; border-top: 1px solid var(--line); }
+.admin-card h2 + .admin-group, .admin-card h2 + .admin-current + .admin-group { border-top: 0; padding-top: 4px; }
+.admin-group h3 {
+  margin: 0 0 10px;
+  font-family: var(--cond);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.admin-group > * + * { margin-top: 10px; }
+.admin-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.admin-row label { flex: 1 1 auto; color: var(--text); font-size: 15px; }
+.admin-row-field { display: inline-flex; align-items: center; gap: 6px; }
+.admin-row-field input { width: 76px; text-align: right; padding: 8px 10px; }
+.admin-unit { color: var(--muted); }
+.admin .admin-row button { padding: 8px 14px; }
+.admin-row-text { display: grid; grid-template-columns: 1fr auto; gap: 6px 10px; }
+.admin-row-text label { grid-column: 1 / -1; color: var(--muted); font-size: 14px; }
+.admin-row-text input { font-family: var(--sans); }
+.admin-choice-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.admin-choice-label { font-size: 15px; }
+.admin-group .admin-hint { margin-top: 6px; }
