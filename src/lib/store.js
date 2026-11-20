@@ -1,6 +1,6 @@
 import { DEFAULT_PRICES, HAPPY_DRINKS, parsePrice } from './market.js';
 import { INITIAL_HAPPY, INVALID_INPUT_MESSAGE, isExpired, isPromotion, nextState, parseInput } from './happyHour.js';
-import { DEFAULT_MENU, DEFAULT_TOPIC, DEFAULT_WHEEL, TOPIC_IDS, mergeMenu, mergeWheel } from './topics.js';
+import { DEFAULT_MENU, DEFAULT_PICTURES, DEFAULT_TOPIC, DEFAULT_WHEEL, TOPIC_IDS, mergeMenu, mergePictures, mergeWheel } from './topics.js';
 
 // Designs der Börse: Standard (neutral), Halloween, Bunt (hell) und Klassisch.
 export const THEMES = ['standard', 'halloween', 'bunt', 'classic'];
@@ -27,11 +27,12 @@ export function createStore() {
   let topic = DEFAULT_TOPIC;
   let menu = { ...DEFAULT_MENU };
   let wheel = { ...DEFAULT_WHEEL };
+  let pictureSettings = { ...DEFAULT_PICTURES };
 
   const happyDrink = drink => (HAPPY_DRINKS.includes(drink) ? drink : null);
 
   return {
-    snapshot: () => ({ prices: { ...prices }, happy: structuredClone(happy), alarmAt, theme, settings: { ...settings }, topic, menu: { ...menu }, wheel: { ...wheel } }),
+    snapshot: () => ({ prices: { ...prices }, happy: structuredClone(happy), alarmAt, theme, settings: { ...settings }, topic, menu: { ...menu }, wheel: { ...wheel }, pictureSettings: { ...pictureSettings } }),
 
     setPrices(input, now) {
       if (!input || typeof input !== 'object' || Array.isArray(input)) return { ok: false, error: 'Keine Preise übergeben.' };
@@ -113,6 +114,13 @@ export function createStore() {
       const result = mergeWheel(wheel, input);
       if (result.error) return { ok: false, error: result.error };
       wheel = result.value;
+      return { ok: true };
+    },
+
+    setPictureSettings(input) {
+      const result = mergePictures(pictureSettings, input);
+      if (result.error) return { ok: false, error: result.error };
+      pictureSettings = result.value;
       return { ok: true };
     },
 

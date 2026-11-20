@@ -2,12 +2,13 @@ import { useEffect, useMemo, useState } from 'react'
 import ExchangeBoard from './components/ExchangeBoard.jsx'
 import MenuBoard from './components/MenuBoard.jsx'
 import WheelBoard from './components/WheelBoard.jsx'
+import PicturesBoard from './components/PicturesBoard.jsx'
 import { buildBoard, fmt } from './lib/market.js'
 import { happyFlash, isAlarmActive } from './lib/happyHour.js'
 import { useExchange } from './lib/useExchange.js'
 import { applyTheme, normalizeTheme, storedTheme } from './lib/theme.js'
 
-// Anzeige: wählt das Thema aus /admin (Börse, Getränkekarte, Glücksrad). Alarm und
+// Anzeige: wählt das Thema aus /admin (Börse, Getränkekarte, Glücksrad, Bilder). Alarm und
 // Happy-Hour-Einblendung liegen über jedem Thema.
 export default function App() {
   const live = useExchange()
@@ -45,6 +46,7 @@ export default function App() {
     <>
       {topic === 'menu' && <MenuBoard drinks={drinks} happy={happy} menu={live.menu} now={now} />}
       {topic === 'wheel' && <WheelBoard drinks={drinks} wheel={live.wheel} now={now} serverNow={serverNow} />}
+      {topic === 'pictures' && <PicturesBoard pictures={live.pictures} settings={live.pictureSettings} serverNow={serverNow} />}
       {topic === 'exchange' && (
         <ExchangeBoard
           prices={prices}

@@ -3,7 +3,8 @@
 export const TOPICS = [
   { id: 'exchange', label: 'Börse' },
   { id: 'menu', label: 'Getränkekarte' },
-  { id: 'wheel', label: 'Glücksrad' }
+  { id: 'wheel', label: 'Glücksrad' },
+  { id: 'pictures', label: 'Bilder' }
 ];
 export const TOPIC_IDS = TOPICS.map(topic => topic.id);
 export const DEFAULT_TOPIC = 'exchange';
@@ -19,6 +20,13 @@ export const DEFAULT_WHEEL = {
   title: 'Glücksrad',
   spinSeconds: 30,
   showPrices: true
+};
+
+export const DEFAULT_PICTURES = {
+  title: 'Eure Fotos',
+  intervalSeconds: 8,
+  requireApproval: false,
+  showQr: true
 };
 
 const TEXT_LIMIT = 60;
@@ -68,5 +76,13 @@ function merge(current, input, fields) {
   return { value: next };
 }
 
+const PICTURE_FIELDS = {
+  title: value => text(value, 'Titel', false),
+  intervalSeconds: value => seconds(value, 'Bild wechseln alle', 3, 120),
+  requireApproval: value => flag(value, 'Freigabe'),
+  showQr: value => flag(value, 'QR-Code')
+};
+
 export const mergeMenu = (current, input) => merge(current, input, MENU_FIELDS);
+export const mergePictures = (current, input) => merge(current, input, PICTURE_FIELDS);
 export const mergeWheel = (current, input) => merge(current, input, WHEEL_FIELDS);

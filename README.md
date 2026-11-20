@@ -35,6 +35,11 @@ Auf `/admin` wählt man das **Thema der Anzeige**:
 - **Glücksrad** – ein buntes Glücksrad dreht sich im eingestellten Takt und kürt den
   „Drink der Runde“ (auf allen Anzeigen gleich). Einstellungen: Titel, Takt, Preise.
 
+- **Bilder** – Fotos der Gäste fallen wie Polaroids nacheinander auf einen Stapel, mit
+  unscharfem Hintergrund und QR-Code zum Hochladen. Gäste laden über `/upload` hoch
+  (das Handy verkleinert das Foto vorher). Einstellungen: Titel, Takt, Freigabe nötig ja/nein,
+  QR-Code an/aus; unter „Fotos“ auf `/admin` freigeben und löschen.
+
 Preise, Happy Hours, Alarm und „Alles zurücksetzen“ gelten für alle Themen; die
 Einstellungen sind je Thema getrennt; /admin zeigt automatisch die des aktiven Themas.
 
@@ -61,6 +66,10 @@ Auf `/admin`:
 Der Reporterbereich wechselt (Standard: alle 30 Sekunden, einstellbar) zwischen den Szenen in
 `src/lib/scenes.js` (Studio, Brauerei, Getränkemarkt).
 
+Die Fotos liegen im Railway-Bucket `mailcast-audio-bucked` unter `rupibar/pictures/`
+(Variablen `S3_*` am Dienst rupibar als Verweis auf den Bucket) und bleiben auch nach
+einem Deploy erhalten; ohne diese Variablen speichert der Server lokal in `data/pictures`.
+
 Die Preise liegen nur im Speicher des Servers. `/admin` ist nicht passwortgeschützt,
 und nach jedem Deploy oder Neustart gelten wieder die Standardpreise.
 
@@ -70,10 +79,13 @@ und nach jedem Deploy oder Neustart gelten wieder die Standardpreise.
   (`GET /api/state`, Live-Updates über `GET /api/events`, `PUT /api/prices`,
   `POST /api/happy-hour`, `POST /api/happy-hour/reset`, `POST /api/reset`,
   `POST /api/alarm`, `PUT /api/theme`, `PUT /api/settings`, `PUT /api/topic`,
-  `PUT /api/menu`, `PUT /api/wheel`).
+  `PUT /api/menu`, `PUT /api/wheel`, `PUT /api/picture-settings`, `POST /api/pictures`,
+  `GET`/`DELETE /api/pictures/:id`, `POST /api/pictures/:id/approve`).
 - `src/App.jsx` – wählt das Thema; `src/components/ExchangeBoard.jsx`, `MenuBoard.jsx`,
   `WheelBoard.jsx` – die drei Themen; `src/admin/AdminPage.jsx` – Admin-Seite.
 - `src/lib/topics.js` – Themen und ihre Einstellungen; `src/lib/wheel.js` – Glücksrad.
+- `server/pictureStore.js` – Fotos (S3 oder lokal); `src/components/PicturesBoard.jsx` – Bilder;
+  `src/upload/UploadPage.jsx` – Upload-Seite für Gäste.
 - `src/components/` – Kopfzeile, Kursanzeige, Crash-Chart, Reporter,
   Getränkekacheln und Laufband.
 - `src/lib/market.js` – Getränke, Standardpreise und Chart-Geometrie.

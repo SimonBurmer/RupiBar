@@ -140,3 +140,12 @@
 
 .admin .admin-topics button { font-size: 18px; padding: 12px 18px; }
 .admin-text input { width: auto; flex: 1 1 180px; text-align: left; font-family: var(--sans); }
+
+.admin-photos-group h3 { margin: 14px 0 8px; font-family: var(--cond); font-size: 16px; font-weight: 600; color: var(--muted); }
+.admin-photos { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.admin-photos li { display: grid; grid-template-columns: 72px 1fr auto; align-items: center; gap: 12px; }
+.admin-photos img { width: 72px; height: 72px; object-fit: cover; border-radius: 4px; display: block; background: var(--panel); }
+.admin-photo-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.admin-photo-actions { display: flex; gap: 6px; }
+.admin .admin-photo-actions button { padding: 7px 10px; font-size: 14px; }
+.admin-hint a { color: var(--accent); }

@@ -46,12 +46,13 @@ function TextSetting({ id, label, value, allowEmpty = false, disabled, onSave })
 }
 
 export default function AdminPage() {
-  const { prices, happy, alarmAt, theme, settings, topic, menu, wheel, offset, synced, connected } = useExchange()
+  const { prices, happy, alarmAt, theme, settings, topic, menu, wheel, pictureSettings, pictures, offset, synced, connected } = useExchange()
   const [drafts, setDrafts] = useState(null)
   const [priceFeedback, setPriceFeedback] = useState({ text: '', error: false })
   const [happyFeedback, setHappyFeedback] = useState({ text: '', error: false })
   const [alarmFeedback, setAlarmFeedback] = useState({ text: '', error: false })
   const [topicFeedback, setTopicFeedback] = useState({ text: '', error: false })
+  const [photoFeedback, setPhotoFeedback] = useState({ text: '', error: false })
   // Die Einstellungen zeigen immer das aktive Thema.
   const settingsTab = topic ?? 'exchange'
   const [resetFeedback, setResetFeedback] = useState({ text: '', error: false })
@@ -133,6 +134,10 @@ export default function AdminPage() {
 
   function changeTopicSettings(which, update, message) {
     return run(() => sendChange('PUT', `/api/${which}`, update), setDisplayFeedback, () => message)
+  }
+
+  async function pictureAction(method, url, message) {
+    return run(() => sendChange(method, url), setPhotoFeedback, () => message)
   }
 
   function changeSettings(update, message) {
@@ -329,7 +334,79 @@ export default function AdminPage() {
           </div>
         )}
 
+        {settingsTab === 'pictures' && (
+          <div>
+            <TextSetting id="pictures-title" label="Titel neben dem QR-Code" value={pictureSettings.title} disabled={busy || !connected}
+              onSave={value => changeTopicSettings('picture-settings', { title: value }, 'Titel gespeichert.')} />
+            <SecondsSetting id="pictures-seconds" label="Bild wechseln alle (Sekunden)" min={3} max={120} value={pictureSettings.intervalSeconds}
+              disabled={busy || !connected} onSave={value => changeTopicSettings('picture-settings', { intervalSeconds: value }, `Neues Bild alle ${value} Sekunden.`)} />
+            <fieldset className="admin-choice admin-spaced">
+              <legend>Neue Fotos</legend>
+              {[[false, 'Sofort zeigen'], [true, 'Erst nach Freigabe']].map(([value, label]) => (
+                <button key={label} type="button" aria-pressed={pictureSettings.requireApproval === value}
+                  className={pictureSettings.requireApproval === value ? 'selected' : ''} disabled={busy || !connected}
+                  onClick={() => changeTopicSettings('picture-settings', { requireApproval: value }, `Neue Fotos: ${label}.`)}>
+                  {label}
+                </button>
+              ))}
+            </fieldset>
+            <fieldset className="admin-choice admin-spaced">
+              <legend>QR-Code zum Hochladen</legend>
+              {[[true, 'An'], [false, 'Aus']].map(([value, label]) => (
+                <button key={label} type="button" aria-pressed={pictureSettings.showQr === value}
+                  className={pictureSettings.showQr === value ? 'selected' : ''} disabled={busy || !connected}
+                  onClick={() => changeTopicSettings('picture-settings', { showQr: value }, `QR-Code ${label.toLowerCase()}.`)}>
+                  {label}
+                </button>
+              ))}
+            </fieldset>
+            <small className="admin-hint">Gäste laden Fotos über <a href="/upload" target="_blank" rel="noreferrer">{window.location.host}/upload</a> hoch.</small>
+          </div>
+        )}
+
         <p className={`admin-feedback${displayFeedback.error ? ' error' : ''}`} role="status" aria-live="polite">{displayFeedback.text}</p>
+      </section>
+
+      <section className="admin-card">
+        <h2>Fotos</h2>
+        {pictures.length === 0 ? (
+          <p className="admin-current">Noch keine Fotos hochgeladen.</p>
+        ) : (
+          <>
+            {[['pending', 'Warten auf Freigabe'], ['live', 'Auf der Anzeige']].map(([status, label]) => {
+              const list = pictures.filter(picture => picture.status === status).sort((a, b) => b.at - a.at)
+              if (!list.length) return null
+              return (
+                <div key={status} className="admin-photos-group">
+                  <h3>{label} ({list.length})</h3>
+                  <ul className="admin-photos">
+                    {list.map(picture => (
+                      <li key={picture.id}>
+                        <a href={`/api/pictures/${picture.id}`} target="_blank" rel="noreferrer">
+                          <img src={`/api/pictures/${picture.id}`} alt="" loading="lazy" />
+                        </a>
+                        <span className="admin-photo-name">{picture.name || 'ohne Namen'}</span>
+                        <span className="admin-photo-actions">
+                          {status === 'pending' && (
+                            <button type="button" className="primary" disabled={busy || !connected}
+                              onClick={() => pictureAction('POST', `/api/pictures/${picture.id}/approve`, 'Foto freigegeben.')}>
+                              Freigeben
+                            </button>
+                          )}
+                          <button type="button" className="danger" disabled={busy || !connected}
+                            onClick={() => window.confirm('Dieses Foto löschen?') && pictureAction('DELETE', `/api/pictures/${picture.id}`, 'Foto gelöscht.')}>
+                            Löschen
+                          </button>
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )
+            })}
+          </>
+        )}
+        <p className={`admin-feedback${photoFeedback.error ? ' error' : ''}`} role="status" aria-live="polite">{photoFeedback.text}</p>
       </section>
 
       <section className="admin-card">

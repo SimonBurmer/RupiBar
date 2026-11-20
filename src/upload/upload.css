@@ -1,0 +1,54 @@
+/* Upload-Seite fürs Handy, in den Farben des Standard-Designs. */
+.upload {
+  width: min(520px, 100%);
+  align-self: start;
+  padding: 28px 16px 48px;
+  color: var(--text);
+  font-family: var(--sans);
+}
+.upload h1 { margin: 0; font-family: var(--cond); font-weight: 700; font-size: 32px; line-height: 1.1; }
+.upload-lead { color: var(--muted); line-height: 1.5; margin: 10px 0 24px; }
+.upload form { display: grid; gap: 18px; }
+.upload-pick input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.upload-pick span {
+  display: block;
+  padding: 26px 16px;
+  text-align: center;
+  border: 2px dashed var(--line-strong);
+  border-radius: 10px;
+  font-family: var(--cond);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--accent);
+  cursor: pointer;
+}
+.upload-pick input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+.upload-previews { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 8px; }
+.upload-previews img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 6px; }
+.upload-name { display: grid; gap: 6px; color: var(--muted); font-size: 14px; }
+.upload-name input {
+  font: inherit;
+  font-size: 16px;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  padding: 12px;
+}
+.upload-name input:focus { outline: none; border-color: var(--accent); }
+.upload button {
+  font: inherit;
+  font-family: var(--cond);
+  font-size: 20px;
+  font-weight: 700;
+  padding: 14px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #06111f;
+  cursor: pointer;
+}
+.upload button:disabled { opacity: .45; cursor: not-allowed; }
+.upload-message { min-height: 1.4em; margin: 18px 0 0; color: var(--up); line-height: 1.45; }
+.upload-message.error { color: var(--down); }
+.upload-note { color: var(--faint); font-size: 13px; line-height: 1.5; }

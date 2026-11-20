@@ -8,7 +8,7 @@ import { createStore } from '../src/lib/store.js'
 const T0 = 1800000000000
 
 test('Themen: Börse, Getränkekarte, Glücksrad', () => {
-  assert.deepEqual(TOPIC_IDS, ['exchange', 'menu', 'wheel'])
+  assert.deepEqual(TOPIC_IDS, ['exchange', 'menu', 'wheel', 'pictures'])
   const store = createStore()
   assert.equal(store.snapshot().topic, 'exchange')
   assert.equal(store.setTopic('menu').ok, true)
