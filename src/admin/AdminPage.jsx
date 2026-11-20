@@ -208,7 +208,7 @@ export default function AdminPage() {
         <a className="admin-link" href="/">Zur Anzeige →</a>
       </header>
 
-      <section className="admin-card">
+      <section className="admin-card admin-topics-section">
         <h2>Thema der Anzeige</h2>
         <p className="admin-current">Tippe auf ein Thema, um es anzuzeigen. Darunter erscheinen seine Einstellungen.</p>
         <div className="topic-cards">

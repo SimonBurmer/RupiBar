@@ -216,3 +216,23 @@
 @keyframes topic-open { from { opacity: 0; transform: translateY(-4px); } }
 @media (prefers-reduced-motion: reduce) { .topic-card-body { animation: none; } }
 .topic-cards + .admin-hint { margin-top: 14px; }
+
+/* Jeder Bereich als eigene Karte (wie die Themen-Karten). */
+.admin-card {
+  margin: 0 0 14px;
+  padding: 18px 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--panel);
+}
+.admin-card h2 { margin-bottom: 10px; }
+/* Die Themen sind selbst Karten, ihr Bereich bleibt deshalb ohne Rahmen. */
+.admin-card.admin-topics-section { margin-top: 8px; padding: 14px 0 6px; border: 0; border-radius: 0; background: transparent; }
+.admin-card.admin-alarm { border-color: #b3121f; box-shadow: inset 4px 0 0 #b3121f; }
+.admin-card.admin-danger { border-color: color-mix(in srgb, var(--down) 45%, var(--line-strong)); }
+/* Eingabefelder heben sich von der Karte ab. */
+.admin input { background: var(--bg); }
+.admin-prices { border-top: 0; }
+.admin-prices li:last-child { border-bottom: 0; }
+.admin-note { margin-top: 6px; }
+.admin-feedback:empty { min-height: 0; margin: 0; }
