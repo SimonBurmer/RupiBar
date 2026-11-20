@@ -16,15 +16,15 @@ export default function CrashChart({ market, trade, base, open, haltUntil }) {
         <desc id="crash-description">{`Kursverlust ${percentage} Prozent. Handel ausgesetzt. Preis fixiert bei ${fmt(market.price)} Euro.`}</desc>
         <defs>
           <linearGradient id="crash-fill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#ece7dc" stopOpacity=".06" />
-            <stop offset="100%" stopColor="#ece7dc" stopOpacity="0" />
+            <stop offset="0%" style={{ stopColor: 'var(--text)' }} stopOpacity=".06" />
+            <stop offset="100%" style={{ stopColor: 'var(--text)' }} stopOpacity="0" />
           </linearGradient>
         </defs>
-        <g stroke="#ffffff0f" strokeWidth="1">
+        <g className="chart-grid" strokeWidth="1">
           <path d="M58 48H622 M58 83H622 M58 118H622 M58 153H622 M58 188H622 M58 223H622" />
           <path d="M58 48V242 M170 48V242 M282 48V242 M394 48V242 M506 48V242 M622 48V242" />
         </g>
-        <g fill="#8f897c" fontSize="14">
+        <g className="chart-muted" fontSize="14">
           {g.labels.map((label, tick) => (
             <text key={tick} x="3" y={LABEL_Y[tick]}>{label}</text>
           ))}
@@ -33,8 +33,8 @@ export default function CrashChart({ market, trade, base, open, haltUntil }) {
           <text className="chart-word" x="470" y="273">Handelspause</text>
         </g>
         <path d={g.fillPath} fill="url(#crash-fill)" />
-        <rect x="401" y="35" width="221" height="207" fill="#e8b04a" opacity=".05" />
-        <path d="M401 35V242" stroke="#e8b04a" strokeDasharray="3 5" opacity=".5" />
+        <rect x="401" y="35" width="221" height="207" className="chart-hold-fill" opacity=".05" />
+        <path d="M401 35V242" className="chart-hold-stroke" strokeDasharray="3 5" opacity=".5" />
         <path className="price-history" d={g.historyPath} fill="none" />
         <path className="price-crash" d={g.crashPath} />
         <path
@@ -42,13 +42,13 @@ export default function CrashChart({ market, trade, base, open, haltUntil }) {
           pathLength="1"
           d={g.eventPath}
         />
-        <path d={g.dashPath} stroke="#e8b04a" strokeWidth="1.5" strokeDasharray="5 4" />
-        <circle cx={g.dotX} cy={g.dotY} r="4" fill="#e8b04a" />
+        <path d={g.dashPath} className="chart-hold-stroke" strokeWidth="1.5" strokeDasharray="5 4" />
+        <circle cx={g.dotX} cy={g.dotY} r="4" className="chart-hold-fill" />
         <g fontWeight="500">
-          <text x="65" y={g.openingLabelY} fill="#ece7dc" fontSize="18">{`${fmt(market.opening)} €`}</text>
-          <text className="chart-word" x="414" y="62" fill="#e8b04a" fontSize="16" fontWeight="600">{open ? 'Handel geöffnet' : 'Handel gestoppt'}</text>
-          <text className="chart-word" x="414" y="84" fill="#8f897c" fontSize="14">{`Kurs fixiert bei ${fmt(market.price)} €`}</text>
-          <text x="530" y={g.priceLabelY} fill="#e8b04a" fontSize="22">{`${fmt(market.price)} €`}</text>
+          <text x="65" y={g.openingLabelY} className="chart-text" fontSize="18">{`${fmt(market.opening)} €`}</text>
+          <text className="chart-word chart-hold-fill" x="414" y="62" fontSize="16" fontWeight="600">{open ? 'Handel geöffnet' : 'Handel gestoppt'}</text>
+          <text className="chart-word chart-muted" x="414" y="84" fontSize="14">{`Kurs fixiert bei ${fmt(market.price)} €`}</text>
+          <text x="530" y={g.priceLabelY} className="chart-hold-fill" fontSize="22">{`${fmt(market.price)} €`}</text>
         </g>
       </svg>
       <div className="halt-summary">

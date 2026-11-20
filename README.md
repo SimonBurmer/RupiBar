@@ -28,7 +28,8 @@ wird automatisch deployt.
 
 Auf `/admin` wählt man das **Thema der Anzeige**:
 
-- **Börse** – die Halloween-Kurstafel (Details unten).
+- **Börse** – die Kurstafel (Details unten), mit den Designs **Standard** (neutral,
+  Voreinstellung), **Halloween**, **Bunt** (hell und farbig) und **Klassisch**.
 - **Getränkekarte** – ruhige, neutrale Preistafel in drei Spalten; Happy-Hour-Preise mit
   durchgestrichenem Normalpreis. Einstellungen: Titel, Untertitel, Hinweis, Emojis.
 - **Glücksrad** – ein buntes Glücksrad dreht sich im eingestellten Takt und kürt den
@@ -50,7 +51,7 @@ Auf `/admin`:
   Preis mit Laufzeit (`0` Minuten = bis zur manuellen Rücksetzung), mehrere gleichzeitig
   möglich. Die Anzeige zeigt das Getränk eine Minute lang mit Handelsöffnung und
   Eilmeldung und blendet während einer Happy Hour alle 3 Minuten groß „HAPPY HOUR“ ein.
-- **Design der Anzeige**: „Neu“ oder „Klassisch“ (das ursprüngliche Design).
+- **Design der Börse**: Standard, Halloween, Bunt oder Klassisch.
 - **Anzeige**: Wechseltakt der Kursübersicht mit Chart (Standard 5 s), Getränkeleiste laufend, blätternd (fünf je Seite) oder fest, Tempo in
   Sekunden, Szenenwechsel und Meldungsdauer der Reporter, und das Laufband unten an oder aus.
 - **Alarm**: färbt alle Anzeigen für 6 Sekunden rot mit blinkendem ALARM.
@@ -79,7 +80,7 @@ und nach jedem Deploy oder Neustart gelten wieder die Standardpreise.
 - `src/lib/happyHour.js` – Happy-Hour-Logik; `src/lib/store.js` – Preiszustand des Servers.
 - `src/lib/useExchange.js` – Live-Verbindung des Browsers zum Server.
 - `src/lib/reporterAnimation.js` – Dialog und Canvas-Animation der Reporter.
-- `src/themes/modern.css` und `src/themes/classic.css` – die beiden Designs der Anzeige
+- `src/themes/modern.css` (Standard, Halloween, Bunt) und `src/themes/classic.css` – die Designs der Börse
   (Komponenten des klassischen Designs in `src/components/classic/`);
   `src/index.css` – Alarm- und Happy-Hour-Einblendung; `src/admin/admin.css` – `/admin`.
 

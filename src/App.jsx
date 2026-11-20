@@ -5,7 +5,7 @@ import WheelBoard from './components/WheelBoard.jsx'
 import { buildBoard, fmt } from './lib/market.js'
 import { happyFlash, isAlarmActive } from './lib/happyHour.js'
 import { useExchange } from './lib/useExchange.js'
-import { applyTheme, storedTheme } from './lib/theme.js'
+import { applyTheme, normalizeTheme, storedTheme } from './lib/theme.js'
 
 // Anzeige: wählt das Thema aus /admin (Börse, Getränkekarte, Glücksrad). Alarm und
 // Happy-Hour-Einblendung liegen über jedem Thema.
@@ -13,13 +13,13 @@ export default function App() {
   const live = useExchange()
   const { prices, happy, alarmAt, theme: serverTheme, topic: serverTopic, offset } = live
   const topic = serverTopic ?? 'exchange'
-  const theme = serverTheme ?? storedTheme()
+  const theme = serverTheme ? normalizeTheme(serverTheme) : storedTheme()
   const [now, setNow] = useState(() => Date.now())
 
-  // Getränkekarte und Glücksrad nutzen die Farben und Schriften des neuen Designs.
+  // Getränkekarte und Glücksrad nutzen die neutralen Farben und Schriften des Standard-Designs.
   useEffect(() => {
     if (topic === 'exchange') applyTheme(theme, true)
-    else applyTheme('modern')
+    else applyTheme('standard')
   }, [topic, theme])
 
   useEffect(() => {

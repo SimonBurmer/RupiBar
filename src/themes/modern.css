@@ -130,7 +130,7 @@ body.theme-modern .halt-badge { color: var(--hold); font-weight: 600; }
 body.theme-modern .halt-badge.trading-open { color: var(--up); }
 body.theme-modern .crash-chart { display: block; flex: 1 1 0; width: 100%; min-height: 0; }
 body.theme-modern .crash-chart text { font-family: var(--mono); }
-body.theme-modern .crash-chart .price-history { stroke: #b9b3a6; stroke-width: 1.6; stroke-linejoin: round; }
+body.theme-modern .crash-chart .price-history { stroke: var(--chart-line, #b9b3a6); stroke-width: 1.6; stroke-linejoin: round; }
 body.theme-modern .crash-chart .price-crash { stroke: var(--down); stroke-width: 2.2; fill: none; stroke-linejoin: round; }
 body.theme-modern .price-event { fill: none; stroke: var(--down); stroke-width: 2.6; }
 body.theme-modern .price-event.recovery { stroke: var(--up); }
@@ -170,7 +170,7 @@ body.theme-modern .reporter img.reporter-source { display: none; }
 body.theme-modern .reporter-bottom { flex: 0 0 auto; background: var(--panel); border-top: 2px solid var(--accent); padding: .7cqw 1cqw .8cqw; }
 body.theme-modern .reporter-caption { font-size: .8cqw; font-weight: 600; color: var(--accent); letter-spacing: .05em; }
 body.theme-modern .reporter-headline { font-family: var(--cond); font-weight: 700; font-size: 1.65cqw; line-height: 1.15; margin-top: .25cqw; }
-body.theme-modern .reporter-text { font-size: 1.05cqw; line-height: 1.4; color: #c8c2b5; margin-top: .3cqw; min-height: 2.95cqw; }
+body.theme-modern .reporter-text { font-size: 1.05cqw; line-height: 1.4; color: var(--reporter-text, #c8c2b5); margin-top: .3cqw; min-height: 2.95cqw; }
 /* Getränke */
 body.theme-modern .drinks {
   display: grid;
@@ -240,3 +240,68 @@ body.theme-modern .drinks-track > .drink { border-left: 0; border-right: 1px sol
 body.theme-modern .drinks.mode-page .drink { padding: .7cqw 1.4cqw .6cqw; }
 body.theme-modern .drinks.mode-page .drink-name { font-size: 1.5cqw; }
 body.theme-modern .drinks.mode-page .drink-price { font-size: 2.6cqw; }
+
+/* Chartfarben aus den Design-Variablen. */
+body.theme-modern .chart-grid { stroke: var(--chart-grid, #ffffff0f); }
+body.theme-modern .chart-muted { fill: var(--muted); }
+body.theme-modern .chart-text { fill: var(--text); }
+body.theme-modern .chart-hold-fill { fill: var(--hold); }
+body.theme-modern .chart-hold-stroke { stroke: var(--hold); fill: none; }
+
+/* ---------- Design „Standard“: neutrale Börse, tiefes Marineblau mit blauem Akzent ---------- */
+body.theme-modern.theme-standard {
+  --bg: #0b1220;
+  --panel: #111a2b;
+  --panel-2: #16233a;
+  --line: #1e2a40;
+  --line-strong: #33435e;
+  --text: #e6edf7;
+  --muted: #8b9bb4;
+  --faint: #56667f;
+  --accent: #3d9cf5;
+  --down: #ef5350;
+  --up: #26c281;
+  --hold: #f2b84b;
+  --chart-line: #a9bad3;
+  --chart-grid: #ffffff10;
+  --reporter-text: #c3cfe0;
+}
+
+/* ---------- Design „Bunt“: hell und fröhlich ---------- */
+body.theme-modern.theme-bunt {
+  --bg: #fff8ec;
+  --panel: #ffffff;
+  --panel-2: #fff0f6;
+  --line: #f1dfe7;
+  --line-strong: #e2c3d3;
+  --text: #1c1b33;
+  --muted: #5d5a7d;
+  --faint: #b2adc9;
+  --accent: #ff2e88;
+  --down: #e63946;
+  --up: #00a878;
+  --hold: #ff9f1c;
+  --chart-line: #6b6790;
+  --chart-grid: #1c1b3312;
+  --reporter-text: #3d3a5c;
+}
+body.theme-modern.theme-bunt .brand-sub {
+  background: linear-gradient(90deg, #ff2e88, #ff9f1c 55%, #00b4d8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+body.theme-modern.theme-bunt .screen { border-top: .45cqw solid transparent; border-image: linear-gradient(90deg, #ff2e88, #ffd60a, #00b4d8, #00a878) 1; }
+body.theme-modern.theme-bunt .reporter { border-color: var(--line-strong); }
+body.theme-modern.theme-bunt .reporter-bottom { background: #ffffff; border-top-color: #00b4d8; }
+body.theme-modern.theme-bunt .reporter-caption { color: #0096c7; }
+body.theme-modern.theme-bunt .drink { border-top: .3cqw solid var(--tile-color, #ff2e88); }
+body.theme-modern.theme-bunt .drink:nth-child(5n + 1) { --tile-color: #ff2e88; }
+body.theme-modern.theme-bunt .drink:nth-child(5n + 2) { --tile-color: #ffb703; }
+body.theme-modern.theme-bunt .drink:nth-child(5n + 3) { --tile-color: #00b4d8; }
+body.theme-modern.theme-bunt .drink:nth-child(5n + 4) { --tile-color: #00a878; }
+body.theme-modern.theme-bunt .drink:nth-child(5n + 5) { --tile-color: #8f5cff; }
+body.theme-modern.theme-bunt .drink.beer { background: #fff0f6; }
+body.theme-modern.theme-bunt .ticker-live { color: #ffffff; }
+body.theme-modern.theme-bunt .ticker-outer { background: #ffffff; }
+body.theme-modern.theme-bunt .live::before { background: #ff2e88; }

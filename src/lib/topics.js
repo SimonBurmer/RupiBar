@@ -1,4 +1,4 @@
-// Themen der Anzeige: Börse (Kurstafel, Halloween), Getränkekarte und Glücksrad (beide neutral).
+// Themen der Anzeige: Börse (Kurstafel mit mehreren Designs), Getränkekarte und Glücksrad.
 // Preise, Happy Hours und Alarm gelten für alle Themen; jedes Thema hat eigene Einstellungen.
 export const TOPICS = [
   { id: 'exchange', label: 'Börse' },

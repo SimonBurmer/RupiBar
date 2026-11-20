@@ -16,7 +16,7 @@ export default function Reporter({ liveRef }) {
   const [dialogue, setDialogue] = useState({
     caption: 'Marktbericht',
     headline: 'BIER UNTER DRUCK',
-    text: 'Dramatische Szenen an der Halloween Exchange. Der Bierindex steht unter massivem Druck.'
+    text: 'Dramatische Szenen an der Getränkebörse. Der Bierindex steht unter massivem Druck.'
   })
   const ready = loaded[sceneIndex]
   const scene = SCENES[sceneIndex]

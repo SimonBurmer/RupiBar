@@ -15,7 +15,7 @@ export function useExchange() {
     const source = new EventSource('/api/events')
     source.onmessage = event => {
       const data = JSON.parse(event.data)
-      setLive({ prices: data.prices, happy: data.happy, alarmAt: data.alarmAt ?? 0, theme: data.theme ?? 'modern', settings: { ...DEFAULT_SETTINGS, ...data.settings }, topic: data.topic ?? 'exchange', menu: { ...DEFAULT_MENU, ...data.menu }, wheel: { ...DEFAULT_WHEEL, ...data.wheel }, offset: data.serverTime - Date.now(), synced: true, connected: true })
+      setLive({ prices: data.prices, happy: data.happy, alarmAt: data.alarmAt ?? 0, theme: data.theme ?? 'standard', settings: { ...DEFAULT_SETTINGS, ...data.settings }, topic: data.topic ?? 'exchange', menu: { ...DEFAULT_MENU, ...data.menu }, wheel: { ...DEFAULT_WHEEL, ...data.wheel }, offset: data.serverTime - Date.now(), synced: true, connected: true })
     }
     source.onerror = () => setLive(prev => ({ ...prev, connected: false }))
     return () => source.close()

@@ -93,7 +93,9 @@ test('Alles zurücksetzen', () => {
 
 test('Design wählen', () => {
   const store = createStore()
-  assert.equal(store.snapshot().theme, 'modern')
+  assert.equal(store.snapshot().theme, 'standard')
+  for (const theme of ['halloween', 'bunt', 'standard']) assert.equal(store.setTheme(theme).ok, true)
+  assert.equal(store.setTheme('modern').ok, false, 'alter Name nicht mehr gültig')
   assert.equal(store.setTheme('classic').ok, true)
   assert.equal(store.setTheme('neon').ok, false)
   assert.equal(store.snapshot().theme, 'classic')

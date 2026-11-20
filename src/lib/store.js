@@ -2,8 +2,9 @@ import { DEFAULT_PRICES, HAPPY_DRINKS, parsePrice } from './market.js';
 import { INITIAL_HAPPY, INVALID_INPUT_MESSAGE, isExpired, isPromotion, nextState, parseInput } from './happyHour.js';
 import { DEFAULT_MENU, DEFAULT_TOPIC, DEFAULT_WHEEL, TOPIC_IDS, mergeMenu, mergeWheel } from './topics.js';
 
-export const THEMES = ['modern', 'classic'];
-export const DEFAULT_THEME = 'modern';
+// Designs der Börse: Standard (neutral), Halloween, Bunt (hell) und Klassisch.
+export const THEMES = ['standard', 'halloween', 'bunt', 'classic'];
+export const DEFAULT_THEME = 'standard';
 // Anzeige-Einstellungen: Getränkeleiste fest / laufend / blätternd, Tempo in Sekunden, Laufband an/aus.
 export const TILE_MODES = ['scroll', 'page', 'fixed'];
 // Reporter: Szenenwechsel und Meldungsdauer in Sekunden.

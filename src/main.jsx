@@ -16,8 +16,8 @@ import './index.css'
 import { applyTheme, storedTheme } from './lib/theme.js'
 
 const isAdmin = /^\/admin\/?$/.test(window.location.pathname)
-// /admin nutzt immer das neue Design; die Anzeige startet mit dem zuletzt gesehenen.
-applyTheme(isAdmin ? 'modern' : storedTheme())
+// /admin nutzt immer das Standard-Design; die Anzeige startet mit dem zuletzt gesehenen.
+applyTheme(isAdmin ? 'standard' : storedTheme())
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

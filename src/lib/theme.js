@@ -1,21 +1,36 @@
-// Design der Anzeige: 'modern' (Standard) oder 'classic'. Das gewählte Design kommt vom Server;
-// der letzte Stand wird pro Browser gemerkt, damit beim Laden nicht kurz das falsche Design aufblitzt.
+// Design der Anzeige. Das gewählte Design kommt vom Server; der letzte Stand wird pro Browser
+// gemerkt, damit beim Laden nicht kurz das falsche Design aufblitzt.
+// Standard, Halloween und Bunt nutzen das Stylesheet „modern“ (body.theme-modern) mit eigener
+// Farbpalette (body.theme-standard / .theme-bunt); Klassisch hat ein eigenes Stylesheet.
 const KEY = 'rupi-theme'
-const VALID = ['modern', 'classic']
+export const THEME_IDS = ['standard', 'halloween', 'bunt', 'classic']
+const ALIASES = { modern: 'halloween' }
+
+const CLASSES = {
+  standard: ['theme-modern', 'theme-standard'],
+  halloween: ['theme-modern'],
+  bunt: ['theme-modern', 'theme-bunt'],
+  classic: ['theme-classic']
+}
+const ALL_CLASSES = [...new Set(Object.values(CLASSES).flat())]
+
+export const normalizeTheme = theme => {
+  const value = ALIASES[theme] ?? theme
+  return THEME_IDS.includes(value) ? value : 'standard'
+}
 
 export function storedTheme() {
   try {
-    const value = window.localStorage.getItem(KEY)
-    return VALID.includes(value) ? value : 'modern'
+    return normalizeTheme(window.localStorage.getItem(KEY))
   } catch {
-    return 'modern'
+    return 'standard'
   }
 }
 
 export function applyTheme(theme, remember = false) {
-  const value = VALID.includes(theme) ? theme : 'modern'
-  document.body.classList.remove(...VALID.map(name => `theme-${name}`))
-  document.body.classList.add(`theme-${value}`)
+  const value = normalizeTheme(theme)
+  document.body.classList.remove(...ALL_CLASSES)
+  document.body.classList.add(...CLASSES[value])
   if (remember) {
     try { window.localStorage.setItem(KEY, value) } catch { /* ohne Speicher */ }
   }

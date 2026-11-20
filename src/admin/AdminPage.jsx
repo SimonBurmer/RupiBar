@@ -7,7 +7,7 @@ import './admin.css'
 
 const toInput = price => price.toFixed(2)
 const draftsFrom = prices => Object.fromEntries(DRINKS.map(({ name }) => [name, toInput(prices[name])]))
-const THEME_OPTIONS = [['modern', 'Neu'], ['classic', 'Klassisch']]
+const THEME_OPTIONS = [['standard', 'Standard'], ['halloween', 'Halloween'], ['bunt', 'Bunt'], ['classic', 'Klassisch']]
 const TILE_MODE_OPTIONS = [['scroll', 'Laufend'], ['page', 'Blättern'], ['fixed', 'Fest']]
 
 // Zahlenfeld für eine Sekunden-Einstellung mit eigenem Übernehmen-Knopf.

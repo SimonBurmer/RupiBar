@@ -13,16 +13,21 @@ import Reporter from './Reporter.jsx'
 import { MARKET_COUNT, MARKET_PIN_MS, fmt } from '../lib/market.js'
 import { formatEnd, isOpen, isPromotion, latestEvent } from '../lib/happyHour.js'
 
+const modernInfo = state => `Happy Hour: ${fmt(state.price)} € ${state.expiresAt ? `bis ${formatEnd(state)} Uhr` : 'bis auf Weiteres'}`
+const modern = { MarketHero: ModernMarketHero, CrashChart: ModernCrashChart, DrinkGrid: ModernDrinkGrid, Ticker: ModernTicker, happyInfo: modernInfo }
+
+// Designs der Börse: Standard (neutral), Halloween, Bunt (hell) teilen sich die Komponenten
+// und unterscheiden sich in Farben und Kopfzeile; Klassisch ist das ursprüngliche Design.
 const THEMES = {
-  modern: {
-    Header: ModernHeader, MarketHero: ModernMarketHero, CrashChart: ModernCrashChart, DrinkGrid: ModernDrinkGrid, Ticker: ModernTicker,
-    happyInfo: (state) => `Happy Hour: ${fmt(state.price)} € ${state.expiresAt ? `bis ${formatEnd(state)} Uhr` : 'bis auf Weiteres'}`
-  },
+  standard: { ...modern, Header: props => <ModernHeader {...props} /> },
+  halloween: { ...modern, Header: props => <ModernHeader {...props} sub="Halloween Exchange" tag="Getränkebörse" /> },
+  bunt: { ...modern, Header: props => <ModernHeader {...props} /> },
   classic: {
     Header: ClassicHeader, MarketHero: ClassicMarketHero, CrashChart: ClassicCrashChart, DrinkGrid: ClassicDrinkGrid, Ticker: ClassicTicker,
     happyInfo: (state) => `HAPPY HOUR · ${fmt(state.price)} € · ${state.expiresAt ? 'BIS ' : ''}${formatEnd(state).toUpperCase()}`
   }
 }
+
 
 // Börse: Kurstafel mit rotierender Kursübersicht, Reporter, Getränkeleiste und Laufband.
 export default function ExchangeBoard({ prices, happy, markets, drinks, theme, settings, offset, synced, now }) {
@@ -80,7 +85,7 @@ export default function ExchangeBoard({ prices, happy, markets, drinks, theme, s
   const liveRef = useRef(null)
   liveRef.current = { market, happy, offset, timing: { sceneMs: settings.sceneSeconds * 1000, turnMs: settings.newsSeconds * 1000 } }
 
-  const { Header, MarketHero, CrashChart, DrinkGrid, Ticker, happyInfo } = THEMES[theme] ?? THEMES.modern
+  const { Header, MarketHero, CrashChart, DrinkGrid, Ticker, happyInfo } = THEMES[theme] ?? THEMES.standard
 
   return (
     <div className={`screen${settings.showTicker ? '' : ' no-ticker'}`}>
